@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="onClickListener"
+            type="android.view.View.OnClickListener" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".activity.SystemSettingsActivity">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/system_settings_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            bind:popupTheme="@style/AppTheme.PopupOverlay"
+            bind:theme="@style/ToolbarTheme">
+
+            <TextView
+                android:id="@+id/system_settings_countdown_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:paddingRight="@dimen/super_big_spacing"
+                android:text="60"
+                android:textColor="@color/white"
+                android:textSize="@dimen/medium_text" />
+
+        </android.support.v7.widget.Toolbar>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <!--<android.support.v7.widget.CardView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_marginBottom="@dimen/card_spacing"-->
+                <!--android:clickable="false"-->
+                <!--android:foreground="@drawable/ripple"-->
+                <!--app:cardCornerRadius="@dimen/card_corner_radius"-->
+                <!--app:cardElevation="@dimen/card_elevation">-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/medium_spacing"
+                        android:paddingTop="@dimen/medium_spacing"
+                        android:text="@string/title_local_parameters"
+                        android:textColor="@color/md_blue_A200"
+                        android:textSize="@dimen/medium_text"
+                        android:textStyle="bold" />
+
+                    <com.zk.cabinet.view.SettingBasic
+                        android:id="@+id/system_setting_device_id_sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="@{onClickListener}"
+                        app:settingCaption="@string/air"
+                        app:settingIconBackground="@drawable/device_id"
+                        app:settingTitle="@string/device_id" />
+
+                    <com.zk.cabinet.view.SettingBasic
+                        android:id="@+id/system_setting_unit_number_sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="@{onClickListener}"
+                        app:settingCaption="@string/air"
+                        app:settingIconBackground="@drawable/unit_number"
+                        app:settingTitle="@string/unit_number" />
+
+                    <com.zk.cabinet.view.SettingBasic
+                        android:id="@+id/system_setting_unit_address_sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="@{onClickListener}"
+                        app:settingCaption="@string/air"
+                        app:settingIconBackground="@drawable/unit_address"
+                        app:settingTitle="@string/unit_address" />
+
+
+                </LinearLayout>
+
+
+                <!--</android.support.v7.widget.CardView>-->
+
+                <!--<android.support.v7.widget.CardView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_marginBottom="@dimen/card_spacing"-->
+                <!--android:clickable="false"-->
+                <!--android:foreground="@drawable/ripple"-->
+                <!--app:cardCornerRadius="@dimen/card_corner_radius"-->
+                <!--app:cardElevation="@dimen/card_elevation">-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/medium_spacing"
+                        android:paddingTop="@dimen/medium_spacing"
+                        android:text="@string/title_service_parameter"
+                        android:textColor="@color/md_blue_A200"
+                        android:textSize="@dimen/medium_text"
+                        android:textStyle="bold" />
+
+                    <com.zk.cabinet.view.SettingBasic
+                        android:id="@+id/system_setting_platform_service_ip_sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="@{onClickListener}"
+                        app:settingCaption="@string/air"
+                        app:settingIconBackground="@drawable/platform_service_ip"
+                        app:settingTitle="@string/platform_service_ip" />
+
+                </LinearLayout>
+
+                <!--</android.support.v7.widget.CardView>-->
+
+                <!--<android.support.v7.widget.CardView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_marginBottom="@dimen/card_spacing"-->
+                <!--android:clickable="false"-->
+                <!--android:foreground="@drawable/ripple"-->
+                <!--app:cardCornerRadius="@dimen/card_corner_radius"-->
+                <!--app:cardElevation="@dimen/card_elevation">-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/medium_spacing"
+                        android:paddingTop="@dimen/medium_spacing"
+                        android:text="@string/title_cabinet_parameters"
+                        android:textColor="@color/md_blue_A200"
+                        android:textSize="@dimen/medium_text"
+                        android:textStyle="bold" />
+
+                    <com.zk.cabinet.view.SettingBasic
+                        android:id="@+id/system_setting_reader_device_id_sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="@{onClickListener}"
+                        app:settingCaption="@string/air"
+                        app:settingIconBackground="@drawable/read_device_id"
+                        app:settingTitle="@string/reader_device_id" />
+
+                    <com.zk.cabinet.view.SettingBasic
+                        android:id="@+id/system_setting_number_of_boxes_sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="@{onClickListener}"
+                        app:settingCaption="@string/air"
+                        app:settingIconBackground="@drawable/number_of_boxes"
+                        app:settingTitle="@string/number_of_boxes" />
+
+                    <com.zk.cabinet.view.SettingBasic
+                        android:id="@+id/system_setting_not_closed_door_alarm_time_sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="@{onClickListener}"
+                        app:settingCaption="@string/air"
+                        app:settingIconBackground="@drawable/not_closed_door_alarm_time"
+                        app:settingTitle="@string/not_closed_door_alarm_time" />
+
+                    <com.zk.cabinet.view.SettingBasic
+                        android:id="@+id/system_setting_countdown_sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="@{onClickListener}"
+                        app:settingCaption="@string/click_settings"
+                        app:settingIconBackground="@drawable/countdown"
+                        app:settingTitle="@string/countdown" />
+
+                </LinearLayout>
+
+                <!--</android.support.v7.widget.CardView>-->
+
+                <!--<android.support.v7.widget.CardView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_marginBottom="@dimen/card_spacing"-->
+                <!--android:clickable="false"-->
+                <!--android:foreground="@drawable/ripple"-->
+                <!--app:cardCornerRadius="@dimen/card_corner_radius"-->
+                <!--app:cardElevation="@dimen/card_elevation">-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/medium_spacing"
+                        android:paddingTop="@dimen/medium_spacing"
+                        android:text="@string/version_management"
+                        android:textColor="@color/md_blue_A200"
+                        android:textSize="@dimen/medium_text"
+                        android:textStyle="bold" />
+
+                    <com.zk.cabinet.view.SettingBasic
+                        android:id="@+id/system_setting_app_version_sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="@{onClickListener}"
+                        app:settingCaption="@string/air"
+                        app:settingIconBackground="@drawable/app_version"
+                        app:settingTitle="@string/app_version" />
+
+                </LinearLayout>
+
+                <!--</android.support.v7.widget.CardView>-->
+
+                <!--<android.support.v7.widget.CardView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_marginBottom="@dimen/card_spacing"-->
+                <!--android:clickable="false"-->
+                <!--android:foreground="@drawable/ripple"-->
+                <!--app:cardCornerRadius="@dimen/card_corner_radius"-->
+                <!--app:cardElevation="@dimen/card_elevation">-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/medium_spacing"
+                        android:paddingTop="@dimen/medium_spacing"
+                        android:text="@string/android_system"
+                        android:textColor="@color/md_blue_A200"
+                        android:textSize="@dimen/medium_text"
+                        android:textStyle="bold" />
+
+                    <com.zk.cabinet.view.SettingBasic
+                        android:id="@+id/system_setting_display_sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="@{onClickListener}"
+                        app:settingCaption="@string/display_bar"
+                        app:settingIconBackground="@drawable/status_bar"
+                        app:settingTitle="@string/title_display_bar" />
+
+                    <com.zk.cabinet.view.SettingBasic
+                        android:id="@+id/system_setting_file_manager_sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="@{onClickListener}"
+                        app:settingCaption="@string/android_file_manager"
+                        app:settingIconBackground="@drawable/file_manager"
+                        app:settingTitle="@string/title_android_file_manager" />
+
+                </LinearLayout>
+
+                <!--</android.support.v7.widget.CardView>-->
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+</layout>

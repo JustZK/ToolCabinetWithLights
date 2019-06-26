@@ -1,0 +1,255 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="onClickListener"
+            type="android.view.View.OnClickListener" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/shape_gradient"
+        android:orientation="vertical"
+        tools:context=".activity.CabinetSetInfoActivity">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/cabinet_set_info_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            bind:popupTheme="@style/AppTheme.PopupOverlay"
+            bind:theme="@style/ToolbarTheme">
+
+            <TextView
+                android:id="@+id/cabinet_set_info_countdown_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:paddingRight="@dimen/super_big_spacing"
+                android:text="该界面未设置完不建议推出"
+                android:textColor="@color/white"
+                android:textSize="@dimen/medium_text" />
+
+        </android.support.v7.widget.Toolbar>
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/big_background_icon"
+                    android:layout_margin="@dimen/sub_medium_spacing"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/cell_number_title"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                    <TextView
+                        android:id="@+id/cabinet_set_info_cell_number_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/cell_number_title"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/big_background_icon"
+                    android:layout_margin="@dimen/sub_medium_spacing"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/box_name_title"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                    <EditText
+                        android:id="@+id/cabinet_set_info_box_name_edt"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/big_background_icon"
+                    android:layout_margin="@dimen/sub_medium_spacing"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/target_address_title"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                    <EditText
+                        android:id="@+id/cabinet_set_info_target_address_edt"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:inputType="number"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/big_background_icon"
+                    android:layout_margin="@dimen/sub_medium_spacing"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/source_address_title"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                    <EditText
+                        android:id="@+id/cabinet_set_info_source_address_edt"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:gravity="center"
+                        android:text="0xFF"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/big_background_icon"
+                    android:layout_margin="@dimen/sub_medium_spacing"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/lock_number_title"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                    <EditText
+                        android:id="@+id/cabinet_set_info_lock_number_edt"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:inputType="number"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/big_background_icon"
+                    android:layout_margin="@dimen/sub_medium_spacing"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/reader_ip_title"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                    <Spinner
+                        android:id="@+id/cabinet_set_info_reader_ip_spinner"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/big_background_icon"
+                    android:layout_margin="@dimen/sub_medium_spacing"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/antenna_number_title"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                    <EditText
+                        android:id="@+id/cabinet_set_info_antenna_number_edt"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:hint="多个天线号请用英文,隔开"
+                        android:digits="0123456789,"
+                        android:inputType="number"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
+                        android:textSize="@dimen/sub_big_text" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+</layout>

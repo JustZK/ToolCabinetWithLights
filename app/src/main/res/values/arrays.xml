@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="dialog_countdown_array">
+        <item>15秒</item>
+        <item>30秒</item>
+        <item>1分钟</item>
+        <item>2分钟</item>
+        <item>5分钟</item>
+        <item>10分钟</item>
+    </string-array>
+
+    <string-array name="dialog_synchronised_time_array">
+        <item>5分钟</item>
+        <item>10分钟</item>
+        <item>15分钟</item>
+        <item>30分钟</item>
+        <item>45分钟</item>
+        <item>60分钟</item>
+        <item>75分钟</item>
+        <item>90分钟</item>
+    </string-array>
+
+    <string-array name="dialog_number_of_boxes_array">
+        <item>主柜+1副柜</item>
+        <item>主柜+2副柜</item>
+        <item>主柜+3副柜</item>
+        <item>主柜+4副柜</item>
+        <item>主柜+5副柜</item>
+        <item>主柜+6副柜</item>
+        <item>主柜+7副柜</item>
+        <item>主柜+8副柜</item>
+        <item>主柜+9副柜</item>
+        <item>主柜+10副柜</item>
+    </string-array>
+
+    <string-array name="dialog_not_closed_door_alarm_time_array">
+        <item>永不</item>
+        <item>1分钟</item>
+        <item>2分钟</item>
+        <item>5分钟</item>
+        <item>10分钟</item>
+        <item>15分钟</item>
+    </string-array>
+
+    <string-array name="lock_control_board_array">
+        <item>A柜</item>
+        <item>B柜</item>
+        <item>C柜</item>
+    </string-array>
+
+    <string-array name="antenna_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="onClickListener"
+            type="android.view.View.OnClickListener" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        android:orientation="vertical"
+        tools:context=".activity.AccessingActivity">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/accessing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            bind:popupTheme="@style/AppTheme.PopupOverlay"
+            bind:theme="@style/ToolbarTheme">
+
+            <TextView
+                android:id="@+id/accessing_countdown_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:paddingRight="@dimen/super_big_spacing"
+                android:text="60"
+                android:textColor="@color/white"
+                android:textSize="@dimen/medium_text" />
+
+        </android.support.v7.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_spacing">
+
+                <TextView
+                    android:id="@+id/accessing_box_name_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/md_purple_300"
+                    android:textSize="@dimen/super_big_more_text" />
+
+                <TextView
+                    android:id="@+id/accessing_tool_number_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:textColor="@color/md_purple_300"
+                    android:textSize="@dimen/big_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center|right"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_spacing">
+
+                <Button
+                    android:id="@+id/accessing_open_btn"
+                    android:layout_width="115dp"
+                    android:layout_height="65dp"
+                    android:background="@drawable/btn_nor_down"
+                    android:onClick="@{onClickListener}"
+                    android:text="@string/open"
+                    android:textColor="@color/md_purple_300"
+                    android:textSize="@dimen/super_big_text" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/card_spacing"
+            android:background="@color/md_blue_grey_100" />
+
+        <ListView
+            android:id="@+id/accessing_lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
+
+    </LinearLayout>
+</layout>

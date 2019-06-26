@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/adapter_user_item_ll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/card_spacing"
+    android:paddingBottom="@dimen/card_spacing">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_l_spacing"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="用户名称："
+            android:textColor="@color/text_view_01"
+            android:textSize="@dimen/sub_big_text" />
+
+        <TextView
+            android:id="@+id/adapter_user_name_tv"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_l_spacing"
+            android:layout_weight="5"
+            android:gravity="center|left"
+            android:text="@string/tool_name"
+            android:textColor="@color/text_view_01"
+            android:textSize="@dimen/sub_medium_text" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_l_spacing"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="用户编号："
+            android:textColor="@color/text_view_01"
+            android:textSize="@dimen/sub_big_text" />
+
+        <TextView
+            android:id="@+id/adapter_user_id_tv"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_l_spacing"
+            android:layout_weight="5"
+            android:gravity="center|left"
+            android:text="@string/tool_cell_number"
+            android:textColor="@color/text_view_01"
+            android:textSize="@dimen/sub_medium_text" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_spacing"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="用户密码："
+            android:textColor="@color/text_view_01"
+            android:textSize="@dimen/sub_big_text" />
+
+        <TextView
+            android:id="@+id/adapter_tools_epc_tv"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_spacing"
+            android:layout_weight="5"
+            android:gravity="center|left"
+            android:text="******"
+            android:textColor="@color/text_view_01"
+            android:textSize="@dimen/sub_medium_text" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_spacing"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="@string/title_tool_state"
+            android:textColor="@color/text_view_01"
+            android:textSize="@dimen/sub_big_text"
+            android:visibility="invisible" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_spacing"
+            android:layout_weight="5"
+            android:gravity="center|left"
+            android:text="@string/tool_state"
+            android:textColor="@color/text_view_01"
+            android:textSize="@dimen/sub_medium_text"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
+</LinearLayout>

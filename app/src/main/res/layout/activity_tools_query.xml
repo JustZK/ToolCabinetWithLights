@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="onClickListener"
+            type="android.view.View.OnClickListener" />
+
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activity.ToolsQueryActivity">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tool_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            bind:popupTheme="@style/AppTheme.PopupOverlay"
+            bind:theme="@style/ToolbarTheme">
+
+            <TextView
+                android:id="@+id/tool_countdown_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:paddingRight="@dimen/super_big_spacing"
+                android:text="60"
+                android:textColor="@color/white"
+                android:textSize="@dimen/medium_text" />
+
+        </android.support.v7.widget.Toolbar>
+
+        <ListView
+            android:id="@+id/tools_query_lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize">
+
+        </ListView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/tools_add_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:padding="@dimen/big_icon"
+            android:onClick="@{onClickListener}"
+            app:srcCompat="@drawable/add" />
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

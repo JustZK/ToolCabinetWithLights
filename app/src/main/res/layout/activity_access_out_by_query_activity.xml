@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="onClickListener"
+            type="android.view.View.OnClickListener" />
+
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activity.AccessOutByQueryActivity">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/access_out_by_query_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            bind:popupTheme="@style/AppTheme.PopupOverlay"
+            bind:theme="@style/ToolbarTheme">
+
+            <EditText
+                android:id="@+id/access_out_by_query_search_et"
+                android:layout_width="500dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/big_spacing"
+                android:backgroundTint="@color/white"
+                android:hint="请输入工具名称"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
+
+            <TextView
+                android:id="@+id/access_out_by_query_countdown_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:paddingRight="@dimen/super_big_spacing"
+                android:text="60"
+                android:textColor="@color/white"
+                android:textSize="@dimen/medium_text" />
+
+            <TextView
+                android:id="@+id/access_out_by_query_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="right"
+                android:layout_marginEnd="@dimen/big_spacing"
+                android:onClick="@{onClickListener}"
+                android:background="@mipmap/search"
+                android:textColor="@color/white" />
+
+        </android.support.v7.widget.Toolbar>
+
+        <ListView
+            android:id="@+id/access_out_by_query_query_lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize">
+
+        </ListView>
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

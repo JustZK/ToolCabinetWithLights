@@ -30,6 +30,9 @@ public class Cabinet {
     @Property(nameInDb = "TargetAddress")
     private int targetAddress;
 
+    @Property(nameInDb = "TargetAddressForLight")
+    private int targetAddressForLight;
+
     @Property(nameInDb = "SourceAddress")
     private int sourceAddress;
 
@@ -45,15 +48,17 @@ public class Cabinet {
     @Property(nameInDb = "SignBroken")
     private int signBroken;
 
-    @Generated(hash = 273177328)
+    @Generated(hash = 1750107773)
     public Cabinet(Long id, int cellNumber, String boxName, int proportion,
-            int targetAddress, int sourceAddress, int lockNumber,
-            int readerDeviceID, String antennaNumber, int signBroken) {
+            int targetAddress, int targetAddressForLight, int sourceAddress,
+            int lockNumber, int readerDeviceID, String antennaNumber,
+            int signBroken) {
         this.id = id;
         this.cellNumber = cellNumber;
         this.boxName = boxName;
         this.proportion = proportion;
         this.targetAddress = targetAddress;
+        this.targetAddressForLight = targetAddressForLight;
         this.sourceAddress = sourceAddress;
         this.lockNumber = lockNumber;
         this.readerDeviceID = readerDeviceID;
@@ -143,6 +148,14 @@ public class Cabinet {
 
     public void setSignBroken(int signBroken) {
         this.signBroken = signBroken;
+    }
+
+    public int getTargetAddressForLight() {
+        return this.targetAddressForLight;
+    }
+
+    public void setTargetAddressForLight(int targetAddressForLight) {
+        this.targetAddressForLight = targetAddressForLight;
     }
 
 }

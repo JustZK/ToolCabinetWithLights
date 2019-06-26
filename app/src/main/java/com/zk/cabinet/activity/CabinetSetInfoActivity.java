@@ -46,6 +46,7 @@ public class CabinetSetInfoActivity extends AppCompatActivity {
         binding.cabinetSetInfoCellNumberTv.setText(String.valueOf(cellNumber));
         binding.cabinetSetInfoBoxNameEdt.setText(cabinet.getBoxName() == null ? "" : cabinet.getBoxName());
         binding.cabinetSetInfoTargetAddressEdt.setText(String.valueOf(cabinet.getTargetAddress()));
+        binding.cabinetSetInfoTargetAddressForLightEdt.setText(String.valueOf(cabinet.getTargetAddressForLight()));
         binding.cabinetSetInfoLockNumberEdt.setText(String.valueOf(cabinet.getLockNumber()));
         binding.cabinetSetInfoAntennaNumberEdt.setText(cabinet.getAntennaNumber() == null ? "" : cabinet.getAntennaNumber());
         for (int i = 0; i < readerServiceIpPorts.length; i++) {
@@ -63,12 +64,14 @@ public class CabinetSetInfoActivity extends AppCompatActivity {
             case android.R.id.home:
                 String boxName = binding.cabinetSetInfoBoxNameEdt.getText().toString().trim();
                 String targetAddressStr = binding.cabinetSetInfoTargetAddressEdt.getText().toString().trim();
+                String targetAddressForLightStr = binding.cabinetSetInfoTargetAddressForLightEdt.getText().toString().trim();
                 String lockNumberStr = binding.cabinetSetInfoLockNumberEdt.getText().toString().trim();
                 String readerIp = binding.cabinetSetInfoReaderIpSpinner.getSelectedItem().toString();
                 String antennaNumber = binding.cabinetSetInfoAntennaNumberEdt.getText().toString().trim();
 
                 if (!TextUtils.isEmpty(boxName) &&
                         !TextUtils.isEmpty(targetAddressStr) &&
+                        !TextUtils.isEmpty(targetAddressForLightStr) &&
                         !TextUtils.isEmpty(lockNumberStr) &&
                         !TextUtils.isEmpty(readerIp) &&
                         !TextUtils.isEmpty(antennaNumber) &&
@@ -76,6 +79,7 @@ public class CabinetSetInfoActivity extends AppCompatActivity {
                         Integer.parseInt(lockNumberStr) < 17) {
                     cabinet.setBoxName(boxName);
                     cabinet.setTargetAddress(Integer.parseInt(targetAddressStr));
+                    cabinet.setTargetAddressForLight(Integer.parseInt(targetAddressForLightStr));
                     cabinet.setLockNumber(Integer.parseInt(lockNumberStr));
                     cabinet.setReaderDeviceID(Integer.parseInt(readerIp));
                     cabinet.setAntennaNumber(antennaNumber);

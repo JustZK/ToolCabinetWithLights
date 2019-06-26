@@ -93,7 +93,8 @@
     <string name="title_cabinet_set_info">柜体详细设置</string>
     <string name="cell_number_title">格子号，唯一值：</string>
     <string name="box_name_title">格子名称：</string>
-    <string name="target_address_title">目标地址：</string>
+    <string name="target_address_title">锁控目标地址：</string>
+    <string name="target_address_for_light_title">灯控目标地址：</string>
     <string name="source_address_title">源地址：</string>
     <string name="lock_number_title">锁号：</string>
     <string name="reader_ip_title">读写器：</string>

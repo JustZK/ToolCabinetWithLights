@@ -100,4 +100,51 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_spacing"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="工具灯号："
+            android:textColor="@color/text_view_01"
+            android:textSize="@dimen/sub_big_text" />
+
+        <TextView
+            android:id="@+id/adapter_tools_light_tv"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_spacing"
+            android:layout_weight="5"
+            android:gravity="center|left"
+            android:text="@string/tool_epc"
+            android:textColor="@color/text_view_01"
+            android:textSize="@dimen/sub_medium_text" />
+
+        <TextView
+            android:visibility="invisible"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_spacing"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="@string/title_tool_state"
+            android:textColor="@color/text_view_01"
+            android:textSize="@dimen/sub_big_text" />
+
+        <TextView
+            android:visibility="invisible"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_spacing"
+            android:layout_weight="5"
+            android:gravity="center|left"
+            android:text="@string/tool_state"
+            android:textColor="@color/text_view_01"
+            android:textSize="@dimen/sub_medium_text" />
+
+    </LinearLayout>
+
 </LinearLayout>

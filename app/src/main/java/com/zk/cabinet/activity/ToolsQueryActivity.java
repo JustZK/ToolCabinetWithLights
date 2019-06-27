@@ -18,6 +18,7 @@ import com.zk.cabinet.bean.Tools;
 import com.zk.cabinet.databinding.ActivityToolsQueryBinding;
 import com.zk.cabinet.db.CabinetService;
 import com.zk.cabinet.db.ToolsService;
+import com.zk.cabinet.util.RegularExpressionUtil;
 import com.zk.cabinet.view.TimeOffAppCompatActivity;
 
 import java.util.List;
@@ -46,22 +47,21 @@ public class ToolsQueryActivity extends TimeOffAppCompatActivity implements View
         init();
     }
 
-    protected void countDownTimerOnTick(long millisUntilFinished){
+    protected void countDownTimerOnTick(long millisUntilFinished) {
         binding.toolCountdownTv.setText(String.valueOf(millisUntilFinished));
     }
 
-    private void init(){
+    private void init() {
         list = ToolsService.getInstance().loadAll();
         mAdapter = new ToolsAdapter(this, list);
         binding.toolsQueryLv.setAdapter(mAdapter);
 
         cabinetList = CabinetService.getInstance().loadAll();
         boxName = new String[cabinetList.size() - 3];
-        for (int i = 3; i< cabinetList.size(); i++){
+        for (int i = 3; i < cabinetList.size(); i++) {
             boxName[i - 3] = cabinetList.get(i).getBoxName();
         }
     }
-
 
 
     @Override
@@ -76,7 +76,7 @@ public class ToolsQueryActivity extends TimeOffAppCompatActivity implements View
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.tools_add_fab:
                 mDialogView = getLayoutInflater().inflate(R.layout.dialog_add_tool, null);
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
@@ -95,20 +95,26 @@ public class ToolsQueryActivity extends TimeOffAppCompatActivity implements View
                                 String name = ((EditText) mDialogView.
                                         findViewById(R.id.dialog_add_tools_name_edt)).
                                         getText().toString().trim();
+                                String toolLightNumber = ((EditText) mDialogView.
+                                        findViewById(R.id.dialog_add_tools_light_edt)).
+                                        getText().toString().trim();
                                 if (!TextUtils.isEmpty(epc) &&
-                                        !TextUtils.isEmpty(name)) {
+                                        !TextUtils.isEmpty(name) &&
+                                        !TextUtils.isEmpty(toolLightNumber) &&
+                                        RegularExpressionUtil.isNumber(toolLightNumber)) {
 
                                     Tools tools = new Tools();
 
                                     String boxName = ((Spinner) mDialogView.findViewById(R.id.dialog_add_box_name_sp)).getSelectedItem().toString();
-                                    for (int p = 3; p < cabinetList.size(); p++){
-                                        if (boxName.equals(cabinetList.get(p).getBoxName())){
+                                    for (int p = 3; p < cabinetList.size(); p++) {
+                                        if (boxName.equals(cabinetList.get(p).getBoxName())) {
                                             tools.setCellNumber(cabinetList.get(p).getCellNumber());
                                         }
                                     }
                                     tools.setEpc(epc);
                                     tools.setToolName(name);
                                     tools.setToolState(0);
+                                    tools.setToolLightNumber(Integer.parseInt(toolLightNumber));
                                     ToolsService.getInstance().insertOrUpdate(tools);
                                     list = ToolsService.getInstance().loadAll();
                                     mAdapter.setList(list);

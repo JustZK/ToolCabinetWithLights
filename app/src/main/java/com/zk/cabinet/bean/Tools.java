@@ -44,6 +44,12 @@ public class Tools {
     @NotNull
     private int toolState;
 
+    // 工具状态
+    @Expose
+    @SerializedName("ToolLightNumber")
+    @Property(nameInDb = "ToolLightNumber")
+    private int toolLightNumber;
+
     // 借
     @Expose
     @SerializedName("Borrower")
@@ -52,14 +58,15 @@ public class Tools {
 
 
 
-    @Generated(hash = 2110080583)
+    @Generated(hash = 274176335)
     public Tools(Long id, String toolName, String epc, int cellNumber,
-            int toolState, String borrower) {
+            int toolState, int toolLightNumber, String borrower) {
         this.id = id;
         this.toolName = toolName;
         this.epc = epc;
         this.cellNumber = cellNumber;
         this.toolState = toolState;
+        this.toolLightNumber = toolLightNumber;
         this.borrower = borrower;
     }
 
@@ -113,6 +120,14 @@ public class Tools {
 
     public void setBorrower(String borrower) {
         this.borrower = borrower;
+    }
+
+    public int getToolLightNumber() {
+        return this.toolLightNumber;
+    }
+
+    public void setToolLightNumber(int toolLightNumber) {
+        this.toolLightNumber = toolLightNumber;
     }
 
     

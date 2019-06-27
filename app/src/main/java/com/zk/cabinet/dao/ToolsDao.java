@@ -29,7 +29,8 @@ public class ToolsDao extends AbstractDao<Tools, Long> {
         public final static Property Epc = new Property(2, String.class, "epc", false, "EPC");
         public final static Property CellNumber = new Property(3, int.class, "cellNumber", false, "CellNumber");
         public final static Property ToolState = new Property(4, int.class, "toolState", false, "ToolState");
-        public final static Property Borrower = new Property(5, String.class, "borrower", false, "Borrower");
+        public final static Property ToolLightNumber = new Property(5, int.class, "toolLightNumber", false, "ToolLightNumber");
+        public final static Property Borrower = new Property(6, String.class, "borrower", false, "Borrower");
     }
 
 
@@ -50,7 +51,8 @@ public class ToolsDao extends AbstractDao<Tools, Long> {
                 "\"EPC\" TEXT UNIQUE ," + // 2: epc
                 "\"CellNumber\" INTEGER NOT NULL ," + // 3: cellNumber
                 "\"ToolState\" INTEGER NOT NULL ," + // 4: toolState
-                "\"Borrower\" TEXT);"); // 5: borrower
+                "\"ToolLightNumber\" INTEGER NOT NULL ," + // 5: toolLightNumber
+                "\"Borrower\" TEXT);"); // 6: borrower
     }
 
     /** Drops the underlying database table. */
@@ -79,10 +81,11 @@ public class ToolsDao extends AbstractDao<Tools, Long> {
         }
         stmt.bindLong(4, entity.getCellNumber());
         stmt.bindLong(5, entity.getToolState());
+        stmt.bindLong(6, entity.getToolLightNumber());
  
         String borrower = entity.getBorrower();
         if (borrower != null) {
-            stmt.bindString(6, borrower);
+            stmt.bindString(7, borrower);
         }
     }
 
@@ -106,10 +109,11 @@ public class ToolsDao extends AbstractDao<Tools, Long> {
         }
         stmt.bindLong(4, entity.getCellNumber());
         stmt.bindLong(5, entity.getToolState());
+        stmt.bindLong(6, entity.getToolLightNumber());
  
         String borrower = entity.getBorrower();
         if (borrower != null) {
-            stmt.bindString(6, borrower);
+            stmt.bindString(7, borrower);
         }
     }
 
@@ -126,7 +130,8 @@ public class ToolsDao extends AbstractDao<Tools, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // epc
             cursor.getInt(offset + 3), // cellNumber
             cursor.getInt(offset + 4), // toolState
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // borrower
+            cursor.getInt(offset + 5), // toolLightNumber
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6) // borrower
         );
         return entity;
     }
@@ -138,7 +143,8 @@ public class ToolsDao extends AbstractDao<Tools, Long> {
         entity.setEpc(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setCellNumber(cursor.getInt(offset + 3));
         entity.setToolState(cursor.getInt(offset + 4));
-        entity.setBorrower(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setToolLightNumber(cursor.getInt(offset + 5));
+        entity.setBorrower(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
      }
     
     @Override

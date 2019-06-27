@@ -55,7 +55,8 @@ public class ToolsAdapter extends BaseAdapter {
                     (TextView) view.findViewById(R.id.adapter_tools_name_tv),
                     (TextView) view.findViewById(R.id.adapter_tools_cell_number_tv),
                     (TextView) view.findViewById(R.id.adapter_tools_epc_tv),
-                    (TextView) view.findViewById(R.id.adapter_tools_state_tv));
+                    (TextView) view.findViewById(R.id.adapter_tools_state_tv),
+                    (TextView) view.findViewById(R.id.adapter_tools_light_tv));
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -65,6 +66,7 @@ public class ToolsAdapter extends BaseAdapter {
         viewHolder.adapter_tools_cell_number_tv.setText(tools.getToolState() == 0 ? String.valueOf(tools.getCellNumber()) : "---");
         viewHolder.adapter_tools_epc_tv.setText(tools.getEpc() != null ? tools.getEpc() : "---");
         viewHolder.adapter_tools_state_tv.setText(tools.getToolState() == 0 ? "在柜" : "离柜");
+        viewHolder.adapter_tools_light_tv.setText(String.valueOf(tools.getToolLightNumber()));
 
         if (i % 2 != 0) {
             viewHolder.adapter_tools_item_ll.setBackgroundColor(mContext.getResources().getColor(R.color.md_indigo_55));
@@ -84,16 +86,20 @@ public class ToolsAdapter extends BaseAdapter {
         protected TextView adapter_tools_epc_tv;
         protected TextView adapter_tools_state_tv;
 
+        protected TextView adapter_tools_light_tv;
+
         public ViewHolder(LinearLayout adapter_tools_item_ll,
                           TextView adapter_tools_name_tv,
                           TextView adapter_tools_cell_number_tv,
                           TextView adapter_tools_epc_tv,
-                          TextView adapter_tools_state_tv) {
+                          TextView adapter_tools_state_tv,
+                          TextView adapter_tools_light_tv) {
             this.adapter_tools_item_ll = adapter_tools_item_ll;
             this.adapter_tools_name_tv = adapter_tools_name_tv;
             this.adapter_tools_cell_number_tv = adapter_tools_cell_number_tv;
             this.adapter_tools_epc_tv = adapter_tools_epc_tv;
             this.adapter_tools_state_tv = adapter_tools_state_tv;
+            this.adapter_tools_light_tv = adapter_tools_light_tv;
         }
     }
 

@@ -29,11 +29,12 @@ public class CabinetDao extends AbstractDao<Cabinet, Long> {
         public final static Property BoxName = new Property(2, String.class, "boxName", false, "BoxName");
         public final static Property Proportion = new Property(3, int.class, "proportion", false, "Proportion");
         public final static Property TargetAddress = new Property(4, int.class, "targetAddress", false, "TargetAddress");
-        public final static Property SourceAddress = new Property(5, int.class, "sourceAddress", false, "SourceAddress");
-        public final static Property LockNumber = new Property(6, int.class, "lockNumber", false, "LockNumber");
-        public final static Property ReaderDeviceID = new Property(7, int.class, "readerDeviceID", false, "ReaderDeviceID");
-        public final static Property AntennaNumber = new Property(8, String.class, "antennaNumber", false, "AntennaNumber");
-        public final static Property SignBroken = new Property(9, int.class, "signBroken", false, "SignBroken");
+        public final static Property TargetAddressForLight = new Property(5, int.class, "targetAddressForLight", false, "TargetAddressForLight");
+        public final static Property SourceAddress = new Property(6, int.class, "sourceAddress", false, "SourceAddress");
+        public final static Property LockNumber = new Property(7, int.class, "lockNumber", false, "LockNumber");
+        public final static Property ReaderDeviceID = new Property(8, int.class, "readerDeviceID", false, "ReaderDeviceID");
+        public final static Property AntennaNumber = new Property(9, String.class, "antennaNumber", false, "AntennaNumber");
+        public final static Property SignBroken = new Property(10, int.class, "signBroken", false, "SignBroken");
     }
 
 
@@ -54,11 +55,12 @@ public class CabinetDao extends AbstractDao<Cabinet, Long> {
                 "\"BoxName\" TEXT," + // 2: boxName
                 "\"Proportion\" INTEGER NOT NULL ," + // 3: proportion
                 "\"TargetAddress\" INTEGER NOT NULL ," + // 4: targetAddress
-                "\"SourceAddress\" INTEGER NOT NULL ," + // 5: sourceAddress
-                "\"LockNumber\" INTEGER NOT NULL ," + // 6: lockNumber
-                "\"ReaderDeviceID\" INTEGER NOT NULL ," + // 7: readerDeviceID
-                "\"AntennaNumber\" TEXT," + // 8: antennaNumber
-                "\"SignBroken\" INTEGER NOT NULL );"); // 9: signBroken
+                "\"TargetAddressForLight\" INTEGER NOT NULL ," + // 5: targetAddressForLight
+                "\"SourceAddress\" INTEGER NOT NULL ," + // 6: sourceAddress
+                "\"LockNumber\" INTEGER NOT NULL ," + // 7: lockNumber
+                "\"ReaderDeviceID\" INTEGER NOT NULL ," + // 8: readerDeviceID
+                "\"AntennaNumber\" TEXT," + // 9: antennaNumber
+                "\"SignBroken\" INTEGER NOT NULL );"); // 10: signBroken
     }
 
     /** Drops the underlying database table. */
@@ -83,15 +85,16 @@ public class CabinetDao extends AbstractDao<Cabinet, Long> {
         }
         stmt.bindLong(4, entity.getProportion());
         stmt.bindLong(5, entity.getTargetAddress());
-        stmt.bindLong(6, entity.getSourceAddress());
-        stmt.bindLong(7, entity.getLockNumber());
-        stmt.bindLong(8, entity.getReaderDeviceID());
+        stmt.bindLong(6, entity.getTargetAddressForLight());
+        stmt.bindLong(7, entity.getSourceAddress());
+        stmt.bindLong(8, entity.getLockNumber());
+        stmt.bindLong(9, entity.getReaderDeviceID());
  
         String antennaNumber = entity.getAntennaNumber();
         if (antennaNumber != null) {
-            stmt.bindString(9, antennaNumber);
+            stmt.bindString(10, antennaNumber);
         }
-        stmt.bindLong(10, entity.getSignBroken());
+        stmt.bindLong(11, entity.getSignBroken());
     }
 
     @Override
@@ -110,15 +113,16 @@ public class CabinetDao extends AbstractDao<Cabinet, Long> {
         }
         stmt.bindLong(4, entity.getProportion());
         stmt.bindLong(5, entity.getTargetAddress());
-        stmt.bindLong(6, entity.getSourceAddress());
-        stmt.bindLong(7, entity.getLockNumber());
-        stmt.bindLong(8, entity.getReaderDeviceID());
+        stmt.bindLong(6, entity.getTargetAddressForLight());
+        stmt.bindLong(7, entity.getSourceAddress());
+        stmt.bindLong(8, entity.getLockNumber());
+        stmt.bindLong(9, entity.getReaderDeviceID());
  
         String antennaNumber = entity.getAntennaNumber();
         if (antennaNumber != null) {
-            stmt.bindString(9, antennaNumber);
+            stmt.bindString(10, antennaNumber);
         }
-        stmt.bindLong(10, entity.getSignBroken());
+        stmt.bindLong(11, entity.getSignBroken());
     }
 
     @Override
@@ -134,11 +138,12 @@ public class CabinetDao extends AbstractDao<Cabinet, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // boxName
             cursor.getInt(offset + 3), // proportion
             cursor.getInt(offset + 4), // targetAddress
-            cursor.getInt(offset + 5), // sourceAddress
-            cursor.getInt(offset + 6), // lockNumber
-            cursor.getInt(offset + 7), // readerDeviceID
-            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // antennaNumber
-            cursor.getInt(offset + 9) // signBroken
+            cursor.getInt(offset + 5), // targetAddressForLight
+            cursor.getInt(offset + 6), // sourceAddress
+            cursor.getInt(offset + 7), // lockNumber
+            cursor.getInt(offset + 8), // readerDeviceID
+            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // antennaNumber
+            cursor.getInt(offset + 10) // signBroken
         );
         return entity;
     }
@@ -150,11 +155,12 @@ public class CabinetDao extends AbstractDao<Cabinet, Long> {
         entity.setBoxName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setProportion(cursor.getInt(offset + 3));
         entity.setTargetAddress(cursor.getInt(offset + 4));
-        entity.setSourceAddress(cursor.getInt(offset + 5));
-        entity.setLockNumber(cursor.getInt(offset + 6));
-        entity.setReaderDeviceID(cursor.getInt(offset + 7));
-        entity.setAntennaNumber(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
-        entity.setSignBroken(cursor.getInt(offset + 9));
+        entity.setTargetAddressForLight(cursor.getInt(offset + 5));
+        entity.setSourceAddress(cursor.getInt(offset + 6));
+        entity.setLockNumber(cursor.getInt(offset + 7));
+        entity.setReaderDeviceID(cursor.getInt(offset + 8));
+        entity.setAntennaNumber(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setSignBroken(cursor.getInt(offset + 10));
      }
     
     @Override

@@ -10,6 +10,7 @@ import com.zk.cabinet.db.DBHelper;
 import com.zk.cabinet.netty.server.NettyServerParsingLibrary;
 import com.zk.cabinet.serial.card.CardSerialOperation;
 import com.zk.cabinet.serial.door.DoorSerialOperation;
+import com.zk.cabinet.serial.light.LightSerialOperation;
 import com.zk.cabinet.util.SharedPreferencesUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.SharedPreferencesUtil.Record;
@@ -49,6 +50,7 @@ public class ToolCabinetApplication extends Application {
 
         CardSerialOperation.getInstance().openComPort();
         DoorSerialOperation.getInstance().openComPort();
+        LightSerialOperation.getInstance().openComPort();
 
         NettyServerParsingLibrary nettyServerParsingLibrary = NettyServerParsingLibrary.getInstance();
         nettyServerParsingLibrary.init(7880);

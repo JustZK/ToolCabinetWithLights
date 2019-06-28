@@ -2,16 +2,13 @@ package com.zk.cabinet.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,13 +21,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.zk.cabinet.R;
 import com.zk.cabinet.bean.User;
 import com.zk.cabinet.callback.CardListener;
-import com.zk.cabinet.constant.SelfComm;
 import com.zk.cabinet.databinding.ActivityMainBinding;
 import com.zk.cabinet.databinding.DilaogLoginBinding;
 import com.zk.cabinet.db.UserService;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.card.CardSerialOperation;
-import com.zk.cabinet.service.BusinessService;
 import com.zk.cabinet.util.SharedPreferencesUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.TimeOpera;
@@ -96,27 +91,27 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
     }
 
     private void init() {
-        businessServiceIntent = new Intent(this, BusinessService.class);
-        businessServiceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                businessMessenger = new Messenger(service);
-//                Messenger messenger = new Messenger(service);
-                Message msg = Message.obtain();
-                msg.what = SelfComm.BUSINESS_SERVICE_CONNECT;
-                msg.replyTo = new Messenger(mHandler);
-                try {
-                    businessMessenger.send(msg);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        };
+//        businessServiceIntent = new Intent(this, BusinessService.class);
+//        businessServiceConnection = new ServiceConnection() {
+//            @Override
+//            public void onServiceConnected(ComponentName name, IBinder service) {
+//                businessMessenger = new Messenger(service);
+////                Messenger messenger = new Messenger(service);
+//                Message msg = Message.obtain();
+//                msg.what = SelfComm.BUSINESS_SERVICE_CONNECT;
+//                msg.replyTo = new Messenger(mHandler);
+//                try {
+//                    businessMessenger.send(msg);
+//                } catch (RemoteException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onServiceDisconnected(ComponentName name) {
+//
+//            }
+//        };
 
         progressDialog = new ProgressDialog(this);
 

@@ -52,6 +52,17 @@ public class ToolsService extends BaseService<Tools, Long> {
                 ToolsDao.Properties.ToolState.eq(toolState));
     }
 
+    public List<Tools> queryOr (String userID, int cellNumber, int toolState) {
+//        return queryBuilder().where(
+//                ToolsDao.Properties.ToolState.eq(toolState),
+//                ToolsDao.Properties.Borrower.eq(userID)).list();
+
+        return query(
+                ToolsDao.Properties.Borrower.eq(userID),
+                ToolsDao.Properties.CellNumber.eq(cellNumber),
+                ToolsDao.Properties.ToolState.eq(toolState));
+    }
+
     /**
      * 查询指定EPC卷宗信息
      *

@@ -68,9 +68,12 @@ public class ToolsAdapter extends BaseAdapter {
         viewHolder.adapter_tools_state_tv.setText(tools.getToolState() == 0 ? "在柜" : "离柜");
         viewHolder.adapter_tools_light_tv.setText(String.valueOf(tools.getToolLightNumber()));
 
-        if (i % 2 != 0) {
+        if (tools.getSelected()){
+            viewHolder.adapter_tools_item_ll.setBackgroundColor(mContext.getResources().getColor(R.color.md_orange_900));
+        }
+        if (i % 2 != 0 && !tools.getSelected()) {
             viewHolder.adapter_tools_item_ll.setBackgroundColor(mContext.getResources().getColor(R.color.md_indigo_55));
-        } else {
+        } else if (i % 2 == 0 && !tools.getSelected()) {
             viewHolder.adapter_tools_item_ll.setBackgroundColor(mContext.getResources().getColor(R.color.md_grey_200));
         }
 

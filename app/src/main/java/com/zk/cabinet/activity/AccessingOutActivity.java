@@ -22,13 +22,12 @@ import com.zk.cabinet.bean.Tools;
 import com.zk.cabinet.callback.DoorListener;
 import com.zk.cabinet.callback.InventoryListener;
 import com.zk.cabinet.callback.LightListener;
-import com.zk.cabinet.databinding.ActivityAccessingBinding;
+import com.zk.cabinet.databinding.ActivityAccessingOutBinding;
 import com.zk.cabinet.db.CabinetService;
 import com.zk.cabinet.db.ToolsService;
 import com.zk.cabinet.netty.server.NettyServerParsingLibrary;
 import com.zk.cabinet.serial.door.DoorSerialOperation;
 import com.zk.cabinet.serial.light.LightSerialOperation;
-import com.zk.cabinet.util.LogUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil;
 import com.zk.cabinet.view.CustomProgressDialog;
 import com.zk.cabinet.view.FullScreenAlertDialog;
@@ -39,34 +38,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class AccessingActivity extends TimeOffAppCompatActivity implements View.OnClickListener {
-    private int operationType = 0;
-
-    private String userTemp;
-
+public class AccessingOutActivity extends TimeOffAppCompatActivity implements View.OnClickListener {
     private final int OPEN_BOX_RESULT = 0x00;
     private final int CHECK_BOX_DOOR_STATE = 0x01;
     private final int INVENTORY_18K6C = 0x02;
     private final int OPEN_LIGHT_RESULT = 0x03;
-    private final int CHECK_LIGHT_STATE = 0x04;
+//    private final int CHECK_LIGHT_STATE = 0x04;
 
-    private ActivityAccessingBinding binding;
-    private int cellNumber;
-    private Cabinet cabinet;
-    private List<Integer> antennaNumberList;
+    private ActivityAccessingOutBinding binding;
+
+    private int operationType = 0; // 0:按柜子 1：按工具取
+    private int cellNumber; //格子编号
+    private Cabinet cabinet; //格子
+    private List<Integer> antennaNumberList; //分支器列表
     private int antennaNumberPosition = 0;
-
     private int openDooring = 0; // 0 关闭 1 开启
-    private boolean inventorying = false; // 0 关闭 1 正在盘点
-    private boolean isFirstLight = true;
+    private boolean inventorying = false; // false 关闭 true 正在盘点
+    private String userTemp; //用户ID
 
-    private List<Tools> toolsList;
+    private List<Tools> toolsList; //
     private ToolsAdapter mAdapter;
-    private List<InventoryInfo> inventoryList;
 
-    private CustomProgressDialog progressDialog;
+    private List<InventoryInfo> inventoryList; //盘点的epc信息
 
-    private FullScreenAlertDialog accessingFullDialog;
+    private CustomProgressDialog progressDialog;//进度条
+    private FullScreenAlertDialog accessingFullDialog;//全屏显示
     private View accessingDialog;
     private ListView dialog_accessing_lv;
     private ToolsAdapter accessingAdapter;
@@ -75,15 +71,14 @@ public class AccessingActivity extends TimeOffAppCompatActivity implements View.
     private Button dialog_accessing_sure;
     private TextView dialog_accessing_reopen_error_tv;
 
-    private ArrayList<Integer> lightNumbers;
+    private ArrayList<Integer> lightNumbers;//需要开灯的列表
 
     private MHandler mHandler;
 
     private void handleMessage(Message msg) {
         switch (msg.what) {
             case OPEN_BOX_RESULT:
-                showToast("锁控板收到开门指令");
-                LogUtil.getInstance().LogPrint("锁控板收到开门指令");
+                showToast("锁控收到开门指令");
                 break;
             case CHECK_BOX_DOOR_STATE:
                 if ((Integer) msg.obj == cabinet.getTargetAddress()) {
@@ -93,19 +88,20 @@ public class AccessingActivity extends TimeOffAppCompatActivity implements View.
                             openDooring = 1;
                             timerCancel();
                             showToast(cabinet.getBoxName() + "已经开启.");
-                            LogUtil.getInstance().LogPrint(cabinet.getBoxName() + "已经开启.");
                         }
                     } else if (openDooring == 1) {
                         if (!boxStateList.contains(cabinet.getLockNumber())) {
                             DoorSerialOperation.getInstance().startCheckBoxDoorState(-1);
-                            LightSerialOperation.getInstance().startCheckLightState(-1);
-                            lightNumbers.clear();
+
+                            lightNumbers.clear();//关灯
                             LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
                                     cabinet.getSourceAddress(), lightNumbers));
+
                             openDooring = 0;
-                            LogUtil.getInstance().LogPrint(cabinet.getBoxName() + "已经关闭，准备盘点.");
                             antennaNumberPosition = 0;
-                            NettyServerParsingLibrary.getInstance().send(new NettySendInfo(cabinet.getReaderDeviceID(), 0, antennaNumberList.get(antennaNumberPosition), 0));
+                            NettyServerParsingLibrary.getInstance().send(new NettySendInfo(
+                                    cabinet.getReaderDeviceID(), 0,
+                                    antennaNumberList.get(antennaNumberPosition), 0));
                             showToast(cabinet.getBoxName() + "已经关闭，准备盘点.");
                             ProgressDialogShow("正在第1次盘点，请稍后......");
                         }
@@ -138,36 +134,22 @@ public class AccessingActivity extends TimeOffAppCompatActivity implements View.
                     antennaNumberPosition++;
                     if (antennaNumberPosition < antennaNumberList.size()) {
                         ProgressDialogShow("正在第" + (antennaNumberPosition + 1) + "次盘点，请稍后......");
-                        NettyServerParsingLibrary.getInstance().send(new NettySendInfo(cabinet.getReaderDeviceID(), 0, antennaNumberList.get(antennaNumberPosition), 0));
+                        NettyServerParsingLibrary.getInstance().send(new NettySendInfo(
+                                cabinet.getReaderDeviceID(), 0,
+                                antennaNumberList.get(antennaNumberPosition), 0));
 
 
-                    } else {
+                    } else { // 盘点结束
                         ProgressDialogDismiss();
                         int saveNumber = 0, takeNumber = 0;
                         for (InventoryInfo inventoryInfo : inventoryList) {
                             Tools toolsTemp = ToolsService.getInstance().queryEq(inventoryInfo.getEPC());
                             if (toolsTemp != null) {
                                 if (toolsTemp.getToolState() != 0) {
-                                    saveNumber++;
-                                    toolsTemp.setCellNumber(cellNumber);
-                                    toolsTemp.setToolState(0);
-                                    toolsTemp.setBorrower(userTemp);
-                                    toolsTemp.setToolLightNumber(lightNumbers.get(0));
-                                    accessingList.add(toolsTemp);
+                                    saveNumber++; // 有工具存入
                                 }
                             }
-//                            客户需求不要没有录入的数据
-//                            else {
-//                                saveNumber++;
-//                                Tools toolsNew = new Tools();
-//                                toolsNew.setToolState(0);
-//                                toolsNew.setEpc(inventoryInfo.getEPC());
-//                                toolsNew.setCellNumber(cellNumber);
-//                                toolsNew.setBorrower(userTemp);
-//                                accessingList.add(toolsNew);
-//                            }
                         }
-
                         for (Tools tools : toolsList) {
                             boolean isExist = false;
                             for (InventoryInfo inventoryInfo : inventoryList) {
@@ -177,8 +159,9 @@ public class AccessingActivity extends TimeOffAppCompatActivity implements View.
                                 }
                             }
                             if (!isExist) {
-                                tools.setToolState(1);
                                 takeNumber++;
+
+                                tools.setToolState(1);
                                 tools.setBorrower(userTemp);
                                 accessingList.add(tools);
                             }
@@ -217,171 +200,101 @@ public class AccessingActivity extends TimeOffAppCompatActivity implements View.
                         dialog_accessing_sure.setEnabled(true);
                         dialog_accessing_result_tv.setText(messageStr);
 
-                        if (operationType == 0 || operationType == 1) {
-                            if (saveNumber > 0) {
-                                accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
-                                dialog_accessing_reopen_error_tv.setText("本次操作只允许取出！");
-                            } else {
-                                dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
+                        if (saveNumber > 0) {
+                            accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
+                            dialog_accessing_reopen_error_tv.setText("本次操作只允许取出！");
+                        } else {
+                            boolean isOK = true;
+                            for (Tools tools : accessingList){
+                                for (Tools tools1 : toolsList){
+                                    if (tools1.getEpc().equalsIgnoreCase(tools.getEpc()) && !tools1.getSelected()){
+                                        isOK = false;
+                                    }
+                                }
                             }
-                        } else if (operationType == 2) {
-                            if (takeNumber > 0) {
-                                accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
-                                dialog_accessing_reopen_error_tv.setText("本次操作只允许存入！");
-                            } else if (saveNumber > 1){
-                                accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
-                                dialog_accessing_reopen_error_tv.setText("归还操作只允许归还一件！");
-                            } else {
+                            if (isOK) {
                                 dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
+                                accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
+                            }
+                            else  {
+                                accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
+                                dialog_accessing_reopen_error_tv.setText("您取出了未选中的工具！");
                             }
                         }
-
                     }
                 } else {
                     accessClear();
-
-                    if (accessingFullDialog != null && accessingFullDialog.isShowing())
-                        accessingFullDialog.dismiss();
-
                     showToast("读卡器离线，本次存取操作无效！");
                 }
                 break;
             case OPEN_LIGHT_RESULT:
-                showToast("灯控收到指令");
-                break;
-            case CHECK_LIGHT_STATE:
-                if (operationType == 2 && !inventorying) {
-                    ArrayList<Integer> lightStateList = msg.getData().getIntegerArrayList("LightStateList");
-                    if (isFirstLight){
-                        LogUtil.getInstance().d("isFirstLight");
-                        isFirstLight = false;
-                        lightNumbers = lightStateList;
-                    } else {
-                        lightStateList.removeAll(lightNumbers);
-
-                        LogUtil.getInstance().d("lightStateList" + lightStateList.size());
-                        if (lightStateList.size() > 0){
-                            inventorying = true;
-
-                            LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
-                                    cabinet.getSourceAddress(), lightStateList));
-
-
-                            antennaNumberPosition = 0;
-                            NettyServerParsingLibrary.getInstance().send(new NettySendInfo(cabinet.getReaderDeviceID(), 0, antennaNumberList.get(antennaNumberPosition), 0));
-                            showToast(lightStateList.get(0) + "号位已经插入，准备盘点.");
-                            ProgressDialogShow("正在第1次盘点，请稍后......");
-                        }
-                    }
-
-                }
-//
-//                int isSend = lightNumbers.size();
-//                if (operationType == 2) {// 存入
-//                    if (lightNumbers.size() > 0 && lightStateList != null && lightStateList.size() > 0) {
-//                        for (int q : lightStateList) {
-//                            LogUtil.getInstance().d("CHECK_LIGHT_STATE----:" + q);
-//                            if (lightNumbers.contains(q)) {
-//                                lightNumbers.remove((Integer) q);
-//                            } else {
-//                                LogUtil.getInstance().d("CHECK_LIGHT_STATE++++:" + q);
-//                            }
-//                        }
-//                        if (isSend != lightNumbers.size())
-//                            LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
-//                                    cabinet.getSourceAddress(), lightNumbers));
-//                    }
-//                } else if (operationType == 0 || operationType == 1) { // 取出
-//
-//                }
-//
-//                for (int q : lightStateList) {
-//                    LogUtil.getInstance().d("CHECK_LIGHT_STATE:" + q);
-//
-//                }
-//
+                showToast("灯控收到开灯指令");
                 break;
         }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_accessing);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_accessing);
+        setContentView(R.layout.activity_accessing_out);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_accessing_out);
         binding.setOnClickListener(this);
-
-        userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserTemp, "");
-        cellNumber = getIntent().getExtras().getInt("CellNumber");
-
-        lightNumbers = new ArrayList<>();
         operationType = getIntent().getExtras().getInt("OperationType");
-        cabinet = CabinetService.getInstance().queryEq(cellNumber);
-
-        if (operationType == 0 || operationType == 1) {
-            binding.accessingToolbar.setTitle("取出操作");
-        } else {
-//            List<Tools> toolsList = ToolsService.getInstance().queryOr(userTemp, cellNumber, 1);
-//            for (Tools t : toolsList) {
-//                lightNumbers.add(t.getToolLightNumber());
-//            }
-//            LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
-//                    cabinet.getSourceAddress(), lightNumbers));
-            binding.accessingToolbar.setTitle("存入操作");
+        if (operationType == 0) {
+            binding.accessingOutToolbar.setTitle("取出操作(按柜子)");
+        } else if (operationType == 0) {
+            binding.accessingOutToolbar.setTitle("取出操作(按工具)");
         }
-
-
-        setSupportActionBar(binding.accessingToolbar);
+        setSupportActionBar(binding.accessingOutToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         mHandler = new MHandler(this);
-
 
         init();
     }
 
     private void init() {
-        DoorSerialOperation.getInstance().onDoorListener(doorListener);
-        LightSerialOperation.getInstance().onLightListener(lightListener);
-//        DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
+        userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserTemp, "");
+        cellNumber = getIntent().getExtras().getInt("CellNumber");
+        cabinet = CabinetService.getInstance().queryEq(cellNumber);
 
+        lightNumbers = new ArrayList<>();
         accessingList = new ArrayList<>();
-
-        antennaNumberList = new ArrayList<>();
-        LogUtil.getInstance().LogPrint(cabinet.getAntennaNumber());
+        antennaNumberList = new ArrayList<>();//分支器list
         String[] antennaNumberStr = cabinet.getAntennaNumber().split(",");
         for (String s : antennaNumberStr) {
             antennaNumberList.add(Integer.valueOf(s));
-            LogUtil.getInstance().LogPrint(s);
         }
 
-        binding.accessingBoxNameTv.setText(cabinet.getBoxName());
-
-        toolsList = ToolsService.getInstance().queryEq(cabinet.getCellNumber(), 0);
-        mAdapter = new ToolsAdapter(this, toolsList);
-        binding.accessingLv.setAdapter(mAdapter);
-
-        binding.accessingToolNumberTv.setText("本柜共有：" + (toolsList == null ? 0 : toolsList.size()) + "件工具");
-
+        DoorSerialOperation.getInstance().onDoorListener(doorListener);
+        LightSerialOperation.getInstance().onLightListener(lightListener);
         NettyServerParsingLibrary.getInstance().processor.onInventoryListener(inventoryListener);
 
-        if (getIntent().getExtras().getBoolean("ImmediatelyOpen")) {
-            LogUtil.getInstance().LogPrint("点击开启" + cabinet.getBoxName());
-            DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(), cabinet.getSourceAddress(), cabinet.getLockNumber()));
+        binding.accessingOutBoxNameTv.setText(cabinet.getBoxName());
+        toolsList = ToolsService.getInstance().queryEq(cabinet.getCellNumber(), 0);
+        if (toolsList == null) toolsList = new ArrayList<>();
+        mAdapter = new ToolsAdapter(this, toolsList);
+        binding.accessingOutLv.setAdapter(mAdapter);
+        binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
+
+        if (getIntent().getExtras().getBoolean("ImmediatelyOpen")) { //进来就开门
+            binding.accessingOutOpenBtn.setVisibility(View.INVISIBLE);
+            DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
+                    cabinet.getSourceAddress(), cabinet.getLockNumber()));
             DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
-            LightSerialOperation.getInstance().startCheckLightState(cabinet.getTargetAddressForLight());
         }
 
-        if (operationType == 0) binding.accessingLv.setOnItemClickListener(onItemClickListener);
-        else if (operationType == 1) {
+        if (operationType == 0) {
+            binding.accessingOutLv.setOnItemClickListener(onItemClickListener);
+        } else if (operationType == 1) {
             String epc = getIntent().getExtras().getString("EPC");
             for (Tools tools : toolsList) {
                 if (tools.getEpc().equals(epc)) {
                     tools.setSelected(true);
                     mAdapter.notifyDataSetChanged();
                     lightNumbers.add(tools.getToolLightNumber());
-                    LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
+                    LightSerialOperation.getInstance().send(new LightSendInfo(
+                            cabinet.getTargetAddressForLight(),
                             cabinet.getSourceAddress(), lightNumbers));
                     break;
                 }
@@ -390,7 +303,7 @@ public class AccessingActivity extends TimeOffAppCompatActivity implements View.
     }
 
     protected void countDownTimerOnTick(long millisUntilFinished) {
-        binding.accessingCountdownTv.setText(String.valueOf(millisUntilFinished));
+        binding.accessingOutCountdownTv.setText(String.valueOf(millisUntilFinished));
     }
 
     private InventoryListener inventoryListener = new InventoryListener() {
@@ -425,6 +338,7 @@ public class AccessingActivity extends TimeOffAppCompatActivity implements View.
         }
     };
 
+
     private LightListener lightListener = new LightListener() {
         @Override
         public void openLightResult(boolean openBoxResult) {
@@ -436,30 +350,25 @@ public class AccessingActivity extends TimeOffAppCompatActivity implements View.
 
         @Override
         public void checkLightState(int targetAddress, ArrayList<Integer> lightStateList) {
-            Message msg = Message.obtain();
-            msg.what = CHECK_LIGHT_STATE;
-            msg.obj = targetAddress;
-            Bundle b = new Bundle();
-            b.putIntegerArrayList("LightStateList", lightStateList);
-            msg.setData(b);
-            mHandler.sendMessage(msg);
+
         }
     };
+
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.accessing_open_btn:
-                LogUtil.getInstance().LogPrint("点击开启" + cabinet.getBoxName());
-
-
                 for (Tools tools : toolsList) {
                     if (tools.getSelected()) {
                         lightNumbers.add(tools.getToolLightNumber());
                     }
                 }
-                DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(), cabinet.getSourceAddress(), cabinet.getLockNumber()));
+
+                DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
+                        cabinet.getSourceAddress(), cabinet.getLockNumber()));
                 DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
+
                 LightSerialOperation.getInstance().startCheckLightState(cabinet.getTargetAddressForLight());
                 LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
                         cabinet.getSourceAddress(), lightNumbers));
@@ -467,36 +376,31 @@ public class AccessingActivity extends TimeOffAppCompatActivity implements View.
             case R.id.dialog_accessing_reopen:
                 accessClear();
 
-                accessingFullDialog.dismiss();
-                DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(), cabinet.getSourceAddress(), cabinet.getLockNumber()));
+                DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
+                        cabinet.getSourceAddress(), cabinet.getLockNumber()));
                 DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
-                LightSerialOperation.getInstance().startCheckLightState(cabinet.getTargetAddressForLight());
                 break;
             case R.id.dialog_accessing_sure:
                 ToolsService.getInstance().insertOrUpdate(accessingList);
 
                 accessClear();
-
-                accessingFullDialog.dismiss();
                 timerStart();
 
                 toolsList = ToolsService.getInstance().queryEq(cabinet.getCellNumber(), 0);
+                if (toolsList == null) toolsList = new ArrayList<>();
                 mAdapter.setList(toolsList);
                 mAdapter.notifyDataSetChanged();
-
-                binding.accessingToolNumberTv.setText("本柜共有：" + (toolsList == null ? 0 : toolsList.size()) + "件工具");
-
-
+                binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
                 break;
         }
     }
 
     private static class MHandler extends Handler {
-        private final WeakReference<AccessingActivity> accessingActivityWeakReference;
+        private final WeakReference<AccessingOutActivity> accessingActivityWeakReference;
 
-        MHandler(AccessingActivity accessingActivity) {
+        MHandler(AccessingOutActivity accessingOutActivity) {
             super();
-            accessingActivityWeakReference = new WeakReference<>(accessingActivity);
+            accessingActivityWeakReference = new WeakReference<>(accessingOutActivity);
         }
 
         @Override
@@ -554,11 +458,14 @@ public class AccessingActivity extends TimeOffAppCompatActivity implements View.
     }
 
     private void accessClear() {
-        inventorying = false;
-        openDooring = 0;
+        inventorying = false; //是否在盘点
+        openDooring = 0; //门状态
         antennaNumberPosition = 0;
         if (accessingList != null) accessingList.clear();
         if (inventoryList != null) inventoryList.clear();
+        if (accessingFullDialog != null && accessingFullDialog.isShowing())
+            accessingFullDialog.dismiss();
+        ProgressDialogDismiss();
     }
 
     private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
@@ -569,5 +476,4 @@ public class AccessingActivity extends TimeOffAppCompatActivity implements View.
             mAdapter.notifyDataSetChanged();
         }
     };
-
 }

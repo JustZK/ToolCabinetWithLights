@@ -56,11 +56,14 @@ public class Tools {
     @Property(nameInDb = "Borrower")
     private String borrower;
 
+    @Expose
+    @SerializedName("Selected")
+    @Property(nameInDb = "Selected")
+    private boolean selected;
 
-
-    @Generated(hash = 274176335)
+    @Generated(hash = 65853307)
     public Tools(Long id, String toolName, String epc, int cellNumber,
-            int toolState, int toolLightNumber, String borrower) {
+            int toolState, int toolLightNumber, String borrower, boolean selected) {
         this.id = id;
         this.toolName = toolName;
         this.epc = epc;
@@ -68,6 +71,7 @@ public class Tools {
         this.toolState = toolState;
         this.toolLightNumber = toolLightNumber;
         this.borrower = borrower;
+        this.selected = selected;
     }
 
     @Generated(hash = 161980891)
@@ -128,6 +132,14 @@ public class Tools {
 
     public void setToolLightNumber(int toolLightNumber) {
         this.toolLightNumber = toolLightNumber;
+    }
+
+    public boolean getSelected() {
+        return this.selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     

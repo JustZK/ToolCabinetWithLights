@@ -31,6 +31,7 @@ public class ToolsDao extends AbstractDao<Tools, Long> {
         public final static Property ToolState = new Property(4, int.class, "toolState", false, "ToolState");
         public final static Property ToolLightNumber = new Property(5, int.class, "toolLightNumber", false, "ToolLightNumber");
         public final static Property Borrower = new Property(6, String.class, "borrower", false, "Borrower");
+        public final static Property Selected = new Property(7, boolean.class, "selected", false, "Selected");
     }
 
 
@@ -52,7 +53,8 @@ public class ToolsDao extends AbstractDao<Tools, Long> {
                 "\"CellNumber\" INTEGER NOT NULL ," + // 3: cellNumber
                 "\"ToolState\" INTEGER NOT NULL ," + // 4: toolState
                 "\"ToolLightNumber\" INTEGER NOT NULL ," + // 5: toolLightNumber
-                "\"Borrower\" TEXT);"); // 6: borrower
+                "\"Borrower\" TEXT," + // 6: borrower
+                "\"Selected\" INTEGER NOT NULL );"); // 7: selected
     }
 
     /** Drops the underlying database table. */
@@ -87,6 +89,7 @@ public class ToolsDao extends AbstractDao<Tools, Long> {
         if (borrower != null) {
             stmt.bindString(7, borrower);
         }
+        stmt.bindLong(8, entity.getSelected() ? 1L: 0L);
     }
 
     @Override
@@ -115,6 +118,7 @@ public class ToolsDao extends AbstractDao<Tools, Long> {
         if (borrower != null) {
             stmt.bindString(7, borrower);
         }
+        stmt.bindLong(8, entity.getSelected() ? 1L: 0L);
     }
 
     @Override
@@ -131,7 +135,8 @@ public class ToolsDao extends AbstractDao<Tools, Long> {
             cursor.getInt(offset + 3), // cellNumber
             cursor.getInt(offset + 4), // toolState
             cursor.getInt(offset + 5), // toolLightNumber
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6) // borrower
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // borrower
+            cursor.getShort(offset + 7) != 0 // selected
         );
         return entity;
     }
@@ -145,6 +150,7 @@ public class ToolsDao extends AbstractDao<Tools, Long> {
         entity.setToolState(cursor.getInt(offset + 4));
         entity.setToolLightNumber(cursor.getInt(offset + 5));
         entity.setBorrower(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setSelected(cursor.getShort(offset + 7) != 0);
      }
     
     @Override

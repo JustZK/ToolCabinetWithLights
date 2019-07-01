@@ -56,10 +56,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.AccessOutByQueryActivity"
+        <activity android:name=".activity.AccessingOutActivity"
+            android:label="@string/title_activity_access_operate"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".activity.AccessOutByQueryActivity"
             android:label="@string/title_access_out_by_query"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.AccessDepositActivity"
+        <activity
+            android:name=".activity.AccessDepositActivity"
             android:label="@string/title_access_deposit"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

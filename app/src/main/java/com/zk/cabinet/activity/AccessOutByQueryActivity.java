@@ -53,7 +53,7 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
         binding.accessOutByQueryQueryLv.setAdapter(mAdapter);
         binding.accessOutByQueryQueryLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 if (openBuilder == null) {
                     openBuilder = new AlertDialog.Builder(AccessOutByQueryActivity.this);
                 }
@@ -66,7 +66,8 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
                     public void onClick(DialogInterface dialog, int which) {
                         Bundle bundle = new Bundle();
                         bundle.putInt("CellNumber", cabinetTemp.getCellNumber());
-                        bundle.putInt("OperationType", 0);
+                        bundle.putInt("OperationType", 1);
+                        bundle.putString("EPC", list.get(position).getEpc());
                         bundle.putBoolean("ImmediatelyOpen", true);
                         IntentActivity(AccessingActivity.class, bundle);
                     }

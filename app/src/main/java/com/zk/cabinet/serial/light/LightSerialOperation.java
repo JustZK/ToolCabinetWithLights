@@ -20,8 +20,8 @@ public class LightSerialOperation extends SerialHelper {
 
     private LightListener lightListener;
 
-    private final String PATH = "/dev/ttyS0";
-    private final String BAUD = "115200";
+    private final String PATH = "/dev/ttyS2";
+    private final String BAUD = "9600";
     private boolean isConnect = false;
     private volatile static LightSerialOperation instance;
 
@@ -140,7 +140,7 @@ public class LightSerialOperation extends SerialHelper {
         }
         LogUtil.getInstance().d(TAG, "onDataReceived：：：：" + buffers);
         if (DoorUtils.andCheck(buffer, size)) {
-            LogUtil.getInstance().d("门 和校验通过");
+            LogUtil.getInstance().d("灯 和校验通过");
             int type = (buffer[6] < 0 ? 256 + buffer[6] : buffer[6]) * 256
                     + (buffer[7] < 0 ? 256 + buffer[7] : buffer[7]);
             switch (type) {

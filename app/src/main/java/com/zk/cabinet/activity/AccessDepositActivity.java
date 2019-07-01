@@ -70,7 +70,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Bundle bundle = new Bundle();
                         bundle.putInt("CellNumber", cabinetTemp.getCellNumber());
-                        bundle.putInt("OperationType", 1);
+                        bundle.putInt("OperationType", 2);
                         bundle.putBoolean("ImmediatelyOpen", true);
                         IntentActivity(AccessingActivity.class, bundle);
                     }

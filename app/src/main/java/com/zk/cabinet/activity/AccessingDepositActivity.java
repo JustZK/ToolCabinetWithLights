@@ -161,6 +161,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                     toolsTemp.setToolState(0);
                                     toolsTemp.setBorrower(userTemp);
                                     toolsTemp.setToolLightNumber(needOpenLightNumbers.get(0));
+                                    toolsTemp.setSelected(false);
                                     accessingList.add(toolsTemp);
                                 }
                             }
@@ -462,6 +463,9 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
 
     @Override
     protected void onDestroy() {
+        for (Tools tools : toolsList) {
+            tools.setSelected(false);
+        }
         DoorSerialOperation.getInstance().onDoorListener(null);
         DoorSerialOperation.getInstance().startCheckBoxDoorState(-1);
         LightSerialOperation.getInstance().startCheckLightState(-1);

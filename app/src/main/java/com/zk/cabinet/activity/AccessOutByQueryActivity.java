@@ -69,7 +69,7 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
                         bundle.putInt("OperationType", 1);
                         bundle.putString("EPC", list.get(position).getEpc());
                         bundle.putBoolean("ImmediatelyOpen", true);
-                        IntentActivity(AccessingActivity.class, bundle);
+                        IntentActivity(AccessingOutActivity.class, bundle);
                     }
                 });
                 openBuilder.setNegativeButton(getString(R.string.cancel), null);

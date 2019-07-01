@@ -70,7 +70,7 @@ public class AccessOutActivity extends TimeOffAppCompatActivity {
                     bundle.putInt("CellNumber", list.get(position).getCellNumber());
                     bundle.putInt("OperationType", 0);
                     bundle.putBoolean("ImmediatelyOpen", false);
-                    IntentActivity(AccessingActivity.class, bundle);
+                    IntentActivity(AccessingOutActivity.class, bundle);
                 }else showToast("该格子未配置，请先配置！");
             }
         }

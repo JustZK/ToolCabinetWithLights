@@ -72,7 +72,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
                         bundle.putInt("CellNumber", cabinetTemp.getCellNumber());
                         bundle.putInt("OperationType", 2);
                         bundle.putBoolean("ImmediatelyOpen", true);
-                        IntentActivity(AccessingActivity.class, bundle);
+                        IntentActivity(AccessingDepositActivity.class, bundle);
                     }
                 });
                 openBuilder.setNegativeButton(getString(R.string.cancel), null);

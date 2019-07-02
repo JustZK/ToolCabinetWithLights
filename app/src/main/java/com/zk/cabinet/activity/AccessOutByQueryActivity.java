@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implements View.OnClickListener{
+public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implements View.OnClickListener {
     private ActivityAccessOutByQueryActivityBinding binding;
 
     private List<Tools> list;
@@ -42,12 +42,12 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
         init();
     }
 
-    protected void countDownTimerOnTick(long millisUntilFinished){
+    protected void countDownTimerOnTick(long millisUntilFinished) {
         binding.accessOutByQueryCountdownTv.setText(String.valueOf(millisUntilFinished));
     }
 
-    private void init(){
-        list = ToolsService.getInstance().loadAll();
+    private void init() {
+        list = ToolsService.getInstance().queryOr("");
         if (list == null) list = new ArrayList<>();
         mAdapter = new ToolsAdapter(this, list);
         binding.accessOutByQueryQueryLv.setAdapter(mAdapter);
@@ -90,21 +90,21 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.access_out_by_query_btn:
                 String search = binding.accessOutByQuerySearchEt.getText().toString().trim();
-                if (!TextUtils.isEmpty(search)){
-                    list = ToolsService.getInstance().queryOr(search);
-                    if (list == null) list = new ArrayList<>();
-                    mAdapter.setList(list);
-                    mAdapter.notifyDataSetChanged();
+//                if (!TextUtils.isEmpty(search)){
+                list = ToolsService.getInstance().queryOr(search);
+                if (list == null) list = new ArrayList<>();
+                mAdapter.setList(list);
+                mAdapter.notifyDataSetChanged();
 
-                } else {
-                    list = ToolsService.getInstance().loadAll();
-                    if (list == null) list = new ArrayList<>();
-                    mAdapter.setList(list);
-                    mAdapter.notifyDataSetChanged();
-                }
+//                } else {
+//                    list = ToolsService.getInstance().loadAll();
+//                    if (list == null) list = new ArrayList<>();
+//                    mAdapter.setList(list);
+//                    mAdapter.notifyDataSetChanged();
+//                }
                 break;
         }
     }

@@ -39,7 +39,8 @@ public class ToolsService extends BaseService<Tools, Long> {
      */
     public List<Tools> queryOr (String str) {
         return queryBuilder().where(
-                ToolsDao.Properties.ToolName.like("%" + str + "%")).list();
+                ToolsDao.Properties.ToolName.like("%" + str + "%"),
+                ToolsDao.Properties.ToolState.eq(0)).list();
     }
 
     public List<Tools> queryOr (String userID, int toolState) {

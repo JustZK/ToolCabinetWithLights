@@ -74,6 +74,8 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
 
     private ArrayList<Integer> lightNumbers, needOpenLightNumbers;//需要开灯的列表
 
+    private String EPC;
+
     private MHandler mHandler;
 
     private void handleMessage(Message msg) {
@@ -93,7 +95,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                     } else if (openDooring == 1) {
                         if (!boxStateList.contains(cabinet.getLockNumber())) {
                             if (!inventorying) {
-                                inventorying = true;
+//                                inventorying = true;
                                 DoorSerialOperation.getInstance().startCheckBoxDoorState(-1);
                                 LightSerialOperation.getInstance().startCheckLightState(-1);
                                 needOpenLightNumbers.clear();//关灯
@@ -102,11 +104,11 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
 
                                 openDooring = 0;
                                 antennaNumberPosition = 0;
-                                NettyServerParsingLibrary.getInstance().send(new NettySendInfo(
-                                        cabinet.getReaderDeviceID(), 0,
-                                        antennaNumberList.get(antennaNumberPosition), 0));
-                                ProgressDialogShow("正在第1次盘点，请稍后......");
-                                showToast(cabinet.getBoxName() + "已经关闭，准备盘点.");
+//                                NettyServerParsingLibrary.getInstance().send(new NettySendInfo(
+//                                        cabinet.getReaderDeviceID(), 0,
+//                                        antennaNumberList.get(antennaNumberPosition), 0));
+//                                ProgressDialogShow("正在第1次盘点，请稍后......");
+                                showToast(cabinet.getBoxName() + "已经关闭，请点击返回键返回上一层.");
 
                             } else {
                                 showToast(cabinet.getBoxName() + "已经关闭，当前正在盘点中");
@@ -217,8 +219,13 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                             dialog_accessing_reopen_error_tv.setText("本次操作只允许存入！");
                         } else {
                             if (toolsList.size() == 1) {
-                                dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
-                                accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
+                                if (EPC.equalsIgnoreCase(toolsList.get(0).getEpc())) {
+                                    dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
+                                    accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
+                                } else {
+                                    accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
+                                    dialog_accessing_reopen_error_tv.setText("您存入的工具和您准备存入的工具不符！");
+                                }
                             } else {
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                                 dialog_accessing_reopen_error_tv.setText("您存入了多个工具！");
@@ -276,6 +283,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
         userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserTemp, "");
         cellNumber = getIntent().getExtras().getInt("CellNumber");
         cabinet = CabinetService.getInstance().queryEq(cellNumber);
+        EPC = getIntent().getExtras().getString("EPC");
 
         lightNumbers = new ArrayList<>();
         accessingList = new ArrayList<>();

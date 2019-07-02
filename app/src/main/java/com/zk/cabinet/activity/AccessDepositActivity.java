@@ -57,7 +57,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
         binding.accessDepositQueryLv.setAdapter(mAdapter);
         binding.accessDepositQueryLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 if (openBuilder == null) {
                     openBuilder = new AlertDialog.Builder(AccessDepositActivity.this);
                 }
@@ -71,6 +71,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
                         Bundle bundle = new Bundle();
                         bundle.putInt("CellNumber", cabinetTemp.getCellNumber());
                         bundle.putInt("OperationType", 2);
+                        bundle.putString("EPC", list.get(position).getEpc());
                         bundle.putBoolean("ImmediatelyOpen", true);
                         IntentActivity(AccessingDepositActivity.class, bundle);
                     }

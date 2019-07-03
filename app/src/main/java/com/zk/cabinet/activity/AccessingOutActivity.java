@@ -358,7 +358,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.accessing_open_btn:
+            case R.id.accessing_out_open_btn:
                 for (Tools tools : toolsList) {
                     if (tools.getSelected()) {
                         lightNumbers.add(tools.getToolLightNumber());

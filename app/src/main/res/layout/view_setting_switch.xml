@@ -34,14 +34,14 @@
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_view_01"
+                    android:textColor="@color/gray_deep"
                     tools:text="title text goes here"/>
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/caption"
                     style="@style/TextAppearance.AppCompat.Caption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_view_01"
+                    android:textColor="@color/gray_deep"
                     tools:text="caption text goes here"/>
             </LinearLayout>
             <android.support.v7.widget.SwitchCompat

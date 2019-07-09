@@ -1,10 +1,9 @@
 package com.zk.cabinet.activity;
 
 import android.databinding.DataBindingUtil;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,7 +23,6 @@ import com.zk.cabinet.callback.DoorListener;
 import com.zk.cabinet.callback.InventoryListener;
 import com.zk.cabinet.callback.LightListener;
 import com.zk.cabinet.databinding.ActivityAccessingDepositBinding;
-import com.zk.cabinet.databinding.ActivityAccessingOutBinding;
 import com.zk.cabinet.db.CabinetService;
 import com.zk.cabinet.db.ToolsService;
 import com.zk.cabinet.netty.server.NettyServerParsingLibrary;
@@ -94,12 +92,13 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                         }
                     } else if (openDooring == 1) {
                         if (!boxStateList.contains(cabinet.getLockNumber())) {
+                            timerStart();
                             if (!inventorying) {
 //                                inventorying = true;
                                 DoorSerialOperation.getInstance().startCheckBoxDoorState(-1);
                                 LightSerialOperation.getInstance().startCheckLightState(-1);
                                 needOpenLightNumbers.clear();//关灯
-                                LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
+                                LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
                                         cabinet.getSourceAddress(), needOpenLightNumbers));
 
                                 openDooring = 0;
@@ -111,7 +110,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                 showToast(cabinet.getBoxName() + "已经关闭，请点击返回键返回上一层.");
 
                             } else {
-                                showToast(cabinet.getBoxName() + "已经关闭，当前正在盘点中");
+                                showToast(cabinet.getBoxName() + "已经关闭.");
                             }
                         }
                     }
@@ -216,18 +215,22 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
 
                         if (takeNumber > 0) {
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
+                            accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                             dialog_accessing_reopen_error_tv.setText("本次操作只允许存入！");
                         } else {
-                            if (toolsList.size() == 1) {
-                                if (EPC.equalsIgnoreCase(toolsList.get(0).getEpc())) {
+                            if (accessingList.size() == 1) {
+                                if (EPC.equalsIgnoreCase(accessingList.get(0).getEpc())) {
                                     dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
                                     accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
+                                    accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);
                                 } else {
                                     accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
+                                    accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                                     dialog_accessing_reopen_error_tv.setText("您存入的工具和您准备存入的工具不符！");
                                 }
                             } else {
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
+                                accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                                 dialog_accessing_reopen_error_tv.setText("您存入了多个工具！");
                             }
                         }
@@ -238,7 +241,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                 }
                 break;
             case OPEN_LIGHT_RESULT:
-                showToast("灯控收到开灯指令");
+                showToast("灯控收到指令");
                 break;
             case CHECK_LIGHT_STATE:
                 if (!inventorying && openDooring == 1) {
@@ -247,7 +250,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                     if (needOpenLightNumbers.size() == 1) {
                         inventorying = true;
 
-                        LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
+                        LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
                                 cabinet.getSourceAddress(), needOpenLightNumbers));
 
                         antennaNumberPosition = 0;
@@ -394,7 +397,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                 DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
 
                 LightSerialOperation.getInstance().startCheckLightState(cabinet.getTargetAddressForLight());
-                LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
+                LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
                         cabinet.getSourceAddress(), lightNumbers));
                 break;
             case R.id.dialog_accessing_reopen:
@@ -407,6 +410,9 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                 break;
             case R.id.dialog_accessing_sure:
                 ToolsService.getInstance().insertOrUpdate(accessingList);
+
+//                DoorSerialOperation.getInstance().startCheckBoxDoorState(-1);
+                LightSerialOperation.getInstance().startCheckLightState(-1);
 
                 accessClear();
                 timerStart();
@@ -480,7 +486,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
         LightSerialOperation.getInstance().onLightListener(null);
         NettyServerParsingLibrary.getInstance().processor.onInventoryListener(null);
         lightNumbers.clear();
-        LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
+        LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
                 cabinet.getSourceAddress(), lightNumbers));
         super.onDestroy();
     }

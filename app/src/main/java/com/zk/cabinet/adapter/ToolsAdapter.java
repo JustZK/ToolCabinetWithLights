@@ -63,7 +63,7 @@ public class ToolsAdapter extends BaseAdapter {
         }
 
         viewHolder.adapter_tools_name_tv.setText(tools.getToolName() != null ? tools.getToolName() : "---");
-        viewHolder.adapter_tools_cell_number_tv.setText(tools.getToolState() == 0 ? String.valueOf(tools.getCellNumber()) : "---");
+        viewHolder.adapter_tools_cell_number_tv.setText(String.valueOf(tools.getCellNumber()));
         viewHolder.adapter_tools_epc_tv.setText(tools.getEpc() != null ? tools.getEpc() : "---");
         viewHolder.adapter_tools_state_tv.setText(tools.getToolState() == 0 ? "在柜" : "离柜");
         viewHolder.adapter_tools_light_tv.setText(String.valueOf(tools.getToolLightNumber()));

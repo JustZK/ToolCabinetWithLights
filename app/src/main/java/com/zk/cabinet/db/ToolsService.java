@@ -99,6 +99,7 @@ public class ToolsService extends BaseService<Tools, Long> {
                                 toolsTemp.setToolState(tools.getToolState());
                                 toolsTemp.setCellNumber(tools.getCellNumber());
                                 toolsTemp.setBorrower(tools.getBorrower());
+                                toolsTemp.setToolLightNumber(tools.getToolLightNumber());
                                 try {
                                     update(toolsTemp);
                                 } catch (Exception updateException) {

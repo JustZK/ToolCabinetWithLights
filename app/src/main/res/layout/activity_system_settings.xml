@@ -69,7 +69,7 @@
                         android:paddingLeft="@dimen/medium_spacing"
                         android:paddingTop="@dimen/medium_spacing"
                         android:text="@string/title_local_parameters"
-                        android:textColor="@color/md_blue_A200"
+                        android:textColor="@color/gray_deep"
                         android:textSize="@dimen/medium_text"
                         android:textStyle="bold" />
 
@@ -129,7 +129,7 @@
                         android:paddingLeft="@dimen/medium_spacing"
                         android:paddingTop="@dimen/medium_spacing"
                         android:text="@string/title_service_parameter"
-                        android:textColor="@color/md_blue_A200"
+                        android:textColor="@color/gray_deep"
                         android:textSize="@dimen/medium_text"
                         android:textStyle="bold" />
 
@@ -167,7 +167,7 @@
                         android:paddingLeft="@dimen/medium_spacing"
                         android:paddingTop="@dimen/medium_spacing"
                         android:text="@string/title_cabinet_parameters"
-                        android:textColor="@color/md_blue_A200"
+                        android:textColor="@color/gray_deep"
                         android:textSize="@dimen/medium_text"
                         android:textStyle="bold" />
 
@@ -235,7 +235,7 @@
                         android:paddingLeft="@dimen/medium_spacing"
                         android:paddingTop="@dimen/medium_spacing"
                         android:text="@string/version_management"
-                        android:textColor="@color/md_blue_A200"
+                        android:textColor="@color/gray_deep"
                         android:textSize="@dimen/medium_text"
                         android:textStyle="bold" />
 
@@ -273,7 +273,7 @@
                         android:paddingLeft="@dimen/medium_spacing"
                         android:paddingTop="@dimen/medium_spacing"
                         android:text="@string/android_system"
-                        android:textColor="@color/md_blue_A200"
+                        android:textColor="@color/gray_deep"
                         android:textSize="@dimen/medium_text"
                         android:textStyle="bold" />
 

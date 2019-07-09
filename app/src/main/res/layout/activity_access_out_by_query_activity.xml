@@ -28,7 +28,7 @@
 
             <EditText
                 android:id="@+id/access_out_by_query_search_et"
-                android:layout_width="500dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/big_spacing"
                 android:backgroundTint="@color/white"

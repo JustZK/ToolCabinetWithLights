@@ -1,10 +1,10 @@
 package com.zk.cabinet.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -107,5 +107,17 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
 //                }
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        showToast("刷新界面");
+        String search = binding.accessOutByQuerySearchEt.getText().toString().trim();
+        list = ToolsService.getInstance().queryOr(search);
+        if (list == null) list = new ArrayList<>();
+        mAdapter.setList(list);
+        mAdapter.notifyDataSetChanged();
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

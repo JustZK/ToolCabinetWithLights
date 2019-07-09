@@ -94,7 +94,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                             DoorSerialOperation.getInstance().startCheckBoxDoorState(-1);
 
                             lightNumbers.clear();//关灯
-                            LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
+                            LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
                                     cabinet.getSourceAddress(), lightNumbers));
 
                             openDooring = 0;
@@ -202,6 +202,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
 
                         if (saveNumber > 0) {
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
+                            accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                             dialog_accessing_reopen_error_tv.setText("本次操作只允许取出！");
                         } else {
                             boolean isOK = true;
@@ -215,9 +216,11 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                             if (isOK) {
                                 dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
+                                accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);
                             }
                             else  {
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
+                                accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                                 dialog_accessing_reopen_error_tv.setText("您取出了未选中的工具！");
                             }
                         }
@@ -228,7 +231,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 }
                 break;
             case OPEN_LIGHT_RESULT:
-                showToast("灯控收到开灯指令");
+                showToast("灯控收到指令");
                 break;
         }
     }
@@ -370,7 +373,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
 
                 LightSerialOperation.getInstance().startCheckLightState(cabinet.getTargetAddressForLight());
-                LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
+                LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
                         cabinet.getSourceAddress(), lightNumbers));
                 break;
             case R.id.dialog_accessing_reopen:
@@ -452,7 +455,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
         LightSerialOperation.getInstance().onLightListener(null);
         NettyServerParsingLibrary.getInstance().processor.onInventoryListener(null);
         lightNumbers.clear();
-        LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddress(),
+        LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
                 cabinet.getSourceAddress(), lightNumbers));
         super.onDestroy();
     }

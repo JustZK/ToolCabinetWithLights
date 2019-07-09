@@ -20,7 +20,7 @@
             android:layout_weight="3"
             android:gravity="center"
             android:text="@string/title_tool_name"
-            android:textColor="@color/text_view_01"
+            android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_big_text" />
 
         <TextView
@@ -30,7 +30,7 @@
             android:layout_weight="5"
             android:gravity="center|left"
             android:text="@string/tool_name"
-            android:textColor="@color/text_view_01"
+            android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
 
         <TextView
@@ -39,7 +39,7 @@
             android:layout_weight="3"
             android:gravity="center"
             android:text="@string/title_tool_cell_number"
-            android:textColor="@color/text_view_01"
+            android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_big_text" />
 
         <TextView
@@ -49,7 +49,7 @@
             android:layout_weight="5"
             android:gravity="center|left"
             android:text="@string/tool_cell_number"
-            android:textColor="@color/text_view_01"
+            android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
 
     </LinearLayout>
@@ -66,7 +66,7 @@
             android:layout_weight="3"
             android:gravity="center"
             android:text="@string/title_tool_epc"
-            android:textColor="@color/text_view_01"
+            android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_big_text" />
 
         <TextView
@@ -76,7 +76,7 @@
             android:layout_weight="5"
             android:gravity="center|left"
             android:text="@string/tool_epc"
-            android:textColor="@color/text_view_01"
+            android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
 
         <TextView
@@ -85,7 +85,7 @@
             android:layout_weight="3"
             android:gravity="center"
             android:text="@string/title_tool_state"
-            android:textColor="@color/text_view_01"
+            android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_big_text" />
 
         <TextView
@@ -95,7 +95,7 @@
             android:layout_weight="5"
             android:gravity="center|left"
             android:text="@string/tool_state"
-            android:textColor="@color/text_view_01"
+            android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
 
     </LinearLayout>
@@ -112,7 +112,7 @@
             android:layout_weight="3"
             android:gravity="center"
             android:text="工具灯号："
-            android:textColor="@color/text_view_01"
+            android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_big_text" />
 
         <TextView
@@ -122,7 +122,7 @@
             android:layout_weight="5"
             android:gravity="center|left"
             android:text="@string/tool_epc"
-            android:textColor="@color/text_view_01"
+            android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
 
         <TextView
@@ -132,7 +132,7 @@
             android:layout_weight="3"
             android:gravity="center"
             android:text="@string/title_tool_state"
-            android:textColor="@color/text_view_01"
+            android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_big_text" />
 
         <TextView
@@ -142,7 +142,7 @@
             android:layout_weight="5"
             android:gravity="center|left"
             android:text="@string/tool_state"
-            android:textColor="@color/text_view_01"
+            android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
 
     </LinearLayout>

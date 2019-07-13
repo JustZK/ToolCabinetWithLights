@@ -12,9 +12,11 @@
 
     <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/guide_login_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg1"
+        android:onClick="@{onClickListener}"
         tools:context=".activity.MainActivity">
 
         <TextClock
@@ -48,6 +50,7 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:paddingTop="@dimen/super_big_big_spacing"
+            android:visibility="gone"
             app:srcCompat="@drawable/fingerprint" />
 
         <TextView
@@ -63,6 +66,7 @@
             android:padding="@dimen/medium_spacing"
             android:text="@string/other_login"
             android:textColor="@color/gray_light"
+            android:visibility="gone"
             android:textSize="@dimen/big_text" />
 
         <TextView
@@ -72,7 +76,8 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:layout_marginBottom="130dp"
+            android:gravity="center"
+            android:layout_marginBottom="200dp"
             android:padding="@dimen/medium_spacing"
             android:text="@string/fingerprint_entry_prompt"
             android:textColor="@color/gray_light"

@@ -18,18 +18,19 @@
     <string name="fill_complete">请填写完整！</string>
     <string name="misconfiguration">填写的配置有误</string>
     <string name="add">添加</string>
+    <string name="login">登陆</string>
     <!--常用按钮名称和提示 - end -->
 
     <!--主界面-->
-    <string name="fingerprint_entry_prompt">请将手指放于屏幕下方指纹传感器上</string>
+    <string name="fingerprint_entry_prompt">请将手指\卡片放于屏幕下方传感器上\n或点击屏幕任意键使用密码登陆</string>
     <string name="other_login">其他方式登陆</string>
     <string name="contractor">智能工具柜应用系统</string>
 
-    <string name="login_by_pwd">密码登录</string>
+    <string name="login_by_pwd">用户登录</string>
     <string name="account">账  号：</string>
     <string name="password">密  码：</string>
-    <string name="account_hint">请输入您的账号</string>
-    <string name="password_hint">请输入您的密码</string>
+    <string name="account_hint">请输入账号</string>
+    <string name="password_hint">请输入密码</string>
     <string name="pwd_error">您的密码错误！</string>
     <string name="pwd_null">您的账号密码为null，请联系管理员，或者在平台修改密码。</string>
     <string name="pwd_account_error">您的账户或密码错误！</string>
@@ -103,7 +104,7 @@
     <!--系统设置-->
 
     <!--工具查询-->
-    <string name="title_activity_access_operate">存取操作(按格子借用)</string>
+    <string name="title_activity_access_operate">按格子借用</string>
     <string name="title_tools">工具管理</string>
     <string name="title_tool_name">工具名称：</string>
     <string name="tool_name">工具名称</string>
@@ -125,9 +126,9 @@
     <string name="title_personnel_management">人员管理</string>
     <string name="user_add">添加人员/</string>
 
-    <string name="title_access_out_by_query">存取操作(按工具借用)</string>
+    <string name="title_access_out_by_query">按工具借用</string>
 
-    <string name="title_access_deposit">存取操作(一键归还)</string>
+    <string name="title_access_deposit">一键归还</string>
 
 
     <string name="title_open_cabinet_where_the_file_is_located">开启柜门</string>

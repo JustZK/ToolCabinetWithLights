@@ -96,7 +96,7 @@ public class SystemSettingsActivity extends TimeOffAppCompatActivity implements 
             }
         }
 
-        mNumberBoxesItemSelected = spUtil.getInt(Key.NumberOfBoxes, 0);
+        mNumberBoxesItemSelected = spUtil.getInt(Key.NumberOfBoxes, 10);
         mNumberBoxesItems = getResources().getStringArray(R.array.dialog_number_of_boxes_array);
 
         binding.systemSettingDeviceIdSb.setCaptionText(mDeviceId);
@@ -244,9 +244,13 @@ public class SystemSettingsActivity extends TimeOffAppCompatActivity implements 
                                         spUtil.applyValue(new Record(Key.NumberOfBoxes, mNumberBoxesItemSelected));
 
                                         CabinetService.getInstance().deleteAll();
-                                        CabinetService.getInstance().buildMain();
-                                        for (int j = 0; j < (i + 1); j++) {
-                                            CabinetService.getInstance().buildDeputy(j);
+                                        if (mNumberBoxesItemSelected != 10) {
+                                            CabinetService.getInstance().buildMain();
+                                            for (int j = 0; j < (i + 1); j++) {
+                                                CabinetService.getInstance().buildDeputy(j);
+                                            }
+                                        } else {
+                                            CabinetService.getInstance().buildTest();
                                         }
                                     }
                                     dialogInterface.dismiss();

@@ -131,7 +131,7 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.main_other_login_tv:
+            case R.id.guide_login_rl:
                 showLoginDialog();
 //                NettyServerParsingLibrary.getInstance().send(new NettySendInfo(202375248, 0, 0,0));
 //                DoorSerialOperation.getInstance().send(new DoorSendInfo(1, 0xff, 8));

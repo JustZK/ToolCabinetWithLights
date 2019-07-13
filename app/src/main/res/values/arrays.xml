@@ -31,6 +31,7 @@
         <item>主柜+8副柜</item>
         <item>主柜+9副柜</item>
         <item>主柜+10副柜</item>
+        <item>演示柜</item>
     </string-array>
 
     <string-array name="dialog_not_closed_door_alarm_time_array">

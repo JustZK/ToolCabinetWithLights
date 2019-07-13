@@ -15,6 +15,7 @@ import com.zk.cabinet.adapter.CabinetSetAdapter;
 import com.zk.cabinet.bean.Cabinet;
 import com.zk.cabinet.databinding.ActivityAccessBinding;
 import com.zk.cabinet.db.CabinetService;
+import com.zk.cabinet.util.SharedPreferencesUtil;
 import com.zk.cabinet.view.TimeOffAppCompatActivity;
 
 import java.util.ArrayList;
@@ -44,14 +45,27 @@ public class AccessOutActivity extends TimeOffAppCompatActivity {
     private void inti(){
         list = CabinetService.getInstance().loadAll();
         if (list == null) list = new ArrayList<>();
-        GridLayoutManager manager = new GridLayoutManager(this, 9, LinearLayoutManager.HORIZONTAL, false);
-        manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                Cabinet bean = list.get(position);
-                return bean.getProportion();
-            }
-        });
+        GridLayoutManager manager;
+
+        if (spUtil.getInt(SharedPreferencesUtil.Key.NumberOfBoxes, 10) != 10 ) {
+            manager = new GridLayoutManager(this, 9, LinearLayoutManager.HORIZONTAL, false);
+            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    Cabinet bean = list.get(position);
+                    return bean.getProportion();
+                }
+            });
+        } else {
+            manager = new GridLayoutManager(this, 2, LinearLayoutManager.HORIZONTAL, false);
+            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    Cabinet bean = list.get(position);
+                    return bean.getProportion();
+                }
+            });
+        }
 
         binding.accessRv.addItemDecoration(new SpaceItemDecoration());
         binding.accessRv.setLayoutManager(manager);
@@ -83,14 +97,23 @@ public class AccessOutActivity extends TimeOffAppCompatActivity {
 
             int position = parent.getChildAdapterPosition(view);
 
-            if ((list.get(position).getCellNumber() < 0 ||
-                    (list.get(position).getCellNumber() % 10 == 8) ||
-                    (list.get(position).getCellNumber() % 10 == 9) ||
-                    (list.get(position).getCellNumber() % 10 == 0)) &&
-                    (position < (list.size() - 3))){
-                outRect.set(5, 0, 30, 0);
+            if (spUtil.getInt(SharedPreferencesUtil.Key.NumberOfBoxes, 10) != 10 ) {
+
+                if ((list.get(position).getCellNumber() < 0 ||
+                        (list.get(position).getCellNumber() % 10 == 8) ||
+                        (list.get(position).getCellNumber() % 10 == 9) ||
+                        (list.get(position).getCellNumber() % 10 == 0)) &&
+                        (position < (list.size() - 3))) {
+                    outRect.set(5, 0, 30, 0);
+                } else {
+                    outRect.set(5, 0, 5, 0);
+                }
             } else {
-                outRect.set(5, 0, 5, 0);
+                if (position == 0) {
+                    outRect.set(5, 0, 30, 0);
+                } else {
+                    outRect.set(5, 0, 5, 0);
+                }
             }
         }
 

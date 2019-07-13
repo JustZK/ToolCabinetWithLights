@@ -45,6 +45,33 @@ public class CabinetService extends BaseService<Cabinet, Long> {
     }
 
     /**
+     * 生成TEST柜数据
+     */
+    public void buildTest () {
+        Cabinet[] cabinets = new Cabinet[3];
+        cabinets[0] = new Cabinet();
+        cabinets[0].setProportion(2);
+        cabinets[0].setBoxName("主屏幕");
+        cabinets[0].setCellNumber(-2);
+
+        cabinets[1] = new Cabinet();
+        cabinets[1].setProportion(1);
+        cabinets[1].setBoxName("A1");
+        cabinets[1].setCellNumber(1);
+        cabinets[1].setSourceAddress(0xff);
+        cabinets[1].setSignBroken(0);
+
+        cabinets[2] = new Cabinet();
+        cabinets[2].setProportion(1);
+        cabinets[2].setBoxName("A2");
+        cabinets[2].setCellNumber(2);
+        cabinets[2].setSourceAddress(0xff);
+        cabinets[2].setSignBroken(0);
+
+        insert(cabinets);
+    }
+
+    /**
      * 生成A柜数据
      */
     public void buildMain () {

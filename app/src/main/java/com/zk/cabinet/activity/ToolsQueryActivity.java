@@ -21,6 +21,7 @@ import com.zk.cabinet.db.ToolsService;
 import com.zk.cabinet.util.RegularExpressionUtil;
 import com.zk.cabinet.view.TimeOffAppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,9 +58,15 @@ public class ToolsQueryActivity extends TimeOffAppCompatActivity implements View
         binding.toolsQueryLv.setAdapter(mAdapter);
 
         cabinetList = CabinetService.getInstance().loadAll();
-        boxName = new String[cabinetList.size() - 3];
-        for (int i = 3; i < cabinetList.size(); i++) {
-            boxName[i - 3] = cabinetList.get(i).getBoxName();
+        ArrayList<String> boxNameList = new ArrayList<>();
+        for (int i = 0; i < cabinetList.size(); i++) {
+            if (cabinetList.get(i).getCellNumber() > 0) {
+                boxNameList.add(cabinetList.get(i).getBoxName());
+            }
+        }
+        boxName = new String[boxNameList.size()];
+        for (int i = 0; i < boxNameList.size(); i++) {
+            boxName[i] = boxNameList.get(i);
         }
     }
 

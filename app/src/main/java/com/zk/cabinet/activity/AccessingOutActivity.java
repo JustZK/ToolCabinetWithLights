@@ -368,13 +368,18 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                     }
                 }
 
-                DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
-                        cabinet.getSourceAddress(), cabinet.getLockNumber()));
-                DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
+                if (lightNumbers.size() > 0) {
 
-                LightSerialOperation.getInstance().startCheckLightState(cabinet.getTargetAddressForLight());
-                LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
-                        cabinet.getSourceAddress(), lightNumbers));
+                    DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
+                            cabinet.getSourceAddress(), cabinet.getLockNumber()));
+                    DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
+
+                    LightSerialOperation.getInstance().startCheckLightState(cabinet.getTargetAddressForLight());
+                    LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
+                            cabinet.getSourceAddress(), lightNumbers));
+                } else {
+                    showToast("请先选择出库的工具。");
+                }
                 break;
             case R.id.dialog_accessing_reopen:
                 accessClear();

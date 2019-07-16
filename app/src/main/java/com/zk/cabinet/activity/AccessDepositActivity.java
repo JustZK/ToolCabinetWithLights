@@ -49,7 +49,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
     }
 
     private void init(){
-        userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserTemp, "");
+        userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserIDTemp, "");
 
         list = ToolsService.getInstance().queryOr(userTemp, 1);
         if (list == null) list = new ArrayList<>();

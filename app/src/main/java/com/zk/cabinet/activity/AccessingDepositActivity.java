@@ -283,7 +283,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
     }
 
     private void init() {
-        userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserTemp, "");
+        userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserIDTemp, "");
         cellNumber = getIntent().getExtras().getInt("CellNumber");
         cabinet = CabinetService.getInstance().queryEq(cellNumber);
         EPC = getIntent().getExtras().getString("EPC");

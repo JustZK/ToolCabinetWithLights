@@ -257,7 +257,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
     }
 
     private void init() {
-        userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserTemp, "");
+        userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserIDTemp, "");
         cellNumber = getIntent().getExtras().getInt("CellNumber");
         cabinet = CabinetService.getInstance().queryEq(cellNumber);
 

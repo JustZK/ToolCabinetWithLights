@@ -312,7 +312,7 @@ public class AccessingActivity extends TimeOffAppCompatActivity implements View.
         binding = DataBindingUtil.setContentView(this, R.layout.activity_accessing);
         binding.setOnClickListener(this);
 
-        userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserTemp, "");
+        userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserIDTemp, "");
         cellNumber = getIntent().getExtras().getInt("CellNumber");
 
         lightNumbers = new ArrayList<>();

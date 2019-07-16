@@ -19,15 +19,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.zk.cabinet.R;
-import com.zk.cabinet.bean.User;
 import com.zk.cabinet.callback.CardListener;
 import com.zk.cabinet.databinding.ActivityMainBinding;
 import com.zk.cabinet.databinding.DilaogLoginBinding;
-import com.zk.cabinet.db.UserService;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.card.CardSerialOperation;
-import com.zk.cabinet.util.SharedPreferencesUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
+import com.zk.cabinet.util.SharedPreferencesUtil.Record;
 import com.zk.cabinet.util.TimeOpera;
 import com.zk.cabinet.view.TimeOffAppCompatActivity;
 
@@ -35,11 +33,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 public class MainActivity extends TimeOffAppCompatActivity implements View.OnClickListener,
         View.OnLongClickListener {
     private final static int CARD = 0x00;
-    private final static int LOGIN_RESULT = 0x01;
+    private final static int LOGIN_SUCCESS = 0x01;
+    private final static int LOGIN_ERROR = 0x02;
     private ActivityMainBinding mainBinding;
     private AlertDialog dialogLogin;
 
@@ -63,16 +63,33 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                     Login(1, null, msg.obj.toString());
                 }
                 break;
-            case LOGIN_RESULT:
+            case LOGIN_SUCCESS:
+                progressDialog.dismiss();
                 isLanding = false;
-                if ((Boolean) msg.obj) {
-                    Bundle loginBundle = msg.getData();
-                    Intent intent = new Intent();
-                    intent.setClass(MainActivity.this, MainMenuActivity.class);
-                    startActivityForResult(intent, REQUEST_CODE);
-                } else {
 
-                }
+                Bundle bundleLogin = msg.getData();
+                ArrayList<Record> records = new ArrayList<>();
+                records.add(new Record(Key.UserIDTemp, bundleLogin.getString("UserID")));
+                records.add(new Record(Key.CodeTemp, bundleLogin.getString("Code")));
+                records.add(new Record(Key.NameTemp, bundleLogin.getString("Name")));
+                records.add(new Record(Key.GenderTemp, bundleLogin.getString("Gender")));
+                records.add(new Record(Key.MobilePhoneTemp, bundleLogin.getString("MobilePhone")));
+                records.add(new Record(Key.CardIDTemp, bundleLogin.getString("CardID")));
+                spUtil.applyValue(records);
+
+                dilaogLoginBinding.dialogOtherLoginAccountEdt.setText(null);
+                dilaogLoginBinding.dialogOtherLoginPwdEdt.setText(null);
+                dismissLoginDialog();
+                Intent intent = new Intent();
+                intent.putExtra("UserType", 1);
+                intent.setClass(MainActivity.this, MainMenuActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
+
+                break;
+            case LOGIN_ERROR:
+                progressDialog.dismiss();
+                isLanding = false;
+                showToast(msg.obj.toString());
                 break;
         }
     }
@@ -138,6 +155,8 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                 break;
             case R.id.dialog_other_login_dismiss_btn:
                 dismissLoginDialog();
+                dilaogLoginBinding.dialogOtherLoginAccountEdt.setText(null);
+                dilaogLoginBinding.dialogOtherLoginPwdEdt.setText(null);
 
 //                DoorSerialOperation.getInstance().send(new DoorSendInfo(1, 0xff, p));
 //                p++;
@@ -150,26 +169,28 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                 String user = dilaogLoginBinding.dialogOtherLoginAccountEdt.getText().toString().trim();
                 String pwd = dilaogLoginBinding.dialogOtherLoginPwdEdt.getText().toString().trim();
                 if (!TextUtils.isEmpty(user) && !TextUtils.isEmpty(pwd)) {
-//                    Login(0, user, pwd);
-                    User loginUser = UserService.getInstance().queryByUserID(user);
-                    if (loginUser != null){
-                        if (loginUser.getPassword().equals(pwd)){
-
-                            spUtil.applyValue(new SharedPreferencesUtil.Record(Key.UserTemp, loginUser.getUserID()));
-
-                            dilaogLoginBinding.dialogOtherLoginAccountEdt.setText(null);
-                            dilaogLoginBinding.dialogOtherLoginPwdEdt.setText(null);
-                            dismissLoginDialog();
-                            Intent intent = new Intent();
-                            intent.putExtra("UserType", 1);
-                            intent.setClass(MainActivity.this, MainMenuActivity.class);
-                            startActivityForResult(intent, REQUEST_CODE);
-                        } else {
-                            showToast("密码错误！");
-                        }
-                    } else {
-                        showToast("用户不存在！");
-                    }
+                    progressDialog.setMessage("正在联网校对，请稍后......");
+                    progressDialog.show();
+                    Login(0, user, pwd);
+//                    User loginUser = UserService.getInstance().queryByUserID(user);
+//                    if (loginUser != null){
+//                        if (loginUser.getPassword().equals(pwd)){
+//
+//                            spUtil.applyValue(new SharedPreferencesUtil.Record(Key.UserTemp, loginUser.getUserID()));
+//
+//                            dilaogLoginBinding.dialogOtherLoginAccountEdt.setText(null);
+//                            dilaogLoginBinding.dialogOtherLoginPwdEdt.setText(null);
+//                            dismissLoginDialog();
+//                            Intent intent = new Intent();
+//                            intent.putExtra("UserType", 1);
+//                            intent.setClass(MainActivity.this, MainMenuActivity.class);
+//                            startActivityForResult(intent, REQUEST_CODE);
+//                        } else {
+//                            showToast("密码错误！");
+//                        }
+//                    } else {
+//                        showToast("用户不存在！");
+//                    }
                 } else {
                     showToast("请填写完整！");
                 }
@@ -196,7 +217,7 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
 
     @Override
     public boolean onLongClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.dialog_other_login_sure_btn:
 
                 String user = dilaogLoginBinding.dialogOtherLoginAccountEdt.getText().toString().trim();
@@ -222,7 +243,6 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
 
                 break;
         }
-
 
 
         return true;
@@ -252,24 +272,24 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
     private void Login(int loginBy, String user, String pwd) {
         isLanding = true;
         String url = "";
-        JSONObject jsonObject = new JSONObject();
-        JSONObject dataObject = new JSONObject();
+        final JSONObject jsonObject = new JSONObject();
+//        JSONObject dataObject = new JSONObject();
         Long time = TimeOpera.getNowTime();
         try {
             if (loginBy == 0) {
                 url = NetworkRequest.getInstance().urlLoginByPwd;
-                dataObject.put("code", user);
-                dataObject.put("password", pwd);
+//                dataObject.put("code", user);
+//                dataObject.put("password", pwd);
 
             } else if (loginBy == 1) {
                 url = NetworkRequest.getInstance().urlLoginByPwd;
-                dataObject.put("cardid", pwd);
+//                dataObject.put("cardid", pwd);
 
             }
-            jsonObject.put("appkey", spUtil.getInt(Key.DeviceId, 00000000));
-            jsonObject.put("time", time);
+            jsonObject.put("account", user);
+            jsonObject.put("password", pwd);
 //            jsonObject.put("token", EncryptUtil.md5());
-            jsonObject.put("Data", dataObject);
+//            jsonObject.put("Data", dataObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -278,13 +298,42 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                 jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject jsonResult) {
-
+                try {
+                    JSONObject jsonObject = jsonResult.getJSONObject("Data");
+                    if (jsonResult.getInt("Result") == 200 && jsonObject.getBoolean("Result")) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("UserID", jsonObject.getString("UserID"));
+                        bundle.putString("Code", jsonObject.getString("Code"));
+                        bundle.putString("Name", jsonObject.getString("Name"));
+                        bundle.putString("Gender", jsonObject.getString("Gender"));
+                        bundle.putString("MobilePhone", jsonObject.getString("MobilePhone"));
+                        bundle.putString("CardID", jsonObject.getString("CardID"));
+                        Message msg = Message.obtain();
+                        msg.what = LOGIN_SUCCESS;
+                        msg.setData(bundle);
+                        mHandler.sendMessage(msg);
+                    } else {
+                        Message msg = Message.obtain();
+                        msg.what = LOGIN_ERROR;
+                        msg.obj = "账户或密码不存在。";
+                        mHandler.sendMessage(msg);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Message msg = Message.obtain();
+                    msg.what = LOGIN_ERROR;
+                    msg.obj = "数据解析失败。";
+                    mHandler.sendMessage(msg);
+                }
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Message msg = Message.obtain();
+                msg.what = LOGIN_ERROR;
+                msg.obj = error.toString();
+                mHandler.sendMessage(msg);
             }
         });
 

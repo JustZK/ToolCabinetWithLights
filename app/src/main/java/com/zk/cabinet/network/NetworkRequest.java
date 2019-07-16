@@ -2,8 +2,6 @@ package com.zk.cabinet.network;
 
 import android.content.Context;
 
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.zk.cabinet.util.LogUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil;
 
 public class NetworkRequest extends VolleyRequest{
@@ -22,7 +20,7 @@ public class NetworkRequest extends VolleyRequest{
     public String urlWaitTool;
     public String urlBorrowTool;
     public String urlReturnTool;
-    public static final String LOGIN_BY_PWD = "/openapi/user/login";
+    public static final String LOGIN_BY_PWD = "/api/User/Login";
     public static final String LOGIN_BY_CARD = "/openapi/user/card";
     public static final String CABINET_INFO = "/openapi/base/Cabinet";
     public static final String TOOL = "/openapi/base/tool";

@@ -200,7 +200,14 @@ public class SharedPreferencesUtil {
         ToolCabinet,
         Root, //配置管理员账户 String
         RootPwd, //配置管理员密码 String
-        UserTemp, //登陆账户 String
+
+        UserIDTemp, //登陆账户 String
+        CodeTemp,
+        NameTemp,
+        GenderTemp,
+        MobilePhoneTemp,
+        CardIDTemp,
+
         DeviceId,//设备编号 String
         UnitNumber,//单位编号 String
         UnitAddress,//单位地址 String

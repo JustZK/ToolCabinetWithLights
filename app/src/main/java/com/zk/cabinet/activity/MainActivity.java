@@ -77,9 +77,6 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                 records.add(new Record(Key.CardIDTemp, bundleLogin.getString("CardID")));
                 spUtil.applyValue(records);
 
-                dilaogLoginBinding.dialogOtherLoginAccountEdt.setText(null);
-                dilaogLoginBinding.dialogOtherLoginPwdEdt.setText(null);
-                dismissLoginDialog();
                 Intent intent = new Intent();
                 intent.putExtra("UserType", 1);
                 intent.setClass(MainActivity.this, MainMenuActivity.class);
@@ -171,6 +168,11 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                 if (!TextUtils.isEmpty(user) && !TextUtils.isEmpty(pwd)) {
                     progressDialog.setMessage("正在联网校对，请稍后......");
                     progressDialog.show();
+
+                    dilaogLoginBinding.dialogOtherLoginAccountEdt.setText(null);
+                    dilaogLoginBinding.dialogOtherLoginPwdEdt.setText(null);
+                    dismissLoginDialog();
+
                     Login(0, user, pwd);
 //                    User loginUser = UserService.getInstance().queryByUserID(user);
 //                    if (loginUser != null){

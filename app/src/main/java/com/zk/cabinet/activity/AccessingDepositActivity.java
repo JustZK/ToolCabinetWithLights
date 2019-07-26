@@ -1,16 +1,21 @@
 package com.zk.cabinet.activity;
 
+import android.app.ProgressDialog;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.zk.cabinet.R;
 import com.zk.cabinet.adapter.ToolsAdapter;
 import com.zk.cabinet.bean.Cabinet;
@@ -24,14 +29,21 @@ import com.zk.cabinet.callback.InventoryListener;
 import com.zk.cabinet.callback.LightListener;
 import com.zk.cabinet.databinding.ActivityAccessingDepositBinding;
 import com.zk.cabinet.db.CabinetService;
-import com.zk.cabinet.db.ToolsService;
 import com.zk.cabinet.netty.server.NettyServerParsingLibrary;
+import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.door.DoorSerialOperation;
 import com.zk.cabinet.serial.light.LightSerialOperation;
+import com.zk.cabinet.util.LogUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil;
+import com.zk.cabinet.util.SharedPreferencesUtil.Key;
+import com.zk.cabinet.util.TimeOpera;
 import com.zk.cabinet.view.CustomProgressDialog;
 import com.zk.cabinet.view.FullScreenAlertDialog;
 import com.zk.cabinet.view.TimeOffAppCompatActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -44,6 +56,11 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
     private final int INVENTORY_18K6C = 0x02;
     private final int OPEN_LIGHT_RESULT = 0x03;
     private final int CHECK_LIGHT_STATE = 0x04;
+    private final static int GET_TOOLS_IN_BOX_LIST_SUCCESS = 0x05;
+    private final static int GET_TOOLS_IN_BOX_LIST_ERROR = 0x06;
+    private final static int UP_UP_OUT_BOUND_LIST_SUCCESS = 0x07;
+    private final static int UP_UP_OUT_BOUND_LIST_ERROR = 0x08;
+    private final static int GET_TOOLS_IN_BOX_LIST_SUCCESS_TWO = 0x09;
 
     private ActivityAccessingDepositBinding binding;
 
@@ -75,6 +92,8 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
     private String EPC;
 
     private MHandler mHandler;
+
+    private ProgressDialog progress;
 
     private void handleMessage(Message msg) {
         switch (msg.what) {
@@ -153,18 +172,25 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                         ProgressDialogDismiss();
                         int saveNumber = 0, takeNumber = 0;
                         for (InventoryInfo inventoryInfo : inventoryList) {
-                            Tools toolsTemp = ToolsService.getInstance().queryEq(inventoryInfo.getEPC());
-                            if (toolsTemp != null) {
-                                if (toolsTemp.getToolState() != 0) {
-                                    saveNumber++; // 有工具存入
+                            if (inventoryInfo.getEPC().equalsIgnoreCase(EPC)) {
+                                Tools toolsTemp = new Tools();
+                                saveNumber++; // 有工具存入
 
-                                    toolsTemp.setCellNumber(cellNumber);
-                                    toolsTemp.setToolState(0);
-                                    toolsTemp.setBorrower(userTemp);
-                                    toolsTemp.setToolLightNumber(needOpenLightNumbers.get(0));
-                                    toolsTemp.setSelected(false);
-                                    accessingList.add(toolsTemp);
-                                }
+                                toolsTemp.setCaseNumber(getIntent().getExtras().getString("CaseNumber"));
+                                toolsTemp.setPropertyInvolvedName(getIntent().getExtras().getString("PropertyInVolvedName"));
+                                toolsTemp.setPropertyNumber(getIntent().getExtras().getString("PropertyNumber"));
+                                toolsTemp.setMechanismCoding(getIntent().getExtras().getString("MechanismCoding"));
+                                toolsTemp.setMechanismName(getIntent().getExtras().getString("MechanismName"));
+                                toolsTemp.setEpc(EPC);
+                                toolsTemp.setCellNumber(cellNumber);
+                                toolsTemp.setToolState(0);
+                                toolsTemp.setBorrower(userTemp);
+                                toolsTemp.setToolLightNumber(needOpenLightNumbers.get(0));
+                                toolsTemp.setSelected(false);
+
+
+                                accessingList.add(toolsTemp);
+                                break;
                             }
                         }
                         for (Tools tools : toolsList) {
@@ -228,10 +254,14 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                     accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                                     dialog_accessing_reopen_error_tv.setText("您存入的工具和您准备存入的工具不符！");
                                 }
-                            } else {
+                            } else if (accessingList.size() > 1) {
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                                 dialog_accessing_reopen_error_tv.setText("您存入了多个工具！");
+                            } else if (accessingList.size() == 0) {
+                                dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
+                                accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
+                                accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);
                             }
                         }
                     }
@@ -246,6 +276,8 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
             case CHECK_LIGHT_STATE:
                 if (!inventorying && openDooring == 1) {
                     needOpenLightNumbers = msg.getData().getIntegerArrayList("LightStateList");
+                    LogUtil.getInstance().d("lightNumbers.s "+ lightNumbers.size());
+                    LogUtil.getInstance().d("needOpenLightNumbers.s "+ needOpenLightNumbers.size());
                     needOpenLightNumbers.removeAll(lightNumbers);
                     if (needOpenLightNumbers.size() == 1) {
                         inventorying = true;
@@ -264,6 +296,50 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                         showToast("本次操作只允许归还一件工具");
                     }
                 }
+                break;
+            case GET_TOOLS_IN_BOX_LIST_SUCCESS:
+                progress.dismiss();
+                toolsList = (List<Tools>) msg.obj;
+
+                for (Tools tools : toolsList) {
+                    lightNumbers.add(tools.getToolLightNumber());
+                }
+                LogUtil.getInstance().d("lightNumbers.s "+ lightNumbers.size());
+                mAdapter.setList(toolsList);
+                mAdapter.notifyDataSetChanged();
+                binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
+                binding.accessingDepositOpenBtn.setVisibility(View.INVISIBLE);
+                DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
+                        cabinet.getSourceAddress(), cabinet.getLockNumber()));
+                DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
+
+                LightSerialOperation.getInstance().startCheckLightState(cabinet.getTargetAddressForLight());
+
+                break;
+            case GET_TOOLS_IN_BOX_LIST_SUCCESS_TWO:
+                progress.dismiss();
+                toolsList = (List<Tools>) msg.obj;
+                mAdapter.setList(toolsList);
+                mAdapter.notifyDataSetChanged();
+                binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
+                break;
+            case GET_TOOLS_IN_BOX_LIST_ERROR:
+                binding.accessingDepositToolNumberTv.setText("获取异常");
+                progress.dismiss();
+                showToast(msg.obj.toString());
+                break;
+            case UP_UP_OUT_BOUND_LIST_SUCCESS:
+                accessClear();
+                binding.accessingDepositToolNumberTv.setText("正在联网获取格子信息");
+                progress.setMessage("正在联网获取格子数据，请稍后......");
+                getToolsInBoxList(GET_TOOLS_IN_BOX_LIST_SUCCESS_TWO);
+                break;
+            case UP_UP_OUT_BOUND_LIST_ERROR:
+                toolsList.clear();
+                mAdapter.notifyDataSetChanged();
+                binding.accessingDepositToolNumberTv.setText("获取异常");
+                progress.dismiss();
+                showToast(msg.obj.toString());
                 break;
         }
     }
@@ -301,24 +377,30 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
         NettyServerParsingLibrary.getInstance().processor.onInventoryListener(inventoryListener);
 
         binding.accessingDepositBoxNameTv.setText(cabinet.getBoxName());
-        toolsList = ToolsService.getInstance().queryEq(cabinet.getCellNumber(), 0);
-        if (toolsList == null) toolsList = new ArrayList<>();
+//        toolsList = ToolsService.getInstance().queryEq(cabinet.getCellNumber(), 0);
+//        if (toolsList == null)
+        toolsList = new ArrayList<>();
         mAdapter = new ToolsAdapter(this, toolsList);
         binding.accessingDepositLv.setAdapter(mAdapter);
         binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
 
-        for (Tools tools : toolsList) {
-            lightNumbers.add(tools.getToolLightNumber());
-        }
+//        for (Tools tools : toolsList) {
+//            lightNumbers.add(tools.getToolLightNumber());
+//        }
+//
+//        if (getIntent().getExtras().getBoolean("ImmediatelyOpen")) { //进来就开门
+//            binding.accessingDepositOpenBtn.setVisibility(View.INVISIBLE);
+//            DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
+//                    cabinet.getSourceAddress(), cabinet.getLockNumber()));
+//            DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
+//
+//            LightSerialOperation.getInstance().startCheckLightState(cabinet.getTargetAddressForLight());
+//        }
 
-        if (getIntent().getExtras().getBoolean("ImmediatelyOpen")) { //进来就开门
-            binding.accessingDepositOpenBtn.setVisibility(View.INVISIBLE);
-            DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
-                    cabinet.getSourceAddress(), cabinet.getLockNumber()));
-            DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
-
-            LightSerialOperation.getInstance().startCheckLightState(cabinet.getTargetAddressForLight());
-        }
+        getToolsInBoxList(GET_TOOLS_IN_BOX_LIST_SUCCESS);
+        progress = new ProgressDialog(this);
+        progress.setMessage("正在联网获取格子数据，请稍后......");
+        progress.show();
 
 
     }
@@ -387,7 +469,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
         switch (v.getId()) {
             case R.id.accessing_deposit_open_btn:
                 for (Tools tools : toolsList) {
-                    if (tools.getSelected()) {
+                    if (tools.isSelected()) {
                         lightNumbers.add(tools.getToolLightNumber());
                     }
                 }
@@ -409,19 +491,23 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                 LightSerialOperation.getInstance().startCheckLightState(cabinet.getTargetAddressForLight());
                 break;
             case R.id.dialog_accessing_sure:
-                ToolsService.getInstance().insertOrUpdate(accessingList);
+//                ToolsService.getInstance().insertOrUpdate(accessingList);
 
 //                DoorSerialOperation.getInstance().startCheckBoxDoorState(-1);
                 LightSerialOperation.getInstance().startCheckLightState(-1);
 
-                accessClear();
+//                accessClear();
                 timerStart();
 
-                toolsList = ToolsService.getInstance().queryEq(cabinet.getCellNumber(), 0);
-                if (toolsList == null) toolsList = new ArrayList<>();
-                mAdapter.setList(toolsList);
-                mAdapter.notifyDataSetChanged();
-                binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
+                progress.setMessage("正在提交出库数据，请稍后......");
+                getUpOutBoundList(accessingList);
+
+
+//                toolsList = ToolsService.getInstance().queryEq(cabinet.getCellNumber(), 0);
+//                if (toolsList == null) toolsList = new ArrayList<>();
+//                mAdapter.setList(toolsList);
+//                mAdapter.notifyDataSetChanged();
+//                binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
                 break;
         }
     }
@@ -502,12 +588,133 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
         ProgressDialogDismiss();
     }
 
-    private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (toolsList.get(position).getSelected()) toolsList.get(position).setSelected(false);
-            else toolsList.get(position).setSelected(true);
-            mAdapter.notifyDataSetChanged();
+    private void getToolsInBoxList(final int what) {
+        String url = "";
+        JSONObject jsonObject = new JSONObject();
+        url = NetworkRequest.getInstance().urlToolsInBoxList;
+        try {
+            jsonObject.put("CabinetID", spUtil.getString(Key.DeviceId, ""));
+            jsonObject.put("CountErNumber", cabinet.getCellNumber());
+        } catch (JSONException e1) {
+            e1.printStackTrace();
         }
-    };
+        LogUtil.getInstance().d("" + jsonObject);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,
+                jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject jsonResult) {
+                try {
+                    LogUtil.getInstance().d("--  " + jsonResult);
+                    JSONArray data = jsonResult.getJSONArray("Data");
+                    if (jsonResult.getInt("Result") == 200 && data.length() > 0) {
+                        List<Tools> toolsList = new ArrayList<>();
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject jsonObject = data.getJSONObject(i);
+                            Tools tools = new Tools();
+                            tools.setCaseNumber(jsonObject.getString("CaseNumber"));
+                            tools.setPropertyInvolvedName(jsonObject.getString("PropertyInVolvedName"));
+                            tools.setPropertyNumber(jsonObject.getString("PropertyNumber"));
+                            tools.setMechanismCoding(jsonObject.getString("MechanismCoding"));
+                            tools.setMechanismName(jsonObject.getString("MechanismName"));
+                            tools.setEpc(jsonObject.getString("EPC"));
+                            tools.setCellNumber(jsonObject.getInt("CountErNumber"));
+                            tools.setToolLightNumber(jsonObject.getInt("Light"));
+                            tools.setToolState(jsonObject.getInt("State"));
+                            toolsList.add(tools);
+                        }
+                        Message msg = Message.obtain();
+                        msg.what = what;
+                        msg.obj = toolsList;
+                        mHandler.sendMessage(msg);
+                    } else {
+                        List<Tools> toolsList = new ArrayList<>();
+                        Message msg = Message.obtain();
+                        msg.what = what;
+                        msg.obj = toolsList;
+                        mHandler.sendMessage(msg);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Message msg = Message.obtain();
+                    msg.what = GET_TOOLS_IN_BOX_LIST_ERROR;
+                    msg.obj = "数据解析失败。";
+                    mHandler.sendMessage(msg);
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Message msg = Message.obtain();
+                msg.what = GET_TOOLS_IN_BOX_LIST_ERROR;
+                msg.obj = error.toString();
+                mHandler.sendMessage(msg);
+            }
+        });
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        NetworkRequest.getInstance().add(jsonObjectRequest);
+    }
+
+
+    private void getUpOutBoundList(List<Tools> upAccessingList) {
+        String url = "";
+        JSONObject jsonObject = new JSONObject();
+        url = NetworkRequest.getInstance().urlUpOutBoundList;
+        try {
+            jsonObject.put("CreatorID", spUtil.getString(Key.UserIDTemp, ""));
+            jsonObject.put("Creator ", spUtil.getString(Key.NameTemp, ""));
+            jsonObject.put("CabinetID", spUtil.getString(Key.DeviceId, ""));
+            jsonObject.put("TypeState", 0);
+            JSONArray jsonArray = new JSONArray();
+            for (int i = 0; i < upAccessingList.size(); i++) {
+                JSONObject dataJsonObject = new JSONObject();
+                dataJsonObject.put("CaseNumber", upAccessingList.get(i).getCaseNumber());
+                dataJsonObject.put("PropertyInVolvedName", upAccessingList.get(i).getPropertyInvolvedName());
+                dataJsonObject.put("PropertyNumber", upAccessingList.get(i).getPropertyNumber());
+                dataJsonObject.put("MechanismCoding", upAccessingList.get(i).getMechanismCoding());
+                dataJsonObject.put("MechanismName", upAccessingList.get(i).getMechanismName());
+                dataJsonObject.put("EPC", upAccessingList.get(i).getEpc());
+                dataJsonObject.put("CountErNumber", upAccessingList.get(i).getCellNumber());
+                dataJsonObject.put("Light", upAccessingList.get(i).getToolLightNumber());
+                dataJsonObject.put("State", upAccessingList.get(i).getToolState());
+                dataJsonObject.put("LendTime", TimeOpera.getStringDate());
+                jsonArray.put(dataJsonObject);
+                LogUtil.getInstance().d("出库上报写入：" + jsonArray);
+
+            }
+            jsonObject.put("toolInStoreBacks", jsonArray);
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+        }
+        LogUtil.getInstance().d("出库上报：" + jsonObject);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,
+                jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject jsonResult) {
+
+                Message msg = Message.obtain();
+                msg.what = UP_UP_OUT_BOUND_LIST_SUCCESS;
+                msg.obj = toolsList;
+                mHandler.sendMessage(msg);
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Message msg = Message.obtain();
+                msg.what = UP_UP_OUT_BOUND_LIST_ERROR;
+                msg.obj = error.toString();
+                mHandler.sendMessage(msg);
+            }
+        });
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        NetworkRequest.getInstance().add(jsonObjectRequest);
+    }
 }

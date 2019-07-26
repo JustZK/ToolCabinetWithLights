@@ -35,20 +35,20 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_l_spacing"
+            android:layout_height="@dimen/title_medium_spacing"
             android:layout_weight="3"
             android:gravity="center"
-            android:text="@string/title_tool_cell_number"
+            android:text="机构名称："
             android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_big_text" />
 
         <TextView
-            android:id="@+id/adapter_tools_cell_number_tv"
+            android:id="@+id/adapter_mechanism_name_tv"
             android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_l_spacing"
+            android:layout_height="@dimen/title_medium_spacing"
             android:layout_weight="5"
             android:gravity="center|left"
-            android:text="@string/tool_cell_number"
+            android:text="机构名称"
             android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
 
@@ -106,12 +106,32 @@
         android:gravity="center"
         android:orientation="horizontal">
 
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_l_spacing"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="@string/title_tool_cell_number"
+            android:textColor="@color/gray_deep"
+            android:textSize="@dimen/sub_big_text" />
+
+        <TextView
+            android:id="@+id/adapter_tools_cell_number_tv"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/title_medium_l_spacing"
+            android:layout_weight="5"
+            android:gravity="center|left"
+            android:text="@string/tool_cell_number"
+            android:textColor="@color/gray_deep"
+            android:textSize="@dimen/sub_medium_text" />
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="@dimen/title_medium_spacing"
             android:layout_weight="3"
             android:gravity="center"
-            android:text="工具灯号："
+            android:text="所在灯号："
             android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_big_text" />
 
@@ -122,26 +142,6 @@
             android:layout_weight="5"
             android:gravity="center|left"
             android:text="@string/tool_epc"
-            android:textColor="@color/gray_deep"
-            android:textSize="@dimen/sub_medium_text" />
-
-        <TextView
-            android:visibility="invisible"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_spacing"
-            android:layout_weight="3"
-            android:gravity="center"
-            android:text="@string/title_tool_state"
-            android:textColor="@color/gray_deep"
-            android:textSize="@dimen/sub_big_text" />
-
-        <TextView
-            android:visibility="invisible"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_spacing"
-            android:layout_weight="5"
-            android:gravity="center|left"
-            android:text="@string/tool_state"
             android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
 

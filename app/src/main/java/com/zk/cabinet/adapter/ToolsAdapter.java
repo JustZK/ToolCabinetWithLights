@@ -56,24 +56,27 @@ public class ToolsAdapter extends BaseAdapter {
                     (TextView) view.findViewById(R.id.adapter_tools_cell_number_tv),
                     (TextView) view.findViewById(R.id.adapter_tools_epc_tv),
                     (TextView) view.findViewById(R.id.adapter_tools_state_tv),
-                    (TextView) view.findViewById(R.id.adapter_tools_light_tv));
+                    (TextView) view.findViewById(R.id.adapter_tools_light_tv),
+                    (TextView) view.findViewById(R.id.adapter_mechanism_name_tv));
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
 
-        viewHolder.adapter_tools_name_tv.setText(tools.getToolName() != null ? tools.getToolName() : "---");
+        viewHolder.adapter_tools_name_tv.setText(tools.getPropertyInvolvedName() != null ?
+                tools.getPropertyInvolvedName() : "---");
         viewHolder.adapter_tools_cell_number_tv.setText(String.valueOf(tools.getCellNumber()));
         viewHolder.adapter_tools_epc_tv.setText(tools.getEpc() != null ? tools.getEpc() : "---");
         viewHolder.adapter_tools_state_tv.setText(tools.getToolState() == 0 ? "在柜" : "离柜");
         viewHolder.adapter_tools_light_tv.setText(String.valueOf(tools.getToolLightNumber()));
+        viewHolder.adapter_mechanism_name_tv.setText(tools.getMechanismName());
 
-        if (tools.getSelected()){
+        if (tools.isSelected()){
             viewHolder.adapter_tools_item_ll.setBackgroundColor(mContext.getResources().getColor(R.color.md_orange_900));
         }
-        if (i % 2 != 0 && !tools.getSelected()) {
+        if (i % 2 != 0 && !tools.isSelected()) {
             viewHolder.adapter_tools_item_ll.setBackgroundColor(mContext.getResources().getColor(R.color.md_indigo_55));
-        } else if (i % 2 == 0 && !tools.getSelected()) {
+        } else if (i % 2 == 0 && !tools.isSelected()) {
             viewHolder.adapter_tools_item_ll.setBackgroundColor(mContext.getResources().getColor(R.color.md_grey_200));
         }
 
@@ -91,18 +94,22 @@ public class ToolsAdapter extends BaseAdapter {
 
         protected TextView adapter_tools_light_tv;
 
+        protected TextView adapter_mechanism_name_tv;
+
         public ViewHolder(LinearLayout adapter_tools_item_ll,
                           TextView adapter_tools_name_tv,
                           TextView adapter_tools_cell_number_tv,
                           TextView adapter_tools_epc_tv,
                           TextView adapter_tools_state_tv,
-                          TextView adapter_tools_light_tv) {
+                          TextView adapter_tools_light_tv,
+                          TextView adapter_mechanism_name_tv) {
             this.adapter_tools_item_ll = adapter_tools_item_ll;
             this.adapter_tools_name_tv = adapter_tools_name_tv;
             this.adapter_tools_cell_number_tv = adapter_tools_cell_number_tv;
             this.adapter_tools_epc_tv = adapter_tools_epc_tv;
             this.adapter_tools_state_tv = adapter_tools_state_tv;
             this.adapter_tools_light_tv = adapter_tools_light_tv;
+            this.adapter_mechanism_name_tv = adapter_mechanism_name_tv;
         }
     }
 

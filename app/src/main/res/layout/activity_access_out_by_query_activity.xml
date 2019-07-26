@@ -27,6 +27,7 @@
             bind:theme="@style/ToolbarTheme">
 
             <EditText
+                android:visibility="gone"
                 android:id="@+id/access_out_by_query_search_et"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
@@ -47,6 +48,7 @@
                 android:textSize="@dimen/medium_text" />
 
             <TextView
+                android:visibility="gone"
                 android:id="@+id/access_out_by_query_btn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"

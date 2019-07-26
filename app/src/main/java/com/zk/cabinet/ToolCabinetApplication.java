@@ -8,7 +8,7 @@ import com.zk.cabinet.constant.SelfComm;
 import com.zk.cabinet.db.CabinetService;
 import com.zk.cabinet.db.DBHelper;
 import com.zk.cabinet.netty.server.NettyServerParsingLibrary;
-import com.zk.cabinet.serial.card.CardSerialOperation;
+import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.door.DoorSerialOperation;
 import com.zk.cabinet.serial.light.LightSerialOperation;
 import com.zk.cabinet.util.SharedPreferencesUtil;
@@ -44,13 +44,14 @@ public class ToolCabinetApplication extends Application {
 
         DBHelper.getInstance().init(this);
         if (CabinetService.getInstance().loadAll().size() == 0) {
-            CabinetService.getInstance().buildMain();
-            CabinetService.getInstance().buildDeputy(0);
+            CabinetService.getInstance().buildTest();
         }
 
-        CardSerialOperation.getInstance().openComPort();
+//        CardSerialOperation.getInstance().openComPort();
         DoorSerialOperation.getInstance().openComPort();
         LightSerialOperation.getInstance().openComPort();
+
+        NetworkRequest.getInstance().init(this);
 
         NettyServerParsingLibrary nettyServerParsingLibrary = NettyServerParsingLibrary.getInstance();
         nettyServerParsingLibrary.init(7880);

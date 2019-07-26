@@ -180,7 +180,7 @@ public class DoorSerialOperation extends SerialHelper {
                         }
                     }
                     if (doorListener != null){
-                        doorListener.checkBoxDoorState(buffer[2], boxStateList);
+                        doorListener.checkBoxDoorState(buffer[3], boxStateList);
                     }
                     break;
                 default:

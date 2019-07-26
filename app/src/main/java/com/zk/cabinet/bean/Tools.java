@@ -1,101 +1,81 @@
 package com.zk.cabinet.bean;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.NotNull;
-import org.greenrobot.greendao.annotation.Property;
-import org.greenrobot.greendao.annotation.Unique;
-import org.greenrobot.greendao.annotation.Generated;
-
-@Entity(nameInDb = "Tools")
 public class Tools {
 
-    // 本地id
-    @Property(nameInDb = "ID")
-    @Id
-    private Long id;
+    //案件编号
+    private String caseNumber;
 
-    // 工具名称
-    @Expose
-    @SerializedName("ToolName")
-    @Property(nameInDb = "ToolName")
-    private String toolName;
+    //涉案财物名称
+    private String propertyInvolvedName;
 
-    // 工具标签编号
-    @Expose
-    @SerializedName("EPC")
-    @Property(nameInDb = "EPC")
-    @Unique
+    //涉案财物号码
+    private String propertyNumber ;
+
+    //机构编码
+    private String mechanismCoding;
+
+    //机构名称
+    private String mechanismName ;
+
+    // 标签编号
     private String epc;
 
     // 所在箱号
-    @Expose
-    @SerializedName("CellNumber")
-    @Property(nameInDb = "CellNumber")
     private int cellNumber;
 
-    // 工具状态
-    @Expose
-    @SerializedName("ToolState")
-    @Property(nameInDb = "ToolState")
-    @NotNull
+    // 状态
     private int toolState;
 
-    // 工具状态
-    @Expose
-    @SerializedName("ToolLightNumber")
-    @Property(nameInDb = "ToolLightNumber")
+    // 灯号
     private int toolLightNumber;
 
     // 借
-    @Expose
-    @SerializedName("Borrower")
-    @Property(nameInDb = "Borrower")
     private String borrower;
 
-    @Expose
-    @SerializedName("Selected")
-    @Property(nameInDb = "Selected")
     private boolean selected;
 
-    @Generated(hash = 65853307)
-    public Tools(Long id, String toolName, String epc, int cellNumber,
-            int toolState, int toolLightNumber, String borrower, boolean selected) {
-        this.id = id;
-        this.toolName = toolName;
-        this.epc = epc;
-        this.cellNumber = cellNumber;
-        this.toolState = toolState;
-        this.toolLightNumber = toolLightNumber;
-        this.borrower = borrower;
-        this.selected = selected;
+    public String getCaseNumber() {
+        return caseNumber;
     }
 
-    @Generated(hash = 161980891)
-    public Tools() {
+    public void setCaseNumber(String caseNumber) {
+        this.caseNumber = caseNumber;
     }
 
-    public Long getId() {
-        return this.id;
+    public String getPropertyInvolvedName() {
+        return propertyInvolvedName;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPropertyInvolvedName(String propertyInvolvedName) {
+        this.propertyInvolvedName = propertyInvolvedName;
     }
 
-    public String getToolName() {
-        return this.toolName;
+    public String getPropertyNumber() {
+        return propertyNumber;
     }
 
-    public void setToolName(String toolName) {
-        this.toolName = toolName;
+    public void setPropertyNumber(String propertyNumber) {
+        this.propertyNumber = propertyNumber;
+    }
+
+    public String getMechanismCoding() {
+        return mechanismCoding;
+    }
+
+    public void setMechanismCoding(String mechanismCoding) {
+        this.mechanismCoding = mechanismCoding;
+    }
+
+    public String getMechanismName() {
+        return mechanismName;
+    }
+
+    public void setMechanismName(String mechanismName) {
+        this.mechanismName = mechanismName;
     }
 
     public String getEpc() {
-        return this.epc;
+        return epc;
     }
 
     public void setEpc(String epc) {
@@ -103,7 +83,7 @@ public class Tools {
     }
 
     public int getCellNumber() {
-        return this.cellNumber;
+        return cellNumber;
     }
 
     public void setCellNumber(int cellNumber) {
@@ -111,36 +91,34 @@ public class Tools {
     }
 
     public int getToolState() {
-        return this.toolState;
+        return toolState;
     }
 
     public void setToolState(int toolState) {
         this.toolState = toolState;
     }
 
-    public String getBorrower() {
-        return this.borrower;
-    }
-
-    public void setBorrower(String borrower) {
-        this.borrower = borrower;
-    }
-
     public int getToolLightNumber() {
-        return this.toolLightNumber;
+        return toolLightNumber;
     }
 
     public void setToolLightNumber(int toolLightNumber) {
         this.toolLightNumber = toolLightNumber;
     }
 
-    public boolean getSelected() {
-        return this.selected;
+    public String getBorrower() {
+        return borrower;
+    }
+
+    public void setBorrower(String borrower) {
+        this.borrower = borrower;
+    }
+
+    public boolean isSelected() {
+        return selected;
     }
 
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
-
-    
 }

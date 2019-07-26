@@ -76,14 +76,6 @@
             android:label="@string/title_personnel_management"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.ToolsQueryActivity"
-            android:label="@string/title_tools"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activity.AccessingActivity"
-            android:label="@string/title_activity_access_operate"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".activity.AccessOutActivity"
             android:label="@string/title_activity_access_operate"
             android:theme="@style/AppTheme.NoActionBar" />

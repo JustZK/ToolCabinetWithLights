@@ -14,20 +14,18 @@ public class NetworkRequest extends VolleyRequest{
     public static final int DEFAULT_PORT = 7777;
     public String urlLoginByPwd;
     public String urlLoginByCard;
-    public String urlCabinetInfo;
-    public String urlTool;
-    public String urlOftenTool;
-    public String urlWaitTool;
-    public String urlBorrowTool;
-    public String urlReturnTool;
+    public String urlOutBoundList;
+    public String urlInBoundList;
+    public String urlToolsInBoxList;
+    public String urlUpOutBoundList;
+    public String urlUpInBoundList;
     public static final String LOGIN_BY_PWD = "/api/User/Login";
-    public static final String LOGIN_BY_CARD = "/openapi/user/card";
-    public static final String CABINET_INFO = "/openapi/base/Cabinet";
-    public static final String TOOL = "/openapi/base/tool";
-    public static final String OFTEN_TOOL = "/openapi/base/oftentool";
-    public static final String WAIT_TOOL = "/openapi/base/waittool";
-    public static final String BORROW_TOOL = "/openapi/submit/borrowtool";
-    public static final String RETURN_TOOL = "/openapi/submit/returntool";
+    public static final String LOGIN_BY_CARD = "/api/user/card";
+    public static final String OUT_BOUND_LIST = "/Api/Traffic/TrafficGdnQuery";
+    public static final String IN_BOUND_LIST = "/Api/Traffic/TrafficGrnQuery";
+    public static final String TOOLS_IN_BOX_LIST = "/Api/Traffic/TrafficCabinet";
+    public static final String UP_OUT_BOUND_LIST = "/Api/Traffic/TrafficGrnAdd";
+    public static final String UP_IN_BOUND_LIST = "/Api/Traffic/TrafficGrnAdd";
 
     public static NetworkRequest getInstance(){
         if (networkRequest == null) {
@@ -54,12 +52,11 @@ public class NetworkRequest extends VolleyRequest{
     public void configModify (String url, int port) {
         urlLoginByPwd = URL_HEAD + url + URL_COLON + port + LOGIN_BY_PWD;
         urlLoginByCard = URL_HEAD + url + URL_COLON + port + LOGIN_BY_CARD;
-        urlCabinetInfo = URL_HEAD + url + URL_COLON + port + CABINET_INFO;
-        urlTool = URL_HEAD + url + URL_COLON + port + TOOL;
-        urlOftenTool = URL_HEAD + url + URL_COLON + port + OFTEN_TOOL;
-        urlWaitTool = URL_HEAD + url + URL_COLON + port + WAIT_TOOL;
-        urlBorrowTool = URL_HEAD + url + URL_COLON + port + BORROW_TOOL;
-        urlReturnTool = URL_HEAD + url + URL_COLON + port + RETURN_TOOL;
+        urlOutBoundList = URL_HEAD + url + URL_COLON + port + OUT_BOUND_LIST;
+        urlInBoundList = URL_HEAD + url + URL_COLON + port + IN_BOUND_LIST;
+        urlToolsInBoxList = URL_HEAD + url + URL_COLON + port + TOOLS_IN_BOX_LIST;
+        urlUpOutBoundList = URL_HEAD + url + URL_COLON + port + UP_OUT_BOUND_LIST;
+        urlUpInBoundList = URL_HEAD + url + URL_COLON + port + UP_IN_BOUND_LIST;
     }
 
 //    @Override

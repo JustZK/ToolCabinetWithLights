@@ -84,6 +84,7 @@
             android:textSize="@dimen/sub_big_text" />
 
         <TextView
+            android:visibility="invisible"
             android:id="@+id/guide_address_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -209,7 +209,7 @@ public class LightSerialOperation extends SerialHelper {
                         }
                     }
                     if (lightListener != null){
-                        lightListener.checkLightState(buffer[2], boxStateList);
+                        lightListener.checkLightState(buffer[3], boxStateList);
                     }
                     break;
                 default:

@@ -54,7 +54,7 @@ public class DBHelper {
             mDaoSession = mDaoMaster.newSession(IdentityScopeType.None);
 
             CabinetService.getInstance().init(mDaoSession, mDaoSession.getCabinetDao());
-//            ToolsService.getInstance().init(mDaoSession,mDaoSession.getToolsDao());
+            ToolsService.getInstance().init(mDaoSession,mDaoSession.getToolsDao());
             UserService.getInstance().init(mDaoSession,mDaoSession.getUserDao());
         }
     }

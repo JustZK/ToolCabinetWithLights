@@ -23,9 +23,10 @@ import com.zk.cabinet.bean.Cabinet;
 import com.zk.cabinet.bean.Tools;
 import com.zk.cabinet.databinding.ActivityAccessDepositBinding;
 import com.zk.cabinet.db.CabinetService;
+import com.zk.cabinet.db.ToolsService;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.util.LogUtil;
-import com.zk.cabinet.util.SharedPreferencesUtil;
+import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.view.TimeOffAppCompatActivity;
 
 import org.json.JSONArray;
@@ -43,7 +44,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
     private ActivityAccessDepositBinding binding;
     private int propertyInvolved;
 
-    private String userTemp;
+    private String userTemp, unitNumber;
 
     private List<Tools> list;
     private ToolsAdapter mAdapter;
@@ -56,13 +57,16 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
     private void handleMessage(Message msg) {
         switch (msg.what) {
             case GET_IN_BOUND_LIST_SUCCESS:
-                progressDialog.dismiss();
+                if (progressDialog != null && progressDialog.isShowing())
+                    progressDialog.dismiss();
                 list = (List<Tools>) msg.obj;
+                ToolsService.getInstance().insert(list);
                 mAdapter.setList(list);
                 mAdapter.notifyDataSetChanged();
                 break;
             case GET_IN_BOUND_LIST_ERROR:
-                progressDialog.dismiss();
+                if (progressDialog != null && progressDialog.isShowing())
+                    progressDialog.dismiss();
                 showToast(msg.obj.toString());
                 break;
         }
@@ -85,8 +89,12 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
     }
 
     private void init() {
+
+        ToolsService.getInstance().deleteByState(1);
+
         mHandler = new MHandler(this);
-        userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserIDTemp, "");
+        userTemp = spUtil.getString(Key.UserIDTemp, "");
+        unitNumber = spUtil.getString(Key.UnitNumber, "");
 
 //        list = ToolsService.getInstance().queryOr(userTemp, 1);
 //        if (list == null)
@@ -119,6 +127,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
                         bundle.putString("MechanismCoding", list.get(position).getMechanismCoding());
                         bundle.putString("MechanismName", list.get(position).getMechanismName());
 
+                        bundle.putInt("PropertyInvolved", propertyInvolved);
                         IntentActivity(AccessingDepositActivity.class, bundle);
                     }
                 });
@@ -178,6 +187,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
         url = NetworkRequest.getInstance().urlInBoundList;
         try {
             jsonObject.put("CreatorID", userTemp);
+            jsonObject.put("MechanismCoding", unitNumber);
             jsonObject.put("PropertyInVolved", propertyInvolved);
         } catch (JSONException e1) {
             e1.printStackTrace();
@@ -198,6 +208,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
                             JSONObject jsonObject = data.getJSONObject(i);
                             Tools tools = new Tools();
                             tools.setCaseNumber(jsonObject.getString("CaseNumber"));
+                            tools.setPropertyInvolved(String.valueOf(propertyInvolved));
                             tools.setPropertyInvolvedName(jsonObject.getString("PropertyInVolvedName"));
                             tools.setPropertyNumber(jsonObject.getString("PropertyNumber"));
                             tools.setMechanismCoding(jsonObject.getString("MechanismCoding"));
@@ -205,7 +216,9 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
                             tools.setEpc(jsonObject.getString("EPC"));
                             tools.setCellNumber(jsonObject.getInt("CountErNumber"));
                             tools.setToolLightNumber(jsonObject.getInt("Light"));
-                            tools.setToolState(jsonObject.getInt("State"));
+                            tools.setState(jsonObject.getInt("State"));
+                            tools.setNameParty(jsonObject.getString("NameParty"));
+                            tools.setOperateTime(jsonObject.getString("OperateTime"));
                             toolsList.add(tools);
                         }
                         Message msg = Message.obtain();

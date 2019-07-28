@@ -48,6 +48,7 @@ public class ToolCabinetApplication extends Application {
         }
 
 //        CardSerialOperation.getInstance().openComPort();
+
         DoorSerialOperation.getInstance().openComPort();
         LightSerialOperation.getInstance().openComPort();
 

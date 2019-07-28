@@ -23,6 +23,7 @@ import com.zk.cabinet.bean.Cabinet;
 import com.zk.cabinet.bean.Tools;
 import com.zk.cabinet.databinding.ActivityAccessOutByQueryActivityBinding;
 import com.zk.cabinet.db.CabinetService;
+import com.zk.cabinet.db.ToolsService;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.util.LogUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
@@ -50,13 +51,15 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
 
     private ProgressDialog progressDialog;
 
-    private MHandler mHandler;
+    private String userIDTemp, unitNumber, deviceId;
 
+    private MHandler mHandler;
     private void handleMessage(Message msg) {
         switch (msg.what) {
             case GET_OUT_BOUND_LIST_SUCCESS:
                 progressDialog.dismiss();
                 list = (List<Tools>) msg.obj;
+                ToolsService.getInstance().insert(list);
                 mAdapter.setList(list);
                 mAdapter.notifyDataSetChanged();
                 break;
@@ -89,6 +92,13 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
     private void init() {
 //        list = ToolsService.getInstance().queryOr("");
 //        if (list == null)
+
+        userIDTemp = spUtil.getString(Key.UserIDTemp, "");
+        unitNumber = spUtil.getString(Key.UnitNumber, "");
+        deviceId = spUtil.getString(Key.DeviceId, "");
+
+        ToolsService.getInstance().deleteByState(0);
+
         mHandler = new MHandler(this);
         list = new ArrayList<>();
         mAdapter = new ToolsAdapter(this, list);
@@ -111,6 +121,7 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
                         bundle.putInt("OperationType", 1);
                         bundle.putString("EPC", list.get(position).getEpc());
                         bundle.putBoolean("ImmediatelyOpen", true);
+                        bundle.putInt("PropertyInvolved", propertyInvolved);
                         IntentActivity(AccessingOutActivity.class, bundle);
                     }
                 });
@@ -192,8 +203,9 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
         JSONObject jsonObject = new JSONObject();
         url = NetworkRequest.getInstance().urlOutBoundList;
         try {
-            jsonObject.put("CreatorID", spUtil.getString(Key.UserIDTemp, ""));
-            jsonObject.put("CabinetID", spUtil.getString(Key.DeviceId, ""));
+            jsonObject.put("CreatorID", userIDTemp);
+            jsonObject.put("MechanismCoding", unitNumber);
+            jsonObject.put("CabinetID", deviceId);
             jsonObject.put("PropertyInVolved", propertyInvolved);
         } catch (JSONException e1) {
             e1.printStackTrace();
@@ -212,6 +224,7 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
                             JSONObject jsonObject = data.getJSONObject(i);
                             Tools tools = new Tools();
                             tools.setCaseNumber(jsonObject.getString("CaseNumber"));
+                            tools.setPropertyInvolved(String.valueOf(propertyInvolved));
                             tools.setPropertyInvolvedName(jsonObject.getString("PropertyInVolvedName"));
                             tools.setPropertyNumber(jsonObject.getString("PropertyNumber"));
                             tools.setMechanismCoding(jsonObject.getString("MechanismCoding"));
@@ -219,7 +232,9 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
                             tools.setEpc(jsonObject.getString("EPC"));
                             tools.setCellNumber(jsonObject.getInt("CountErNumber"));
                             tools.setToolLightNumber(jsonObject.getInt("Light"));
-                            tools.setToolState(jsonObject.getInt("State"));
+                            tools.setState(jsonObject.getInt("State"));
+                            tools.setNameParty(jsonObject.getString("NameParty"));
+                            tools.setOperateTime(jsonObject.getString("OperateTime"));
                             toolsList.add(tools);
                         }
                         Message msg = Message.obtain();

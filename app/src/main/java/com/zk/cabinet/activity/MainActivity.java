@@ -76,6 +76,7 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                 records.add(new Record(Key.GenderTemp, bundleLogin.getString("Gender")));
                 records.add(new Record(Key.MobilePhoneTemp, bundleLogin.getString("MobilePhone")));
                 records.add(new Record(Key.CardIDTemp, bundleLogin.getString("CardID")));
+                records.add(new Record(Key.UnitNumber, bundleLogin.getString("MechanismCoding")));
                 spUtil.applyValue(records);
 
                 Intent intent = new Intent();
@@ -311,6 +312,7 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                         bundle.putString("Gender", jsonObject.getString("Gender"));
                         bundle.putString("MobilePhone", jsonObject.getString("MobilePhone"));
                         bundle.putString("CardID", jsonObject.getString("CardID"));
+                        bundle.putString("MechanismCoding", jsonObject.getString("MechanismCoding"));
                         Message msg = Message.obtain();
                         msg.what = LOGIN_SUCCESS;
                         msg.setData(bundle);

@@ -36,12 +36,13 @@ public class MainMenuActivity extends TimeOffAppCompatActivity {
         list = new ArrayList<>();
         if (getIntent().getIntExtra("UserType", 1) == 1) {
 //            list.add(new ImageTextListInfo(R.drawable.cabinet, getString(R.string.borrow_by_cabinet)));
-            list.add(new ImageTextListInfo(R.drawable.document_delivery, "证件出库"));
             list.add(new ImageTextListInfo(R.drawable.document_storage, "证件入库"));
-            list.add(new ImageTextListInfo(R.drawable.blood_delivery, "血样/尿样出库"));
+            list.add(new ImageTextListInfo(R.drawable.document_delivery, "证件出库"));
             list.add(new ImageTextListInfo(R.drawable.blood_storage,"血样/尿样入库"));
-            list.add(new ImageTextListInfo(R.drawable.goods_delivery, "收缴物品出库"));
+            list.add(new ImageTextListInfo(R.drawable.blood_delivery, "血样/尿样出库"));
             list.add(new ImageTextListInfo(R.drawable.goods_storage, "收缴物品入库"));
+            list.add(new ImageTextListInfo(R.drawable.goods_delivery, "收缴物品出库"));
+
         } else {
 //            list.add(new ImageTextListInfo(R.drawable.goods, getString(R.string.tool_management)));
 //            list.add(new ImageTextListInfo(R.drawable.personnel_management, getString(R.string.personnel_management)));

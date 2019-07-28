@@ -27,7 +27,7 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="FullscreenDialog" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+    <style name="FullscreenDialog">
         <!-- 是否有边框 -->
         <item name="android:windowFrame">@null</item>
         <!--是否在悬浮Activity之上  -->

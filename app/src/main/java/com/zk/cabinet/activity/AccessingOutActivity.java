@@ -30,6 +30,7 @@ import com.zk.cabinet.callback.InventoryListener;
 import com.zk.cabinet.callback.LightListener;
 import com.zk.cabinet.databinding.ActivityAccessingOutBinding;
 import com.zk.cabinet.db.CabinetService;
+import com.zk.cabinet.db.ToolsService;
 import com.zk.cabinet.netty.server.NettyServerParsingLibrary;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.door.DoorSerialOperation;
@@ -63,6 +64,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
     private final static int UP_UP_OUT_BOUND_LIST_ERROR = 0x08;
     private final static int GET_TOOLS_IN_BOX_LIST_SUCCESS_TWO = 0x09;
 
+    private int propertyInvolved;
     private ActivityAccessingOutBinding binding;
 
     private int operationType = 0; // 0:按柜子 1：按工具取
@@ -94,6 +96,8 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
     private MHandler mHandler;
 
     private ProgressDialog progress;
+
+    private String userIDTemp, unitNumber, deviceId;
 
     private void handleMessage(Message msg) {
         switch (msg.what) {
@@ -181,8 +185,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                             if (!isExist) {
                                 takeNumber++;
 
-                                tools.setToolState(1);
-                                tools.setBorrower(userTemp);
+                                tools.setState(1);
                                 accessingList.add(tools);
                             }
                         }
@@ -259,24 +262,26 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 mAdapter.notifyDataSetChanged();
                 binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
 
-                String epc = getIntent().getExtras().getString("EPC");
+//                String epc = getIntent().getExtras().getString("EPC");
+                List<Tools> epcList = ToolsService.getInstance().getOutTools(cellNumber);
                 for (Tools tools : toolsList) {
-                    if (tools.getEpc().equals(epc)) {
-                        tools.setSelected(true);
-                        mAdapter.notifyDataSetChanged();
-                        lightNumbers.add(tools.getToolLightNumber());
-                        LightSerialOperation.getInstance().send(new LightSendInfo(
-                                cabinet.getTargetAddressForLight(),
-                                cabinet.getSourceAddress(), lightNumbers));
+                    for (Tools epcTool: epcList) {
+                        if (tools.getEpc().equals(epcTool.getEpc())) {
+                            tools.setSelected(true);
+                            lightNumbers.add(tools.getToolLightNumber());
 
-
-                        DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
-                                cabinet.getSourceAddress(), cabinet.getLockNumber()));
-                        DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
-
-                        break;
+                            break;
+                        }
                     }
                 }
+
+                mAdapter.notifyDataSetChanged();
+                LightSerialOperation.getInstance().send(new LightSendInfo(
+                        cabinet.getTargetAddressForLight(),
+                        cabinet.getSourceAddress(), lightNumbers));
+                DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
+                        cabinet.getSourceAddress(), cabinet.getLockNumber()));
+                DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
 
                 break;
             case GET_TOOLS_IN_BOX_LIST_SUCCESS_TWO:
@@ -328,6 +333,12 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
     }
 
     private void init() {
+        userIDTemp = spUtil.getString(Key.UserIDTemp, "");
+        unitNumber = spUtil.getString(Key.UnitNumber, "");
+        deviceId = spUtil.getString(Key.DeviceId, "");
+
+        propertyInvolved = getIntent().getIntExtra("PropertyInvolved", 1);
+
         userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserIDTemp, "");
         cellNumber = getIntent().getExtras().getInt("CellNumber");
         cabinet = CabinetService.getInstance().queryEq(cellNumber);
@@ -566,6 +577,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                             JSONObject jsonObject = data.getJSONObject(i);
                             Tools tools = new Tools();
                             tools.setCaseNumber(jsonObject.getString("CaseNumber"));
+                            tools.setPropertyInvolved(String.valueOf(propertyInvolved));
                             tools.setPropertyInvolvedName(jsonObject.getString("PropertyInVolvedName"));
                             tools.setPropertyNumber(jsonObject.getString("PropertyNumber"));
                             tools.setMechanismCoding(jsonObject.getString("MechanismCoding"));
@@ -573,7 +585,9 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                             tools.setEpc(jsonObject.getString("EPC"));
                             tools.setCellNumber(jsonObject.getInt("CountErNumber"));
                             tools.setToolLightNumber(jsonObject.getInt("Light"));
-                            tools.setToolState(jsonObject.getInt("State"));
+                            tools.setState(jsonObject.getInt("State"));
+                            tools.setNameParty(jsonObject.getString("NameParty"));
+                            tools.setOperateTime(jsonObject.getString("OperateTime"));
                             toolsList.add(tools);
                         }
                         Message msg = Message.obtain();
@@ -618,14 +632,15 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
         JSONObject jsonObject = new JSONObject();
         url = NetworkRequest.getInstance().urlUpOutBoundList;
         try {
-            jsonObject.put("CreatorID", spUtil.getString(Key.UserIDTemp, ""));
+            jsonObject.put("CreatorID", userIDTemp);
             jsonObject.put("Creator ", spUtil.getString(Key.NameTemp, ""));
-            jsonObject.put("CabinetID", spUtil.getString(Key.DeviceId, ""));
+            jsonObject.put("CabinetID", deviceId);
             jsonObject.put("TypeState", 1);
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < upAccessingList.size(); i++) {
                 JSONObject dataJsonObject = new JSONObject();
                 dataJsonObject.put("CaseNumber", upAccessingList.get(i).getCaseNumber());
+                dataJsonObject.put("PropertyInVolved", propertyInvolved);
                 dataJsonObject.put("PropertyInVolvedName", upAccessingList.get(i).getPropertyInvolvedName());
                 dataJsonObject.put("PropertyNumber", upAccessingList.get(i).getPropertyNumber());
                 dataJsonObject.put("MechanismCoding", upAccessingList.get(i).getMechanismCoding());
@@ -633,8 +648,9 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 dataJsonObject.put("EPC", upAccessingList.get(i).getEpc());
                 dataJsonObject.put("CountErNumber", upAccessingList.get(i).getCellNumber());
                 dataJsonObject.put("Light", upAccessingList.get(i).getToolLightNumber());
-                dataJsonObject.put("State", upAccessingList.get(i).getToolState());
-                dataJsonObject.put("LendTime", TimeOpera.getStringDate());
+                dataJsonObject.put("State", upAccessingList.get(i).getState());
+                dataJsonObject.put("OperateTime", TimeOpera.getStringDateShort());
+                dataJsonObject.put("CabinetID", deviceId);
                 jsonArray.put(dataJsonObject);
                 LogUtil.getInstance().d("出库上报写入：" + jsonArray);
 

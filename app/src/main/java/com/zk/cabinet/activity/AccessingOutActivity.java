@@ -460,6 +460,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 timerStart();
 
                 progress.setMessage("正在提交出库数据，请稍后......");
+                progress.show();
                 getUpOutBoundList(accessingList);
 
 //                toolsList = ToolsService.getInstance().queryEq(cabinet.getCellNumber(), 0);
@@ -530,6 +531,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
         lightNumbers.clear();
         LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
                 cabinet.getSourceAddress(), lightNumbers));
+        if (progress.isShowing()) progress.dismiss();
         super.onDestroy();
     }
 

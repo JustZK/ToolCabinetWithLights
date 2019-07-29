@@ -67,6 +67,10 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
             case GET_IN_BOUND_LIST_ERROR:
                 if (progressDialog != null && progressDialog.isShowing())
                     progressDialog.dismiss();
+                list.clear();
+                ToolsService.getInstance().insert(list);
+                mAdapter.setList(list);
+                mAdapter.notifyDataSetChanged();
                 showToast(msg.obj.toString());
                 break;
         }
@@ -158,11 +162,14 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
 //        if (list == null) list = new ArrayList<>();
 //        mAdapter.setList(list);
 //        mAdapter.notifyDataSetChanged();
-        getInBoundList();
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("正在联网获取入库清单，请稍后......");
-        progressDialog.show();
-        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_CODE) {
+            getInBoundList();
+            if (progressDialog == null)
+                progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("正在联网获取入库清单，请稍后......");
+            progressDialog.show();
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private static class MHandler extends Handler {

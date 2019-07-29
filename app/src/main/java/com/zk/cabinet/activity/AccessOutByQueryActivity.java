@@ -54,6 +54,7 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
     private String userIDTemp, unitNumber, deviceId;
 
     private MHandler mHandler;
+
     private void handleMessage(Message msg) {
         switch (msg.what) {
             case GET_OUT_BOUND_LIST_SUCCESS:
@@ -174,12 +175,14 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
 //        if (list == null) list = new ArrayList<>();
 //        mAdapter.setList(list);
 //        mAdapter.notifyDataSetChanged();
-
-        getOutBoundList();
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("正在联网获取入库清单，请稍后......");
-        progressDialog.show();
-        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_CODE) {
+            getOutBoundList();
+            if (progressDialog == null)
+                progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("正在联网获取入库清单，请稍后......");
+            progressDialog.show();
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private static class MHandler extends Handler {

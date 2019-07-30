@@ -1,15 +1,22 @@
 package com.zk.cabinet.activity;
 
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.databinding.DataBindingUtil;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -25,16 +32,26 @@ import com.zk.cabinet.databinding.ActivityMainBinding;
 import com.zk.cabinet.databinding.DilaogLoginBinding;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.card.CardSerialOperation;
+import com.zk.cabinet.util.LogUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.SharedPreferencesUtil.Record;
 import com.zk.cabinet.util.TimeOpera;
 import com.zk.cabinet.view.TimeOffAppCompatActivity;
+import com.zkteco.android.biometric.core.device.ParameterHelper;
+import com.zkteco.android.biometric.core.device.TransportType;
+import com.zkteco.android.biometric.core.utils.LogHelper;
+import com.zkteco.android.biometric.module.fingerprint.FingerprintCaptureListener;
+import com.zkteco.android.biometric.module.fingerprint.FingerprintFactory;
+import com.zkteco.android.biometric.module.fingerprint.FingerprintSensor;
+import com.zkteco.android.biometric.module.fingerprint.exception.FingerprintSensorException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends TimeOffAppCompatActivity implements View.OnClickListener,
         View.OnLongClickListener {
@@ -53,6 +70,13 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
     private DilaogLoginBinding dilaogLoginBinding;
     private ProgressDialog progressDialog;
     private boolean isLanding = false;
+
+
+    private static final int VID = 6997;    //Silkid VID always 6997
+    private static final int PID = 289;     //Silkid PID always 289
+    private UsbManager musbManager = null;
+    private final String ACTION_USB_PERMISSION = "com.zk.cabinet.USB_PERMISSION";
+    private FingerprintSensor fingerprintSensor;
 
     private void handleMessage(Message msg) {
         switch (msg.what) {
@@ -107,31 +131,49 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
     }
 
     private void init() {
-//        businessServiceIntent = new Intent(this, BusinessService.class);
-//        businessServiceConnection = new ServiceConnection() {
-//            @Override
-//            public void onServiceConnected(ComponentName name, IBinder service) {
-//                businessMessenger = new Messenger(service);
-////                Messenger messenger = new Messenger(service);
-//                Message msg = Message.obtain();
-//                msg.what = SelfComm.BUSINESS_SERVICE_CONNECT;
-//                msg.replyTo = new Messenger(mHandler);
-//                try {
-//                    businessMessenger.send(msg);
-//                } catch (RemoteException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            @Override
-//            public void onServiceDisconnected(ComponentName name) {
-//
-//            }
-//        };
 
         progressDialog = new ProgressDialog(this);
 
         CardSerialOperation.getInstance().onCardListener(cardListener);
+
+
+        startFingerprintSensor();
+        RequestDevicePermission();
+
+        LogUtil.getInstance().d("指纹open ：fingerprintSensor：：：" + fingerprintSensor);
+
+        try {
+            fingerprintSensor.open(0);
+        } catch (FingerprintSensorException e) {
+            e.printStackTrace();
+            LogUtil.getInstance().d("指纹open ：：：：" + e);
+        }
+        fingerprintSensor.setFingerprintCaptureListener(0, new FingerprintCaptureListener() {
+            @Override
+            public void captureOK(int i, byte[] bytes, int[] ints, byte[] bytes1) {
+                LogUtil.getInstance().d("指纹：i：：：" + i);
+
+                StringBuilder buffers = new StringBuilder();
+                for (int j = 0; j < bytes1.length; j++) {
+                    buffers.append(Integer.toHexString((bytes1[j] & 0xff)));
+                    buffers.append(" ");
+                }
+                LogUtil.getInstance().d("指纹FingerprintCaptureListener", "test ints" + ints);
+                LogUtil.getInstance().d("指纹FingerprintCaptureListener", "test Received" + buffers);
+            }
+
+            @Override
+            public void captureError(FingerprintSensorException e) {
+                LogUtil.getInstance().d("error：FingerprintSensorException：：：" + e);
+            }
+        });
+        try {
+            fingerprintSensor.startCapture(0);
+        } catch (FingerprintSensorException e) {
+            e.printStackTrace();
+            LogUtil.getInstance().d("指纹：startCapture FingerprintSensorException：：：" + e);
+        }
+        fingerprintSensor.setFingerprintCaptureMode(0, FingerprintCaptureListener.MODE_CAPTURE_TEMPLATE);
     }
 
     private CardListener cardListener = new CardListener() {
@@ -356,4 +398,58 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
 //        }
 //        return super.onKeyDown(keyCode, event);
 //    }
+
+
+    private BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (ACTION_USB_PERMISSION.equals(action)) {
+                synchronized (this) {
+                    UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                    } else {
+//                        Toast.makeText(this, "USB未授权", Toast.LENGTH_SHORT).show();
+                        LogUtil.getInstance().d("USB未授权");
+                        //mTxtReport.setText("USB未授权");
+                    }
+                }
+            }
+        }
+    };
+
+    private void RequestDevicePermission() {
+        musbManager = (UsbManager) this.getSystemService(Context.USB_SERVICE);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_USB_PERMISSION);
+        filter.addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED);
+        this.registerReceiver(mUsbReceiver, filter);
+
+        for (UsbDevice device : musbManager.getDeviceList().values()) {
+            if (device.getVendorId() == VID && device.getProductId() == PID) {
+                Intent intent = new Intent(ACTION_USB_PERMISSION);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+                musbManager.requestPermission(device, pendingIntent);
+            }
+        }
+    }
+
+    private void startFingerprintSensor() {
+        // Define output log level
+        LogHelper.setLevel(Log.VERBOSE);
+        // Start fingerprint sensor
+        Map fingerprintParams = new HashMap();
+        //set vid
+        fingerprintParams.put(ParameterHelper.PARAM_KEY_VID, VID);
+        //set pid
+        fingerprintParams.put(ParameterHelper.PARAM_KEY_PID, PID);
+        fingerprintSensor = FingerprintFactory.createFingerprintSensor(this, TransportType.USB, fingerprintParams);
+
+        /*
+        fingerprintParams.put(ParameterHelper.PARAM_SERIAL_SERIALNAME, fpSerialName);
+        fingerprintParams.put(ParameterHelper.PARAM_SERIAL_BAUDRATE, fpBaudrate);
+        fingerprintSensor = FingerprintFactory.createFingerprintSensor(this, TransportType.SERIALPORT, fingerprintParams);
+        */
+    }
 }

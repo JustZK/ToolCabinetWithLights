@@ -36,6 +36,7 @@ import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.door.DoorSerialOperation;
 import com.zk.cabinet.serial.light.LightSerialOperation;
 import com.zk.cabinet.util.LogUtil;
+import com.zk.cabinet.util.MediaPlayerUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.TimeOpera;
@@ -185,7 +186,8 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                             if (!isExist) {
                                 takeNumber++;
 
-                                tools.setState(1);
+                                tools.setState(0);
+                                tools.setOperateTime(TimeOpera.getStringDateShort());
                                 accessingList.add(tools);
                             }
                         }
@@ -227,6 +229,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                             dialog_accessing_reopen_error_tv.setText("本次操作只允许取出！");
+                            MediaPlayerUtil.getInstance().reportNumber(0,0, 2);
                         } else {
                             boolean isOK = true;
                             for (Tools tools : accessingList) {
@@ -237,6 +240,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                                 }
                             }
                             if (isOK) {
+                                MediaPlayerUtil.getInstance().reportNumber(takeNumber,saveNumber, 0);
                                 dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);
@@ -244,12 +248,14 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                                 dialog_accessing_reopen_error_tv.setText("您取出了未选中的工具！");
+                                MediaPlayerUtil.getInstance().reportNumber(0,0, 3);
                             }
                         }
                     }
                 } else {
                     accessClear();
                     showToast("读卡器离线，本次存取操作无效！");
+                    MediaPlayerUtil.getInstance().reportNumber(0,0, 1);
                 }
                 break;
             case OPEN_LIGHT_RESULT:
@@ -651,7 +657,8 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 dataJsonObject.put("CountErNumber", upAccessingList.get(i).getCellNumber());
                 dataJsonObject.put("Light", upAccessingList.get(i).getToolLightNumber());
                 dataJsonObject.put("State", upAccessingList.get(i).getState());
-                dataJsonObject.put("OperateTime", TimeOpera.getStringDateShort());
+                dataJsonObject.put("OperateTime", upAccessingList.get(i).getOperateTime());
+                dataJsonObject.put("NameParty", upAccessingList.get(i).getNameParty());
                 dataJsonObject.put("CabinetID", deviceId);
                 jsonArray.put(dataJsonObject);
                 LogUtil.getInstance().d("出库上报写入：" + jsonArray);

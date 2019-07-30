@@ -35,6 +35,7 @@ import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.door.DoorSerialOperation;
 import com.zk.cabinet.serial.light.LightSerialOperation;
 import com.zk.cabinet.util.LogUtil;
+import com.zk.cabinet.util.MediaPlayerUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.TimeOpera;
@@ -180,20 +181,11 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                             boolean isSave = false;
                             for (Tools tools : depositList) {
                                 if (inventoryInfo.getEPC().equalsIgnoreCase(tools.getEpc())) {
-                                    Tools toolsTemp = new Tools();
+                                    Tools toolsTemp = tools;
                                     saveNumber++; // 有工具存入
 
-                                    toolsTemp.setCaseNumber(getIntent().getExtras().getString("CaseNumber"));
-                                    toolsTemp.setPropertyInvolvedName(getIntent().getExtras().getString("PropertyInVolvedName"));
-                                    toolsTemp.setPropertyNumber(getIntent().getExtras().getString("PropertyNumber"));
-                                    toolsTemp.setMechanismCoding(getIntent().getExtras().getString("MechanismCoding"));
-                                    toolsTemp.setMechanismName(getIntent().getExtras().getString("MechanismName"));
-                                    toolsTemp.setEpc(tools.getEpc());
-                                    toolsTemp.setCellNumber(cellNumber);
-                                    toolsTemp.setState(0);
-                                    toolsTemp.setToolLightNumber(needOpenLightNumbers.get(0));
-                                    toolsTemp.setSelected(false);
-
+                                    toolsTemp.setState(1);
+                                    toolsTemp.setOperateTime(TimeOpera.getStringDateShort());
 
                                     accessingList.add(toolsTemp);
                                     isSave = true;
@@ -252,12 +244,14 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                             dialog_accessing_reopen_error_tv.setText("本次操作只允许存入！");
+                            MediaPlayerUtil.getInstance().reportNumber(0,0, 5);
                         } else {
                             if (accessingList.size() == 1) {
                                 boolean isOK = false;
                                 for (Tools tools : depositList) {
                                     if (tools.getEpc().equalsIgnoreCase(accessingList.get(0).getEpc())) {
                                         isOK = true;
+                                        MediaPlayerUtil.getInstance().reportNumber(takeNumber,saveNumber, 0);
                                         dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
                                         accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
                                         accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);
@@ -268,21 +262,25 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                     accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                                     accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                                     dialog_accessing_reopen_error_tv.setText("您存入的工具和您准备存入的工具不符！");
+                                    MediaPlayerUtil.getInstance().reportNumber(0,0, 6);
                                 }
                             } else if (accessingList.size() > 1) {
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                                 dialog_accessing_reopen_error_tv.setText("您存入了多个工具！");
+                                MediaPlayerUtil.getInstance().reportNumber(0,0, 7);
                             } else if (accessingList.size() == 0) {
                                 dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);
+                                MediaPlayerUtil.getInstance().reportNumber(takeNumber,saveNumber, 0);
                             }
                         }
                     }
                 } else {
                     accessClear();
                     showToast("读卡器离线，本次存取操作无效！");
+                    MediaPlayerUtil.getInstance().reportNumber(0,0, 1);
                 }
                 break;
             case OPEN_LIGHT_RESULT:
@@ -308,6 +306,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                         ProgressDialogShow("正在第1次盘点，请稍后......");
 
                     } else if (needOpenLightNumbers.size() > 1) {
+                        MediaPlayerUtil.getInstance().reportNumber(0,0, 4);
                         showToast("本次操作只允许归还一件工具");
                     }
                 }
@@ -716,7 +715,8 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                 dataJsonObject.put("CountErNumber", upAccessingList.get(i).getCellNumber());
                 dataJsonObject.put("Light", upAccessingList.get(i).getToolLightNumber());
                 dataJsonObject.put("State", upAccessingList.get(i).getState());
-                dataJsonObject.put("OperateTime", TimeOpera.getStringDateShort());
+                dataJsonObject.put("OperateTime", upAccessingList.get(i).getOperateTime());
+                dataJsonObject.put("NameParty", upAccessingList.get(i).getNameParty());
                 dataJsonObject.put("CabinetID", deviceId);
                 jsonArray.put(dataJsonObject);
                 LogUtil.getInstance().d("出库上报写入：" + jsonArray);

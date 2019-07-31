@@ -70,7 +70,6 @@
             android:textSize="@dimen/sub_big_text" />
 
         <TextView
-            android:id="@+id/adapter_tools_epc_tv"
             android:layout_width="0dp"
             android:layout_height="@dimen/title_medium_spacing"
             android:layout_weight="5"
@@ -84,20 +83,19 @@
             android:layout_height="@dimen/title_medium_spacing"
             android:layout_weight="3"
             android:gravity="center"
-            android:text="@string/title_tool_state"
+            android:text="用户指纹："
             android:textColor="@color/gray_deep"
-            android:textSize="@dimen/sub_big_text"
-            android:visibility="invisible" />
+            android:textSize="@dimen/sub_big_text" />
 
         <TextView
+            android:id="@+id/adapter_user_finger_tv"
             android:layout_width="0dp"
             android:layout_height="@dimen/title_medium_spacing"
             android:layout_weight="5"
             android:gravity="center|left"
             android:text="@string/tool_state"
             android:textColor="@color/gray_deep"
-            android:textSize="@dimen/sub_medium_text"
-            android:visibility="invisible" />
+            android:textSize="@dimen/sub_medium_text" />
 
     </LinearLayout>
 

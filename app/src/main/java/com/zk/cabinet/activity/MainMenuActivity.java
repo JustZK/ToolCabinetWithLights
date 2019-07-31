@@ -45,7 +45,7 @@ public class MainMenuActivity extends TimeOffAppCompatActivity {
 
         } else {
 //            list.add(new ImageTextListInfo(R.drawable.goods, getString(R.string.tool_management)));
-//            list.add(new ImageTextListInfo(R.drawable.personnel_management, getString(R.string.personnel_management)));
+            list.add(new ImageTextListInfo(R.drawable.personnel_management, getString(R.string.personnel_management)));
             list.add(new ImageTextListInfo(R.drawable.system_settings, getString(R.string.system_settings)));
         }
 
@@ -99,6 +99,10 @@ public class MainMenuActivity extends TimeOffAppCompatActivity {
                     break;
                 case R.drawable.system_settings:
                     intent.setClass(MainMenuActivity.this, SystemSettingsActivity.class);
+                    startActivityForResult(intent, REQUEST_CODE);
+                    break;
+                case R.drawable.personnel_management:
+                    intent.setClass(MainMenuActivity.this, PersonnelManagementActivity.class);
                     startActivityForResult(intent, REQUEST_CODE);
                     break;
                 default:

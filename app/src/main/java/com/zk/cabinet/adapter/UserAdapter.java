@@ -53,7 +53,8 @@ public class UserAdapter extends BaseAdapter {
             viewHolder = new ViewHolder(
                     (LinearLayout) view.findViewById(R.id.adapter_user_item_ll),
                     (TextView) view.findViewById(R.id.adapter_user_name_tv),
-                    (TextView) view.findViewById(R.id.adapter_user_id_tv));
+                    (TextView) view.findViewById(R.id.adapter_user_id_tv),
+                    (TextView) view.findViewById(R.id.adapter_user_finger_tv));
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -61,6 +62,7 @@ public class UserAdapter extends BaseAdapter {
 
         viewHolder.adapter_user_name_tv.setText(user.getUserName());
         viewHolder.adapter_user_id_tv.setText(user.getUserID());
+        viewHolder.adapter_user_finger_tv.setText(user.getFingerPrint() == null ? "点击录入指纹" : "******");
 
         if (i % 2 != 0) {
             viewHolder.adapter_user_item_ll.setBackgroundColor(mContext.getResources().getColor(R.color.md_indigo_55));
@@ -76,13 +78,16 @@ public class UserAdapter extends BaseAdapter {
 
         protected TextView adapter_user_name_tv;
         protected TextView adapter_user_id_tv;
+        protected TextView adapter_user_finger_tv;
 
         public ViewHolder(LinearLayout adapter_user_item_ll,
                           TextView adapter_user_name_tv,
-                          TextView adapter_user_id_tv) {
+                          TextView adapter_user_id_tv,
+                          TextView adapter_user_finger_tv) {
             this.adapter_user_item_ll = adapter_user_item_ll;
             this.adapter_user_name_tv = adapter_user_name_tv;
             this.adapter_user_id_tv = adapter_user_id_tv;
+            this.adapter_user_finger_tv = adapter_user_finger_tv;
         }
     }
 

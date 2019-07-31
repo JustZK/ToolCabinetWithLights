@@ -7,6 +7,7 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Unique;
 
 @Entity(nameInDb = "User")
 public class User {
@@ -21,7 +22,16 @@ public class User {
 
     @SerializedName("UserID")
     @Property(nameInDb = "UserID")
+    @Unique
     private String userID;
+
+    @SerializedName("Code")
+    @Property(nameInDb = "Code")
+    private String code;
+
+    @SerializedName("MobilePhone")
+    @Property(nameInDb = "MobilePhone")
+    private String mobilePhone;
 
     @SerializedName("Password")
     @Property(nameInDb = "Password")
@@ -31,17 +41,32 @@ public class User {
     private String cardID;
 
     @Property(nameInDb = "FingerPrint")
-    private String fingerPrint;
+    private byte[] fingerPrint;
 
-    @Generated(hash = 131490364)
-    public User(Long id, String userName, String userID, String password,
-            String cardID, String fingerPrint) {
+    @Property(nameInDb = "FingerPrintTime")
+    private String fingerPrintTime;
+
+    @Property(nameInDb = "MechanismCoding")
+    private String mechanismCoding;
+
+    @Property(nameInDb = "MechanismName")
+    private String mechanismName;
+
+    @Generated(hash = 1909410224)
+    public User(Long id, String userName, String userID, String code,
+            String mobilePhone, String password, String cardID, byte[] fingerPrint,
+            String fingerPrintTime, String mechanismCoding, String mechanismName) {
         this.id = id;
         this.userName = userName;
         this.userID = userID;
+        this.code = code;
+        this.mobilePhone = mobilePhone;
         this.password = password;
         this.cardID = cardID;
         this.fingerPrint = fingerPrint;
+        this.fingerPrintTime = fingerPrintTime;
+        this.mechanismCoding = mechanismCoding;
+        this.mechanismName = mechanismName;
     }
 
     @Generated(hash = 586692638)
@@ -88,13 +113,54 @@ public class User {
         this.cardID = cardID;
     }
 
-    public String getFingerPrint() {
+    public byte[] getFingerPrint() {
         return this.fingerPrint;
     }
 
-    public void setFingerPrint(String fingerPrint) {
+    public void setFingerPrint(byte[] fingerPrint) {
         this.fingerPrint = fingerPrint;
     }
 
+    public String getFingerPrintTime() {
+        return this.fingerPrintTime;
+    }
+
+    public void setFingerPrintTime(String fingerPrintTime) {
+        this.fingerPrintTime = fingerPrintTime;
+    }
+
+    public String getMechanismName() {
+        return this.mechanismName;
+    }
+
+    public void setMechanismName(String mechanismName) {
+        this.mechanismName = mechanismName;
+    }
+
+    public String getCode() {
+        return this.code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getMobilePhone() {
+        return this.mobilePhone;
+    }
+
+    public void setMobilePhone(String mobilePhone) {
+        this.mobilePhone = mobilePhone;
+    }
+
+    public String getMechanismCoding() {
+        return this.mechanismCoding;
+    }
+
+    public void setMechanismCoding(String mechanismCoding) {
+        this.mechanismCoding = mechanismCoding;
+    }
+
+    
     
 }

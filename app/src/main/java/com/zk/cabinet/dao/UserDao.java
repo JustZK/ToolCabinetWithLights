@@ -27,9 +27,14 @@ public class UserDao extends AbstractDao<User, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "ID");
         public final static Property UserName = new Property(1, String.class, "userName", false, "UserName");
         public final static Property UserID = new Property(2, String.class, "userID", false, "UserID");
-        public final static Property Password = new Property(3, String.class, "password", false, "Password");
-        public final static Property CardID = new Property(4, String.class, "cardID", false, "CardID");
-        public final static Property FingerPrint = new Property(5, String.class, "fingerPrint", false, "FingerPrint");
+        public final static Property Code = new Property(3, String.class, "code", false, "Code");
+        public final static Property MobilePhone = new Property(4, String.class, "mobilePhone", false, "MobilePhone");
+        public final static Property Password = new Property(5, String.class, "password", false, "Password");
+        public final static Property CardID = new Property(6, String.class, "cardID", false, "CardID");
+        public final static Property FingerPrint = new Property(7, byte[].class, "fingerPrint", false, "FingerPrint");
+        public final static Property FingerPrintTime = new Property(8, String.class, "fingerPrintTime", false, "FingerPrintTime");
+        public final static Property MechanismCoding = new Property(9, String.class, "mechanismCoding", false, "MechanismCoding");
+        public final static Property MechanismName = new Property(10, String.class, "mechanismName", false, "MechanismName");
     }
 
 
@@ -47,10 +52,15 @@ public class UserDao extends AbstractDao<User, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"User\" (" + //
                 "\"ID\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"UserName\" TEXT," + // 1: userName
-                "\"UserID\" TEXT," + // 2: userID
-                "\"Password\" TEXT," + // 3: password
-                "\"CardID\" TEXT," + // 4: cardID
-                "\"FingerPrint\" TEXT);"); // 5: fingerPrint
+                "\"UserID\" TEXT UNIQUE ," + // 2: userID
+                "\"Code\" TEXT," + // 3: code
+                "\"MobilePhone\" TEXT," + // 4: mobilePhone
+                "\"Password\" TEXT," + // 5: password
+                "\"CardID\" TEXT," + // 6: cardID
+                "\"FingerPrint\" BLOB," + // 7: fingerPrint
+                "\"FingerPrintTime\" TEXT," + // 8: fingerPrintTime
+                "\"MechanismCoding\" TEXT," + // 9: mechanismCoding
+                "\"MechanismName\" TEXT);"); // 10: mechanismName
     }
 
     /** Drops the underlying database table. */
@@ -78,19 +88,44 @@ public class UserDao extends AbstractDao<User, Long> {
             stmt.bindString(3, userID);
         }
  
+        String code = entity.getCode();
+        if (code != null) {
+            stmt.bindString(4, code);
+        }
+ 
+        String mobilePhone = entity.getMobilePhone();
+        if (mobilePhone != null) {
+            stmt.bindString(5, mobilePhone);
+        }
+ 
         String password = entity.getPassword();
         if (password != null) {
-            stmt.bindString(4, password);
+            stmt.bindString(6, password);
         }
  
         String cardID = entity.getCardID();
         if (cardID != null) {
-            stmt.bindString(5, cardID);
+            stmt.bindString(7, cardID);
         }
  
-        String fingerPrint = entity.getFingerPrint();
+        byte[] fingerPrint = entity.getFingerPrint();
         if (fingerPrint != null) {
-            stmt.bindString(6, fingerPrint);
+            stmt.bindBlob(8, fingerPrint);
+        }
+ 
+        String fingerPrintTime = entity.getFingerPrintTime();
+        if (fingerPrintTime != null) {
+            stmt.bindString(9, fingerPrintTime);
+        }
+ 
+        String mechanismCoding = entity.getMechanismCoding();
+        if (mechanismCoding != null) {
+            stmt.bindString(10, mechanismCoding);
+        }
+ 
+        String mechanismName = entity.getMechanismName();
+        if (mechanismName != null) {
+            stmt.bindString(11, mechanismName);
         }
     }
 
@@ -113,19 +148,44 @@ public class UserDao extends AbstractDao<User, Long> {
             stmt.bindString(3, userID);
         }
  
+        String code = entity.getCode();
+        if (code != null) {
+            stmt.bindString(4, code);
+        }
+ 
+        String mobilePhone = entity.getMobilePhone();
+        if (mobilePhone != null) {
+            stmt.bindString(5, mobilePhone);
+        }
+ 
         String password = entity.getPassword();
         if (password != null) {
-            stmt.bindString(4, password);
+            stmt.bindString(6, password);
         }
  
         String cardID = entity.getCardID();
         if (cardID != null) {
-            stmt.bindString(5, cardID);
+            stmt.bindString(7, cardID);
         }
  
-        String fingerPrint = entity.getFingerPrint();
+        byte[] fingerPrint = entity.getFingerPrint();
         if (fingerPrint != null) {
-            stmt.bindString(6, fingerPrint);
+            stmt.bindBlob(8, fingerPrint);
+        }
+ 
+        String fingerPrintTime = entity.getFingerPrintTime();
+        if (fingerPrintTime != null) {
+            stmt.bindString(9, fingerPrintTime);
+        }
+ 
+        String mechanismCoding = entity.getMechanismCoding();
+        if (mechanismCoding != null) {
+            stmt.bindString(10, mechanismCoding);
+        }
+ 
+        String mechanismName = entity.getMechanismName();
+        if (mechanismName != null) {
+            stmt.bindString(11, mechanismName);
         }
     }
 
@@ -140,9 +200,14 @@ public class UserDao extends AbstractDao<User, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // userName
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // userID
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // password
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // cardID
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // fingerPrint
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // code
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // mobilePhone
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // password
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // cardID
+            cursor.isNull(offset + 7) ? null : cursor.getBlob(offset + 7), // fingerPrint
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // fingerPrintTime
+            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // mechanismCoding
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10) // mechanismName
         );
         return entity;
     }
@@ -152,9 +217,14 @@ public class UserDao extends AbstractDao<User, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setUserName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setUserID(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setPassword(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setCardID(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setFingerPrint(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setCode(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setMobilePhone(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setPassword(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setCardID(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setFingerPrint(cursor.isNull(offset + 7) ? null : cursor.getBlob(offset + 7));
+        entity.setFingerPrintTime(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setMechanismCoding(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setMechanismName(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
      }
     
     @Override

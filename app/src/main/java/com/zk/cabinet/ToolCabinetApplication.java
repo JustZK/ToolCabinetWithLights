@@ -60,8 +60,8 @@ public class ToolCabinetApplication extends Application {
 
 //        CardSerialOperation.getInstance().openComPort();
 
-        DoorSerialOperation.getInstance().openComPort();
-        LightSerialOperation.getInstance().openComPort();
+//        DoorSerialOperation.getInstance().openComPort();
+//        LightSerialOperation.getInstance().openComPort();
         MediaPlayerUtil.getInstance().init(this);
 
         NetworkRequest.getInstance().init(this);

@@ -27,11 +27,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.zk.cabinet.R;
+import com.zk.cabinet.bean.User;
 import com.zk.cabinet.callback.CardListener;
+import com.zk.cabinet.callback.FingerprintVerifyListener;
 import com.zk.cabinet.databinding.ActivityMainBinding;
 import com.zk.cabinet.databinding.DilaogLoginBinding;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.card.CardSerialOperation;
+import com.zk.cabinet.util.FingerprintParsingLibrary;
 import com.zk.cabinet.util.LogUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.SharedPreferencesUtil.Record;
@@ -44,6 +47,7 @@ import com.zkteco.android.biometric.module.fingerprint.FingerprintCaptureListene
 import com.zkteco.android.biometric.module.fingerprint.FingerprintFactory;
 import com.zkteco.android.biometric.module.fingerprint.FingerprintSensor;
 import com.zkteco.android.biometric.module.fingerprint.exception.FingerprintSensorException;
+import com.zkteco.zkfinger.FingerprintService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,6 +62,8 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
     private final static int CARD = 0x00;
     private final static int LOGIN_SUCCESS = 0x01;
     private final static int LOGIN_ERROR = 0x02;
+    private final static int FINGER_LOGIN_SUCCESS = 0x03;
+    private final static int FINGER_LOGIN_ERROR = 0x04;
     private ActivityMainBinding mainBinding;
     private AlertDialog dialogLogin;
 
@@ -70,13 +76,6 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
     private DilaogLoginBinding dilaogLoginBinding;
     private ProgressDialog progressDialog;
     private boolean isLanding = false;
-
-
-    private static final int VID = 6997;    //Silkid VID always 6997
-    private static final int PID = 289;     //Silkid PID always 289
-    private UsbManager musbManager = null;
-    private final String ACTION_USB_PERMISSION = "com.zk.cabinet.USB_PERMISSION";
-    private FingerprintSensor fingerprintSensor;
 
     private void handleMessage(Message msg) {
         switch (msg.what) {
@@ -103,6 +102,7 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                 records.add(new Record(Key.UnitNumber, bundleLogin.getString("MechanismCoding")));
                 spUtil.applyValue(records);
 
+                FingerprintParsingLibrary.getInstance().setFingerprintVerify(false);
                 Intent intent = new Intent();
                 intent.putExtra("UserType", 1);
                 intent.setClass(MainActivity.this, MainMenuActivity.class);
@@ -112,6 +112,27 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
             case LOGIN_ERROR:
                 progressDialog.dismiss();
                 isLanding = false;
+                showToast(msg.obj.toString());
+                break;
+            case FINGER_LOGIN_SUCCESS:
+                FingerprintParsingLibrary.getInstance().setFingerprintVerify(false);
+                ArrayList<Record> records1 = new ArrayList<>();
+                User user = (User) msg.obj;
+                records1.add(new Record(Key.UserIDTemp,  user.getUserID()));
+                records1.add(new Record(Key.CodeTemp, user.getCode()));
+                records1.add(new Record(Key.NameTemp, user.getUserName()));
+//                records1.add(new Record(Key.GenderTemp, user.get));
+                records1.add(new Record(Key.MobilePhoneTemp, user.getMobilePhone()));
+                records1.add(new Record(Key.CardIDTemp, user.getCardID()));
+                records1.add(new Record(Key.UnitNumber, user.getMechanismCoding()));
+                spUtil.applyValue(records1);
+
+                Intent intent1 = new Intent();
+                intent1.putExtra("UserType", 1);
+                intent1.setClass(MainActivity.this, MainMenuActivity.class);
+                startActivityForResult(intent1, REQUEST_CODE);
+                break;
+            case FINGER_LOGIN_ERROR:
                 showToast(msg.obj.toString());
                 break;
         }
@@ -136,44 +157,11 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
 
         CardSerialOperation.getInstance().onCardListener(cardListener);
 
+        FingerprintParsingLibrary.getInstance().init(this);
+        FingerprintParsingLibrary.getInstance().onFingerprintVerifyListener(fingerprintVerifyListener);
+        FingerprintParsingLibrary.getInstance().setFingerprintVerify(true);
 
-        startFingerprintSensor();
-        RequestDevicePermission();
 
-        LogUtil.getInstance().d("指纹open ：fingerprintSensor：：：" + fingerprintSensor);
-
-        try {
-            fingerprintSensor.open(0);
-        } catch (FingerprintSensorException e) {
-            e.printStackTrace();
-            LogUtil.getInstance().d("指纹open ：：：：" + e);
-        }
-        fingerprintSensor.setFingerprintCaptureListener(0, new FingerprintCaptureListener() {
-            @Override
-            public void captureOK(int i, byte[] bytes, int[] ints, byte[] bytes1) {
-                LogUtil.getInstance().d("指纹：i：：：" + i);
-
-                StringBuilder buffers = new StringBuilder();
-                for (int j = 0; j < bytes1.length; j++) {
-                    buffers.append(Integer.toHexString((bytes1[j] & 0xff)));
-                    buffers.append(" ");
-                }
-                LogUtil.getInstance().d("指纹FingerprintCaptureListener", "test ints" + ints);
-                LogUtil.getInstance().d("指纹FingerprintCaptureListener", "test Received" + buffers);
-            }
-
-            @Override
-            public void captureError(FingerprintSensorException e) {
-                LogUtil.getInstance().d("error：FingerprintSensorException：：：" + e);
-            }
-        });
-        try {
-            fingerprintSensor.startCapture(0);
-        } catch (FingerprintSensorException e) {
-            e.printStackTrace();
-            LogUtil.getInstance().d("指纹：startCapture FingerprintSensorException：：：" + e);
-        }
-        fingerprintSensor.setFingerprintCaptureMode(0, FingerprintCaptureListener.MODE_CAPTURE_TEMPLATE);
     }
 
     private CardListener cardListener = new CardListener() {
@@ -276,6 +264,7 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                         dilaogLoginBinding.dialogOtherLoginPwdEdt.setText(null);
                         dismissLoginDialog();
 
+                        FingerprintParsingLibrary.getInstance().setFingerprintVerify(false);
                         Intent intent = new Intent();
                         intent.putExtra("UserType", 0);
                         intent.setClass(MainActivity.this, MainMenuActivity.class);
@@ -294,6 +283,12 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
         return true;
     }
 
+    @Override
+    protected void onDestroy() {
+        FingerprintParsingLibrary.getInstance().close();
+        super.onDestroy();
+    }
+
     private static class MHandler extends Handler {
         private final WeakReference<MainActivity> mainActivityWeakReference;
 
@@ -309,6 +304,29 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
             }
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        FingerprintParsingLibrary.getInstance().setFingerprintVerify(true);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private FingerprintVerifyListener fingerprintVerifyListener = new FingerprintVerifyListener() {
+        @Override
+        public void fingerprintVerify(boolean result, User user) {
+            if (result) {
+                Message msg = Message.obtain();
+                msg.what = FINGER_LOGIN_SUCCESS;
+                msg.obj = user;
+                mHandler.sendMessage(msg);
+            } else {
+                Message msg = Message.obtain();
+                msg.what = FINGER_LOGIN_ERROR;
+                msg.obj = "该指纹不存在。";
+                mHandler.sendMessage(msg);
+            }
+        }
+    };
 
     /**
      * @param loginBy 0: 密码登陆 1：刷卡登陆 3：指纹登陆 4：二维码登陆
@@ -400,56 +418,5 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
 //    }
 
 
-    private BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
 
-            if (ACTION_USB_PERMISSION.equals(action)) {
-                synchronized (this) {
-                    UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                    } else {
-//                        Toast.makeText(this, "USB未授权", Toast.LENGTH_SHORT).show();
-                        LogUtil.getInstance().d("USB未授权");
-                        //mTxtReport.setText("USB未授权");
-                    }
-                }
-            }
-        }
-    };
-
-    private void RequestDevicePermission() {
-        musbManager = (UsbManager) this.getSystemService(Context.USB_SERVICE);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_USB_PERMISSION);
-        filter.addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED);
-        this.registerReceiver(mUsbReceiver, filter);
-
-        for (UsbDevice device : musbManager.getDeviceList().values()) {
-            if (device.getVendorId() == VID && device.getProductId() == PID) {
-                Intent intent = new Intent(ACTION_USB_PERMISSION);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-                musbManager.requestPermission(device, pendingIntent);
-            }
-        }
-    }
-
-    private void startFingerprintSensor() {
-        // Define output log level
-        LogHelper.setLevel(Log.VERBOSE);
-        // Start fingerprint sensor
-        Map fingerprintParams = new HashMap();
-        //set vid
-        fingerprintParams.put(ParameterHelper.PARAM_KEY_VID, VID);
-        //set pid
-        fingerprintParams.put(ParameterHelper.PARAM_KEY_PID, PID);
-        fingerprintSensor = FingerprintFactory.createFingerprintSensor(this, TransportType.USB, fingerprintParams);
-
-        /*
-        fingerprintParams.put(ParameterHelper.PARAM_SERIAL_SERIALNAME, fpSerialName);
-        fingerprintParams.put(ParameterHelper.PARAM_SERIAL_BAUDRATE, fpBaudrate);
-        fingerprintSensor = FingerprintFactory.createFingerprintSensor(this, TransportType.SERIALPORT, fingerprintParams);
-        */
-    }
 }

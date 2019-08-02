@@ -27,6 +27,7 @@ public class User {
 
     @SerializedName("Code")
     @Property(nameInDb = "Code")
+    @Unique
     private String code;
 
     @SerializedName("MobilePhone")

@@ -53,7 +53,7 @@ public class UserDao extends AbstractDao<User, Long> {
                 "\"ID\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"UserName\" TEXT," + // 1: userName
                 "\"UserID\" TEXT UNIQUE ," + // 2: userID
-                "\"Code\" TEXT," + // 3: code
+                "\"Code\" TEXT UNIQUE ," + // 3: code
                 "\"MobilePhone\" TEXT," + // 4: mobilePhone
                 "\"Password\" TEXT," + // 5: password
                 "\"CardID\" TEXT," + // 6: cardID

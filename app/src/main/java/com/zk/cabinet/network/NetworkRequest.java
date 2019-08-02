@@ -19,6 +19,8 @@ public class NetworkRequest extends VolleyRequest{
     public String urlToolsInBoxList;
     public String urlUpOutBoundList;
     public String urlUpInBoundList;
+    public String urlUserList;
+    public String urlUserFpiAdd;
     public static final String LOGIN_BY_PWD = "/api/User/Login";
     public static final String LOGIN_BY_CARD = "/api/user/card";
     public static final String OUT_BOUND_LIST = "/Api/Traffic/TrafficGdnQuery";
@@ -26,6 +28,8 @@ public class NetworkRequest extends VolleyRequest{
     public static final String TOOLS_IN_BOX_LIST = "/Api/Traffic/TrafficCabinet";
     public static final String UP_OUT_BOUND_LIST = "/Api/Traffic/TrafficGrnAdd";
     public static final String UP_IN_BOUND_LIST = "/Api/Traffic/TrafficGrnAdd";
+    public static final String USER_LIST = "/Api/Traffic/UserList";
+    public static final String USER_FPI_ADD_LIST = "/Api/Traffic/UserFPIAdd";
 
     public static NetworkRequest getInstance(){
         if (networkRequest == null) {
@@ -57,6 +61,8 @@ public class NetworkRequest extends VolleyRequest{
         urlToolsInBoxList = URL_HEAD + url + URL_COLON + port + TOOLS_IN_BOX_LIST;
         urlUpOutBoundList = URL_HEAD + url + URL_COLON + port + UP_OUT_BOUND_LIST;
         urlUpInBoundList = URL_HEAD + url + URL_COLON + port + UP_IN_BOUND_LIST;
+        urlUserList = URL_HEAD + url + URL_COLON + port + USER_LIST;
+        urlUserFpiAdd = URL_HEAD + url + URL_COLON + port + USER_FPI_ADD_LIST;
     }
 
 //    @Override

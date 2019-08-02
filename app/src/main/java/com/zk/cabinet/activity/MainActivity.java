@@ -96,7 +96,6 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                 records.add(new Record(Key.UserIDTemp, bundleLogin.getString("UserID")));
                 records.add(new Record(Key.CodeTemp, bundleLogin.getString("Code")));
                 records.add(new Record(Key.NameTemp, bundleLogin.getString("Name")));
-                records.add(new Record(Key.GenderTemp, bundleLogin.getString("Gender")));
                 records.add(new Record(Key.MobilePhoneTemp, bundleLogin.getString("MobilePhone")));
                 records.add(new Record(Key.CardIDTemp, bundleLogin.getString("CardID")));
                 records.add(new Record(Key.UnitNumber, bundleLogin.getString("MechanismCoding")));
@@ -121,7 +120,6 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                 records1.add(new Record(Key.UserIDTemp,  user.getUserID()));
                 records1.add(new Record(Key.CodeTemp, user.getCode()));
                 records1.add(new Record(Key.NameTemp, user.getUserName()));
-//                records1.add(new Record(Key.GenderTemp, user.get));
                 records1.add(new Record(Key.MobilePhoneTemp, user.getMobilePhone()));
                 records1.add(new Record(Key.CardIDTemp, user.getCardID()));
                 records1.add(new Record(Key.UnitNumber, user.getMechanismCoding()));
@@ -337,23 +335,17 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
         isLanding = true;
         String url = "";
         final JSONObject jsonObject = new JSONObject();
-//        JSONObject dataObject = new JSONObject();
         Long time = TimeOpera.getNowTime();
         try {
             if (loginBy == 0) {
                 url = NetworkRequest.getInstance().urlLoginByPwd;
-//                dataObject.put("code", user);
-//                dataObject.put("password", pwd);
 
             } else if (loginBy == 1) {
                 url = NetworkRequest.getInstance().urlLoginByPwd;
-//                dataObject.put("cardid", pwd);
 
             }
             jsonObject.put("account", user);
             jsonObject.put("password", pwd);
-//            jsonObject.put("token", EncryptUtil.md5());
-//            jsonObject.put("Data", dataObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -369,7 +361,6 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                         bundle.putString("UserID", jsonObject.getString("UserID"));
                         bundle.putString("Code", jsonObject.getString("Code"));
                         bundle.putString("Name", jsonObject.getString("Name"));
-                        bundle.putString("Gender", jsonObject.getString("Gender"));
                         bundle.putString("MobilePhone", jsonObject.getString("MobilePhone"));
                         bundle.putString("CardID", jsonObject.getString("CardID"));
                         bundle.putString("MechanismCoding", jsonObject.getString("MechanismCoding"));

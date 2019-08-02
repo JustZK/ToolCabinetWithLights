@@ -14,14 +14,28 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.EditText;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.zk.cabinet.R;
 import com.zk.cabinet.adapter.UserAdapter;
+import com.zk.cabinet.bean.Tools;
 import com.zk.cabinet.bean.User;
 import com.zk.cabinet.callback.FingerprintListener;
 import com.zk.cabinet.databinding.ActivityPersonnelManagementBinding;
 import com.zk.cabinet.db.UserService;
+import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.util.FingerprintParsingLibrary;
+import com.zk.cabinet.util.LogUtil;
+import com.zk.cabinet.util.SharedPreferencesUtil;
+import com.zk.cabinet.util.TimeOpera;
 import com.zk.cabinet.view.TimeOffAppCompatActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -29,6 +43,8 @@ import java.util.Objects;
 
 public class PersonnelManagementActivity extends TimeOffAppCompatActivity implements View.OnClickListener {
     private final static int FINGERPRINT = 0x00;
+    private final static int UP_FINGERPRINT_SUCCESS = 0x01;
+    private final static int UP_FINGERPRINT_ERROR = 0x02;
     private ActivityPersonnelManagementBinding binding;
 
     private List<User> list;
@@ -37,6 +53,7 @@ public class PersonnelManagementActivity extends TimeOffAppCompatActivity implem
     private View mDialogView;
     private ProgressDialog fingerDialog;
     private int mPosition;
+    private ProgressDialog progressDialog;
 
     private MHandler mHandler;
     private void handleMessage(Message msg) {
@@ -44,13 +61,26 @@ public class PersonnelManagementActivity extends TimeOffAppCompatActivity implem
             case FINGERPRINT:
                 if (mPosition != -1) {
                     list.get(mPosition).setFingerPrint((byte[]) msg.obj);
+                    list.get(mPosition).setFingerPrintTime(TimeOpera.getStringDateShort());
                     UserService.getInstance().update(list.get(mPosition));
                     FingerprintParsingLibrary.getInstance().upUserList();
                     showToast(list.get(mPosition).getUserName() + "您的指纹已录入！");
+                    upFingerprintList(list.get(mPosition));
                     mPosition = -1;
                     if (fingerDialog != null && fingerDialog.isShowing()) fingerDialog.dismiss();
+                    progressDialog.setMessage("请把您的手指拿开，现在正在上传指纹到平台。");
+                    progressDialog.show();
                     mAdapter.notifyDataSetChanged();
+
                 }
+                break;
+            case UP_FINGERPRINT_SUCCESS:
+                progressDialog.dismiss();
+                showToast(msg.obj.toString());
+                break;
+            case UP_FINGERPRINT_ERROR:
+                progressDialog.dismiss();
+                showToast(msg.obj.toString());
                 break;
         }
     }
@@ -69,6 +99,7 @@ public class PersonnelManagementActivity extends TimeOffAppCompatActivity implem
     }
 
     private void init(){
+        progressDialog = new ProgressDialog(this);
         list = UserService.getInstance().loadAll();
         mAdapter = new UserAdapter(this, list);
         binding.personalManagementQueryLv.setAdapter(mAdapter);
@@ -199,5 +230,46 @@ public class PersonnelManagementActivity extends TimeOffAppCompatActivity implem
                 personnelManagementActivityWeakReference.get().handleMessage(msg);
             }
         }
+    }
+
+    private void upFingerprintList(User user) {
+        String url = "";
+        JSONObject jsonObject = new JSONObject();
+        url = NetworkRequest.getInstance().urlUserFpiAdd;
+        try {
+            jsonObject.put("account", user.getCode());
+            jsonObject.put("FPI ", new String(user.getFingerPrint()));
+            jsonObject.put("FPITime", user.getFingerPrintTime());
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+        }
+        LogUtil.getInstance().d("指纹上报：" + jsonObject);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,
+                jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject jsonResult) {
+                LogUtil.getInstance().d("-----" + jsonResult);
+                Message msg = Message.obtain();
+                msg.what = UP_FINGERPRINT_SUCCESS;
+                msg.obj = "指纹上传成功。";
+                mHandler.sendMessage(msg);
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                LogUtil.getInstance().d("error-----" + error);
+                Message msg = Message.obtain();
+                msg.what = UP_FINGERPRINT_ERROR;
+                msg.obj = error.toString();
+                mHandler.sendMessage(msg);
+            }
+        });
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        NetworkRequest.getInstance().add(jsonObjectRequest);
     }
 }

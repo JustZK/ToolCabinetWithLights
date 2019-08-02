@@ -204,7 +204,6 @@ public class SharedPreferencesUtil {
         UserIDTemp, //登陆账户 String
         CodeTemp,
         NameTemp,
-        GenderTemp,
         MobilePhoneTemp,
         CardIDTemp,
 

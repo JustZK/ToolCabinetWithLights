@@ -61,7 +61,7 @@ public class UserAdapter extends BaseAdapter {
         }
 
         viewHolder.adapter_user_name_tv.setText(user.getUserName());
-        viewHolder.adapter_user_id_tv.setText(user.getUserID());
+        viewHolder.adapter_user_id_tv.setText(user.getCode());
         viewHolder.adapter_user_finger_tv.setText(user.getFingerPrint() == null ? "点击录入指纹" : "******");
 
         if (i % 2 != 0) {

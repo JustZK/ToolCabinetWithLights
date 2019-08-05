@@ -182,8 +182,11 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                             for (Tools tools : depositList) {
                                 if (inventoryInfo.getEPC().equalsIgnoreCase(tools.getEpc())) {
                                     Tools toolsTemp = tools;
-                                    saveNumber++; // 有工具存入
+                                    saveNumber++; // 有物品存入
 
+                                    toolsTemp.setCellNumber(cellNumber);
+                                    toolsTemp.setToolLightNumber(needOpenLightNumbers.get(0));
+                                    toolsTemp.setSelected(false);
                                     toolsTemp.setState(1);
                                     toolsTemp.setOperateTime(TimeOpera.getStringDateShort());
 
@@ -244,14 +247,14 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                             dialog_accessing_reopen_error_tv.setText("本次操作只允许存入！");
-                            MediaPlayerUtil.getInstance().reportNumber(0,0, 5);
+                            MediaPlayerUtil.getInstance().reportNumber(5);
                         } else {
                             if (accessingList.size() == 1) {
                                 boolean isOK = false;
                                 for (Tools tools : depositList) {
                                     if (tools.getEpc().equalsIgnoreCase(accessingList.get(0).getEpc())) {
                                         isOK = true;
-                                        MediaPlayerUtil.getInstance().reportNumber(takeNumber,saveNumber, 0);
+                                        MediaPlayerUtil.getInstance().reportNumber(0);
                                         dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
                                         accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
                                         accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);
@@ -261,26 +264,26 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                 if (!isOK) {
                                     accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                                     accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
-                                    dialog_accessing_reopen_error_tv.setText("您存入的工具和您准备存入的工具不符！");
-                                    MediaPlayerUtil.getInstance().reportNumber(0,0, 6);
+                                    dialog_accessing_reopen_error_tv.setText("您存入的物品和您准备存入的物品不符！");
+                                    MediaPlayerUtil.getInstance().reportNumber(6);
                                 }
                             } else if (accessingList.size() > 1) {
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
-                                dialog_accessing_reopen_error_tv.setText("您存入了多个工具！");
-                                MediaPlayerUtil.getInstance().reportNumber(0,0, 7);
+                                dialog_accessing_reopen_error_tv.setText("您存入了多个物品！");
+                                MediaPlayerUtil.getInstance().reportNumber(7);
                             } else if (accessingList.size() == 0) {
                                 dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);
-                                MediaPlayerUtil.getInstance().reportNumber(takeNumber,saveNumber, 0);
+                                MediaPlayerUtil.getInstance().reportNumber(0);
                             }
                         }
                     }
                 } else {
                     accessClear();
                     showToast("读卡器离线，本次存取操作无效！");
-                    MediaPlayerUtil.getInstance().reportNumber(0,0, 1);
+                    MediaPlayerUtil.getInstance().reportNumber(1);
                 }
                 break;
             case OPEN_LIGHT_RESULT:
@@ -306,8 +309,8 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                         ProgressDialogShow("正在第1次盘点，请稍后......");
 
                     } else if (needOpenLightNumbers.size() > 1) {
-                        MediaPlayerUtil.getInstance().reportNumber(0,0, 4);
-                        showToast("本次操作只允许归还一件工具");
+                        MediaPlayerUtil.getInstance().reportNumber(4);
+                        showToast("本次操作只允许归还一件物品");
                     }
                 }
                 break;
@@ -321,7 +324,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                 LogUtil.getInstance().d("lightNumbers.s " + lightNumbers.size());
                 mAdapter.setList(toolsList);
                 mAdapter.notifyDataSetChanged();
-                binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
+                binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件物品");
                 binding.accessingDepositOpenBtn.setVisibility(View.INVISIBLE);
                 DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
                         cabinet.getSourceAddress(), cabinet.getLockNumber()));
@@ -335,7 +338,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                 toolsList = (List<Tools>) msg.obj;
                 mAdapter.setList(toolsList);
                 mAdapter.notifyDataSetChanged();
-                binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
+                binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件物品");
                 lightNumbers.clear();
                 for (Tools tools : toolsList) {
                     lightNumbers.add(tools.getToolLightNumber());
@@ -348,10 +351,11 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                 showToast(msg.obj.toString());
                 break;
             case UP_UP_OUT_BOUND_LIST_SUCCESS:
-
-                binding.accessingDepositToolNumberTv.setText("正在联网获取格子信息");
-                progress.setMessage("正在联网获取格子数据，请稍后......");
-                getToolsInBoxList(GET_TOOLS_IN_BOX_LIST_SUCCESS_TWO);
+                showToast("入库数据提交成功");
+                finish();
+//                binding.accessingDepositToolNumberTv.setText("正在联网获取格子信息");
+//                progress.setMessage("正在联网获取格子数据，请稍后......");
+//                getToolsInBoxList(GET_TOOLS_IN_BOX_LIST_SUCCESS_TWO);
                 break;
             case UP_UP_OUT_BOUND_LIST_ERROR:
                 toolsList.clear();
@@ -387,6 +391,16 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
         userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserIDTemp, "");
         cellNumber = getIntent().getExtras().getInt("CellNumber");
         cabinet = CabinetService.getInstance().queryEq(cellNumber);
+
+        if (!NettyServerParsingLibrary.getInstance().isOnline(cabinet.getReaderDeviceID())){
+            showToast("读写器离线！");
+            MediaPlayerUtil.getInstance().reportNumber(1);
+            finish();
+            return;
+        }
+
+
+
 //        EPC = getIntent().getExtras().getString("EPC");
         depositList = ToolsService.getInstance().getDepositTools(cellNumber);
 
@@ -408,7 +422,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
         toolsList = new ArrayList<>();
         mAdapter = new ToolsAdapter(this, toolsList);
         binding.accessingDepositLv.setAdapter(mAdapter);
-        binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
+        binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件物品");
 
 //        for (Tools tools : toolsList) {
 //            lightNumbers.add(tools.getToolLightNumber());
@@ -538,7 +552,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
 //                if (toolsList == null) toolsList = new ArrayList<>();
 //                mAdapter.setList(toolsList);
 //                mAdapter.notifyDataSetChanged();
-//                binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
+//                binding.accessingDepositToolNumberTv.setText("本柜共有：" + toolsList.size() + "件物品");
                 break;
         }
     }
@@ -594,17 +608,20 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
 
     @Override
     protected void onDestroy() {
-        for (Tools tools : toolsList) {
-            tools.setSelected(false);
-        }
+        if (toolsList != null)
+            for (Tools tools : toolsList) {
+                tools.setSelected(false);
+            }
         DoorSerialOperation.getInstance().onDoorListener(null);
         DoorSerialOperation.getInstance().startCheckBoxDoorState(-1);
         LightSerialOperation.getInstance().startCheckLightState(-1);
         LightSerialOperation.getInstance().onLightListener(null);
         NettyServerParsingLibrary.getInstance().processor.onInventoryListener(null);
-        lightNumbers.clear();
-        LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
-                cabinet.getSourceAddress(), lightNumbers));
+        if (lightNumbers != null) {
+            lightNumbers.clear();
+            LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
+                    cabinet.getSourceAddress(), lightNumbers));
+        }
         super.onDestroy();
     }
 

@@ -75,6 +75,10 @@ public class NettyServerParsingLibrary {
         processor.send(nettySendInfo);
     }
 
+    public boolean isOnline(int readerIp){
+        return processor.isOnline(readerIp);
+    }
+
     public static class Processor extends NettyServerHandler.NettyServerEventProcessor {
         private HashMap<Integer, ChannelHandlerContext> nettyChannelMap = new HashMap<>();
 
@@ -84,6 +88,10 @@ public class NettyServerParsingLibrary {
 
         public void onInventoryListener(InventoryListener inventoryListener) {
             this.inventoryListener = inventoryListener;
+        }
+
+        public boolean isOnline(int readerIp){
+            return nettyChannelMap.get(readerIp) != null;
         }
 
         public void send(NettySendInfo nettySendInfo) {
@@ -101,7 +109,7 @@ public class NettyServerParsingLibrary {
                             buffers.append(Integer.toHexString((buffer[i] & 0xff)));
                             buffers.append(" ");
                         }
-                        LogUtil.getInstance().LogPrint("NETTY通信Android发送盘点指令：" + buffers);
+                        LogUtil.getInstance().d("NETTY通信Android发送盘点指令：" + buffers);
                         break;
                 }
             } else {

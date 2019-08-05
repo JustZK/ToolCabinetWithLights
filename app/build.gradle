@@ -7,8 +7,8 @@ android {
         applicationId "com.zk.cabinet"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 15
-        versionName "1.1.5"
+        versionCode 17
+        versionName "1.1.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         ndk {
@@ -21,7 +21,7 @@ android {
         release {
             storeFile file("Untitled")
             storePassword "zk123456"
-            keyAlias "toolcabinetwithlights"
+            keyAlias "zk"
             keyPassword "zk123456"
         }
     }

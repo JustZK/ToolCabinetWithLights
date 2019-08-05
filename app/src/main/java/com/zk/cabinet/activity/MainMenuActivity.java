@@ -18,7 +18,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.zk.cabinet.R;
 import com.zk.cabinet.adapter.ImageTextListAdapter;
 import com.zk.cabinet.bean.ImageTextListInfo;
-import com.zk.cabinet.bean.Tools;
 import com.zk.cabinet.bean.User;
 import com.zk.cabinet.databinding.ActivityMainMenuBinding;
 import com.zk.cabinet.db.UserService;
@@ -218,7 +217,7 @@ public class MainMenuActivity extends TimeOffAppCompatActivity {
                             user.setCode(jsonObject.getString("Code"));
                             user.setMobilePhone(jsonObject.getString("MobilePhone"));
 //                            user.setPassword(jsonObject.getString("Password"));
-                            user.setFingerPrint(jsonObject.getString("FPI").getBytes());
+                            user.setFingerPrint(FingerprintParsingLibrary.getInstance().hexStrToByteArray(jsonObject.getString("FPI")));
                             user.setFingerPrintTime(jsonObject.getString("FPITime"));
                             user.setMechanismCoding(mechanismCoding);
                             user.setMechanismName(jsonObject.getString("MechanismName"));

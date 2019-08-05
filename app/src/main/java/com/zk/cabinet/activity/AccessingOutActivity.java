@@ -68,7 +68,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
     private int propertyInvolved;
     private ActivityAccessingOutBinding binding;
 
-    private int operationType = 0; // 0:按柜子 1：按工具取
+    private int operationType = 0; // 0:按柜子 1：按物品取
     private int cellNumber; //格子编号
     private Cabinet cabinet; //格子
     private List<Integer> antennaNumberList; //分支器列表
@@ -171,7 +171,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
 //                            Tools toolsTemp = ToolsService.getInstance().queryEq(inventoryInfo.getEPC());
 //                            if (toolsTemp != null) {
 //                                if (toolsTemp.getToolState() != 0) {
-//                                    saveNumber++; // 有工具存入
+//                                    saveNumber++; // 有物品存入
 //                                }
 //                            }
 //                        }
@@ -229,7 +229,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                             dialog_accessing_reopen_error_tv.setText("本次操作只允许取出！");
-                            MediaPlayerUtil.getInstance().reportNumber(0,0, 2);
+                            MediaPlayerUtil.getInstance().reportNumber(2);
                         } else {
                             boolean isOK = true;
                             for (Tools tools : accessingList) {
@@ -240,22 +240,22 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                                 }
                             }
                             if (isOK) {
-                                MediaPlayerUtil.getInstance().reportNumber(takeNumber,saveNumber, 0);
+                                MediaPlayerUtil.getInstance().reportNumber(0);
                                 dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);
                             } else {
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
-                                dialog_accessing_reopen_error_tv.setText("您取出了未选中的工具！");
-                                MediaPlayerUtil.getInstance().reportNumber(0,0, 3);
+                                dialog_accessing_reopen_error_tv.setText("您取出了未选中的物品！");
+                                MediaPlayerUtil.getInstance().reportNumber(3);
                             }
                         }
                     }
                 } else {
                     accessClear();
                     showToast("读卡器离线，本次存取操作无效！");
-                    MediaPlayerUtil.getInstance().reportNumber(0,0, 1);
+                    MediaPlayerUtil.getInstance().reportNumber(1);
                 }
                 break;
             case OPEN_LIGHT_RESULT:
@@ -266,7 +266,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 toolsList = (List<Tools>) msg.obj;
                 mAdapter.setList(toolsList);
                 mAdapter.notifyDataSetChanged();
-                binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
+                binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件物品");
 
 //                String epc = getIntent().getExtras().getString("EPC");
                 List<Tools> epcList = ToolsService.getInstance().getOutTools(cellNumber);
@@ -295,7 +295,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 toolsList = (List<Tools>) msg.obj;
                 mAdapter.setList(toolsList);
                 mAdapter.notifyDataSetChanged();
-                binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
+                binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件物品");
                 break;
             case GET_TOOLS_IN_BOX_LIST_ERROR:
                 binding.accessingOutToolNumberTv.setText("获取异常");
@@ -304,9 +304,12 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 break;
             case UP_UP_OUT_BOUND_LIST_SUCCESS:
                 accessClear();
-                binding.accessingOutToolNumberTv.setText("正在联网获取格子信息");
-                progress.setMessage("正在联网获取格子数据，请稍后......");
-                getToolsInBoxList(GET_TOOLS_IN_BOX_LIST_SUCCESS_TWO);
+
+                showToast("出库数据提交成功");
+                finish();
+//                binding.accessingOutToolNumberTv.setText("正在联网获取格子信息");
+//                progress.setMessage("正在联网获取格子数据，请稍后......");
+//                getToolsInBoxList(GET_TOOLS_IN_BOX_LIST_SUCCESS_TWO);
                 break;
             case UP_UP_OUT_BOUND_LIST_ERROR:
                 toolsList.clear();
@@ -348,6 +351,13 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
         userTemp = spUtil.getString(SharedPreferencesUtil.Key.UserIDTemp, "");
         cellNumber = getIntent().getExtras().getInt("CellNumber");
         cabinet = CabinetService.getInstance().queryEq(cellNumber);
+
+        if (!NettyServerParsingLibrary.getInstance().isOnline(cabinet.getReaderDeviceID())){
+            showToast("读写器离线！");
+            MediaPlayerUtil.getInstance().reportNumber(1);
+            finish();
+            return;
+        }
 
         lightNumbers = new ArrayList<>();
         accessingList = new ArrayList<>();
@@ -449,7 +459,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                     LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
                             cabinet.getSourceAddress(), lightNumbers));
                 } else {
-                    showToast("请先选择出库的工具。");
+                    showToast("请先选择出库的物品。");
                 }
                 break;
             case R.id.dialog_accessing_reopen:
@@ -473,7 +483,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
 //                if (toolsList == null) toolsList = new ArrayList<>();
 //                mAdapter.setList(toolsList);
 //                mAdapter.notifyDataSetChanged();
-//                binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件工具");
+//                binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件物品");
                 break;
         }
     }
@@ -534,10 +544,12 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
         LightSerialOperation.getInstance().startCheckLightState(-1);
         LightSerialOperation.getInstance().onLightListener(null);
         NettyServerParsingLibrary.getInstance().processor.onInventoryListener(null);
-        lightNumbers.clear();
-        LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
-                cabinet.getSourceAddress(), lightNumbers));
-        if (progress.isShowing()) progress.dismiss();
+        if (lightNumbers != null) {
+            lightNumbers.clear();
+            LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
+                    cabinet.getSourceAddress(), lightNumbers));
+        }
+        if (progress != null && progress.isShowing()) progress.dismiss();
         super.onDestroy();
     }
 

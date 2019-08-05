@@ -1,14 +1,6 @@
 package com.zk.cabinet;
 
 import android.app.Application;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
-import android.util.Log;
 
 import com.tencent.bugly.crashreport.CrashReport;
 import com.zk.cabinet.constant.SelfComm;
@@ -18,22 +10,12 @@ import com.zk.cabinet.netty.server.NettyServerParsingLibrary;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.door.DoorSerialOperation;
 import com.zk.cabinet.serial.light.LightSerialOperation;
-import com.zk.cabinet.util.LogUtil;
 import com.zk.cabinet.util.MediaPlayerUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.SharedPreferencesUtil.Record;
-import com.zkteco.android.biometric.core.device.ParameterHelper;
-import com.zkteco.android.biometric.core.device.TransportType;
-import com.zkteco.android.biometric.core.utils.LogHelper;
-import com.zkteco.android.biometric.module.fingerprint.FingerprintCaptureListener;
-import com.zkteco.android.biometric.module.fingerprint.FingerprintFactory;
-import com.zkteco.android.biometric.module.fingerprint.FingerprintSensor;
-import com.zkteco.android.biometric.module.fingerprint.exception.FingerprintSensorException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ToolCabinetApplication extends Application {
 
@@ -60,8 +42,8 @@ public class ToolCabinetApplication extends Application {
 
 //        CardSerialOperation.getInstance().openComPort();
 
-//        DoorSerialOperation.getInstance().openComPort();
-//        LightSerialOperation.getInstance().openComPort();
+        DoorSerialOperation.getInstance().openComPort();
+        LightSerialOperation.getInstance().openComPort();
         MediaPlayerUtil.getInstance().init(this);
 
         NetworkRequest.getInstance().init(this);
@@ -76,6 +58,7 @@ public class ToolCabinetApplication extends Application {
         }.start();
 
 
+//        String
     }
 
 }

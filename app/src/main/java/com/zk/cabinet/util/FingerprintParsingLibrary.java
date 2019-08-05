@@ -12,7 +12,6 @@ import android.util.Log;
 import com.zk.cabinet.bean.User;
 import com.zk.cabinet.callback.FingerprintListener;
 import com.zk.cabinet.callback.FingerprintVerifyListener;
-import com.zk.cabinet.dao.UserDao;
 import com.zk.cabinet.db.UserService;
 import com.zkteco.android.biometric.core.device.ParameterHelper;
 import com.zkteco.android.biometric.core.device.TransportType;
@@ -55,19 +54,19 @@ public class FingerprintParsingLibrary {
         return instance;
     }
 
-    public void onFingerprintListener(FingerprintListener fingerprintListener){
+    public void onFingerprintListener(FingerprintListener fingerprintListener) {
         this.fingerprintListener = fingerprintListener;
     }
 
-    public void onFingerprintVerifyListener(FingerprintVerifyListener fingerprintVerifyListener){
+    public void onFingerprintVerifyListener(FingerprintVerifyListener fingerprintVerifyListener) {
         this.fingerprintVerifyListener = fingerprintVerifyListener;
     }
 
-    public void setFingerprintVerify(boolean verify){
+    public void setFingerprintVerify(boolean verify) {
         this.isVerify = verify;
     }
 
-    public void upUserList(){
+    public void upUserList() {
         userList = UserService.getInstance().loadAll();
     }
 
@@ -94,16 +93,15 @@ public class FingerprintParsingLibrary {
                     buffers.append(Integer.toHexString((bytes1[j] & 0xff)));
                     buffers.append(" ");
                 }
-                LogUtil.getInstance().d("指纹FingerprintCaptureListener", "test ints" + ints);
                 LogUtil.getInstance().d("指纹FingerprintCaptureListener", "test Received" + buffers);
 
-                if (fingerprintListener != null){
+                if (fingerprintListener != null) {
                     fingerprintListener.fingerprint(bytes1);
                 }
 
-                if (isVerify){
+                if (isVerify) {
                     boolean isExit = false;
-                    for (User user : userList){
+                    for (User user : userList) {
                         if (user.getFingerPrint() != null) {
                             int result = FingerprintService.verify(bytes1, user.getFingerPrint());
                             LogUtil.getInstance().d("指纹对比结果：" + result);
@@ -116,8 +114,8 @@ public class FingerprintParsingLibrary {
                             }
                         }
                     }
-                    if (!isExit){
-                        if (fingerprintVerifyListener != null){
+                    if (!isExit) {
+                        if (fingerprintVerifyListener != null) {
                             fingerprintVerifyListener.fingerprintVerify(false, null);
                         }
                     }
@@ -140,10 +138,10 @@ public class FingerprintParsingLibrary {
 
 //        fingerprintService = new FingerprintService();
         int[] limit = new int[1];
-        LogUtil.getInstance().d("指纹对比初始化结果："+FingerprintService.init(limit));
+        LogUtil.getInstance().d("指纹对比初始化结果：" + FingerprintService.init(limit));
     }
 
-    public void close(){
+    public void close() {
         try {
             fingerprintSensor.close(0);
         } catch (FingerprintSensorException e) {
@@ -203,5 +201,39 @@ public class FingerprintParsingLibrary {
         fingerprintParams.put(ParameterHelper.PARAM_SERIAL_BAUDRATE, fpBaudrate);
         fingerprintSensor = FingerprintFactory.createFingerprintSensor(this, TransportType.SERIALPORT, fingerprintParams);
         */
+    }
+
+
+    public String byteArrayToHexStr(byte[] byteArray) {
+        if (byteArray == null) {
+            return null;
+        }
+        char[] hexArray = "0123456789ABCDEF".toCharArray();
+        char[] hexChars = new char[byteArray.length * 2];
+        for (int j = 0; j < byteArray.length; j++) {
+            int v = byteArray[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    public byte[] hexStrToByteArray(String str) {
+        if (str == null) {
+            return null;
+        }
+        if (str.length() == 0) {
+            return new byte[0];
+        }
+        try {
+            byte[] byteArray = new byte[str.length() / 2];
+            for (int i = 0; i < byteArray.length; i++) {
+                String subStr = str.substring(2 * i, 2 * i + 2);
+                byteArray[i] = ((byte) Integer.parseInt(subStr, 16));
+            }
+            return byteArray;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

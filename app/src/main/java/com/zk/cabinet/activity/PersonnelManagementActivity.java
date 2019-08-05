@@ -10,7 +10,6 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.EditText;
 
@@ -21,7 +20,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.zk.cabinet.R;
 import com.zk.cabinet.adapter.UserAdapter;
-import com.zk.cabinet.bean.Tools;
 import com.zk.cabinet.bean.User;
 import com.zk.cabinet.callback.FingerprintListener;
 import com.zk.cabinet.databinding.ActivityPersonnelManagementBinding;
@@ -29,11 +27,9 @@ import com.zk.cabinet.db.UserService;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.util.FingerprintParsingLibrary;
 import com.zk.cabinet.util.LogUtil;
-import com.zk.cabinet.util.SharedPreferencesUtil;
 import com.zk.cabinet.util.TimeOpera;
 import com.zk.cabinet.view.TimeOffAppCompatActivity;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -238,7 +234,7 @@ public class PersonnelManagementActivity extends TimeOffAppCompatActivity implem
         url = NetworkRequest.getInstance().urlUserFpiAdd;
         try {
             jsonObject.put("account", user.getCode());
-            jsonObject.put("FPI ", new String(user.getFingerPrint()));
+            jsonObject.put("FPI", FingerprintParsingLibrary.getInstance().byteArrayToHexStr(user.getFingerPrint()));
             jsonObject.put("FPITime", user.getFingerPrintTime());
         } catch (JSONException e1) {
             e1.printStackTrace();

@@ -240,7 +240,8 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                                 }
                             }
                             if (isOK) {
-                                MediaPlayerUtil.getInstance().reportNumber(0);
+                                if (takeNumber > 0) MediaPlayerUtil.getInstance().reportNumber(8);
+                                else MediaPlayerUtil.getInstance().reportNumber(0);
                                 dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);

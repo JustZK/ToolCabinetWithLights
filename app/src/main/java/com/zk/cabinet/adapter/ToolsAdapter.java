@@ -76,8 +76,8 @@ public class ToolsAdapter extends BaseAdapter {
 //        viewHolder.adapter_mechanism_name_tv.setText(tools.getMechanismName());
         viewHolder.adapter_mechanism_name_tv.setText(tools.getEpc() != null?
                 tools.getEpc() : "---");
-        viewHolder.adapter_tool_mechanism_name_tv.setText(tools.getMechanismName() != null ?
-                tools.getMechanismName() : "---");
+        viewHolder.adapter_tool_mechanism_name_tv.setText((tools.getMechanismName() != null ?
+                tools.getMechanismName() : "---" ));
 
         if (tools.isSelected()){
             viewHolder.adapter_tools_item_ll.setBackgroundColor(mContext.getResources().getColor(R.color.md_orange_900));

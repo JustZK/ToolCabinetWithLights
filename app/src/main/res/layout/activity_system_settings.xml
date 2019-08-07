@@ -211,6 +211,17 @@
                         app:settingIconBackground="@drawable/countdown"
                         app:settingTitle="@string/countdown" />
 
+                    <com.zk.cabinet.view.SettingWithSwitchView
+                        android:id="@+id/system_setting_sound_switch_sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="@{onClickListener}"
+                        app:settingCaption="@string/sound_switch_on"
+                        app:settingDefaultValue="true"
+                        app:settingIconBackground="@drawable/sound"
+                        app:settingTitle="@string/title_sound_switch" />
+
                 </LinearLayout>
 
                 <!--</android.support.v7.widget.CardView>-->

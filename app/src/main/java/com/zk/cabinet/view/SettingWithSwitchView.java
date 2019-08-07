@@ -40,7 +40,7 @@ public class SettingWithSwitchView extends FrameLayout{
     public SettingWithSwitchView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        setBackgroundResource(R.drawable.ripple);
+//        setBackgroundResource(R.drawable.ripple);
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         inflater.inflate(R.layout.view_setting_switch, this);

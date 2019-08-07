@@ -180,14 +180,18 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                         for (InventoryInfo inventoryInfo : inventoryList) {
                             boolean isSave = false;
                             for (Tools tools : depositList) {
-                                if (inventoryInfo.getEPC().equalsIgnoreCase(tools.getEpc())) {
+                                if (tools.getState() != 0 &&
+                                        inventoryInfo.getEPC().equalsIgnoreCase(tools.getEpc())) {
+
+                                    tools.setState(0);
+
                                     Tools toolsTemp = tools;
                                     saveNumber++; // 有物品存入
 
                                     toolsTemp.setCellNumber(cellNumber);
                                     toolsTemp.setToolLightNumber(needOpenLightNumbers.get(0));
                                     toolsTemp.setSelected(false);
-                                    toolsTemp.setState(1);
+                                    toolsTemp.setState(0);
                                     toolsTemp.setOperateTime(TimeOpera.getStringDateShort());
 
                                     accessingList.add(toolsTemp);
@@ -254,7 +258,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                 for (Tools tools : depositList) {
                                     if (tools.getEpc().equalsIgnoreCase(accessingList.get(0).getEpc())) {
                                         isOK = true;
-                                        MediaPlayerUtil.getInstance().reportNumber(0);
+                                        MediaPlayerUtil.getInstance().reportNumber(9);
                                         dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
                                         accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
                                         accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);
@@ -352,10 +356,10 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                 break;
             case UP_UP_OUT_BOUND_LIST_SUCCESS:
                 showToast("入库数据提交成功");
-                finish();
-//                binding.accessingDepositToolNumberTv.setText("正在联网获取格子信息");
-//                progress.setMessage("正在联网获取格子数据，请稍后......");
-//                getToolsInBoxList(GET_TOOLS_IN_BOX_LIST_SUCCESS_TWO);
+//                finish();
+                binding.accessingDepositToolNumberTv.setText("正在联网获取格子信息");
+                progress.setMessage("正在联网获取格子数据，请稍后......");
+                getToolsInBoxList(GET_TOOLS_IN_BOX_LIST_SUCCESS_TWO);
                 break;
             case UP_UP_OUT_BOUND_LIST_ERROR:
                 toolsList.clear();

@@ -101,6 +101,10 @@
     <string name="reader_ip_title">读写器：</string>
     <string name="antenna_number_title">天线号：</string>
 
+    <string name="title_sound_switch">提示音</string>
+    <string name="sound_switch_on">提示音开启</string>
+    <string name="sound_switch_off">提示音关闭</string>
+
     <!--系统设置-->
 
     <!--物品查询-->

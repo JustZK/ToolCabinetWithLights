@@ -91,9 +91,9 @@ public class MainMenuActivity extends TimeOffAppCompatActivity {
 //            list.add(new ImageTextListInfo(R.drawable.goods, getString(R.string.tool_management)));
             list.add(new ImageTextListInfo(R.drawable.personnel_management, getString(R.string.personnel_management)));
             list.add(new ImageTextListInfo(R.drawable.system_settings, getString(R.string.system_settings)));
-
+            list.add(new ImageTextListInfo(R.drawable.synchronize, "人员同步"));
         }
-        list.add(new ImageTextListInfo(R.drawable.synchronize, "人员同步"));
+
         adapter = new ImageTextListAdapter(MainMenuActivity.this, list);
         mainMenuBinding.mainMenuGv.setAdapter(adapter);
         mainMenuBinding.mainMenuGv.setOnItemClickListener(mOnItemClickListener);

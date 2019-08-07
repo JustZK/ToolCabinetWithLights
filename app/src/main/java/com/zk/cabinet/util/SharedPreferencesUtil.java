@@ -221,6 +221,8 @@ public class SharedPreferencesUtil {
         NotClosedDoorAlarmTime,//未关门报警时间 Int
         Countdown,//倒计时时间 Int
         ReaderServiceIpPort,//读写器IP端口 String 多个 以","隔开
+
+        BeepSound, //提示音
     }
 }
 

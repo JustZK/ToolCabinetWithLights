@@ -57,6 +57,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
     private void handleMessage(Message msg) {
         switch (msg.what) {
             case GET_IN_BOUND_LIST_SUCCESS:
+                ToolsService.getInstance().deleteByState(1);
                 if (progressDialog != null && progressDialog.isShowing())
                     progressDialog.dismiss();
                 list = (List<Tools>) msg.obj;
@@ -65,6 +66,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
                 mAdapter.notifyDataSetChanged();
                 break;
             case GET_IN_BOUND_LIST_ERROR:
+                ToolsService.getInstance().deleteByState(1);
                 if (progressDialog != null && progressDialog.isShowing())
                     progressDialog.dismiss();
                 list.clear();

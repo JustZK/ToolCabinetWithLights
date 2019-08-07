@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.zk.cabinet.R;
 import com.zk.cabinet.databinding.ActivitySystemSettingsBinding;
 import com.zk.cabinet.db.CabinetService;
+import com.zk.cabinet.util.MediaPlayerUtil;
 import com.zk.cabinet.util.RegularExpressionUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.SharedPreferencesUtil.Record;
@@ -50,6 +51,7 @@ public class SystemSettingsActivity extends TimeOffAppCompatActivity implements 
 
     private List<String> mReaderService;
 
+    private Boolean beepSound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +123,9 @@ public class SystemSettingsActivity extends TimeOffAppCompatActivity implements 
         } else {
             binding.systemSettingCountdownSb.setCaptionText("无人操作" + mIntCountdownItems[mCountdownItemSelected] / 60 + "分钟后自动返回主界面");
         }
+
+        beepSound = spUtil.getBoolean(Key.BeepSound, true);
+        binding.systemSettingSoundSwitchSb.setChecked(beepSound);
     }
 
     @Override
@@ -443,6 +448,16 @@ public class SystemSettingsActivity extends TimeOffAppCompatActivity implements 
                 ComponentName cn = new ComponentName("com.android.rk", "com.android.rk.RockExplorer");
                 intent.setComponent(cn);
                 startActivity(intent);
+                break;
+            case R.id.system_setting_sound_switch_sb:
+                if (beepSound){
+                    beepSound = false;
+                } else {
+                    beepSound = true;
+                }
+                MediaPlayerUtil.getInstance().setOpen(beepSound);
+                binding.systemSettingSoundSwitchSb.setChecked(beepSound);
+                spUtil.applyValue(new Record( Key.BeepSound, beepSound));
                 break;
         }
     }

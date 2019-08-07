@@ -58,6 +58,7 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
     private void handleMessage(Message msg) {
         switch (msg.what) {
             case GET_OUT_BOUND_LIST_SUCCESS:
+                ToolsService.getInstance().deleteByState(0);
                 progressDialog.dismiss();
                 list = (List<Tools>) msg.obj;
                 ToolsService.getInstance().insert(list);
@@ -65,6 +66,7 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
                 mAdapter.notifyDataSetChanged();
                 break;
             case GET_OUT_BOUND_LIST_ERROR:
+                ToolsService.getInstance().deleteByState(0);
                 progressDialog.dismiss();
                 list.clear();
                 mAdapter.notifyDataSetChanged();

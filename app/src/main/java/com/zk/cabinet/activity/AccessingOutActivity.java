@@ -185,10 +185,10 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                             }
                             if (!isExist) {
                                 takeNumber++;
-
-                                tools.setState(0);
-                                tools.setOperateTime(TimeOpera.getStringDateShort());
-                                accessingList.add(tools);
+                                Tools takeTool = tools;
+                                takeTool.setState(0);
+                                takeTool.setOperateTime(TimeOpera.getStringDateShort());
+                                accessingList.add(takeTool);
                             }
                         }
 
@@ -236,6 +236,8 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                                 for (Tools tools1 : toolsList) {
                                     if (tools1.getEpc().equalsIgnoreCase(tools.getEpc()) && !tools1.isSelected()) {
                                         isOK = false;
+                                        //不该取得物品
+                                        tools.setSelected(true);
                                     }
                                 }
                             }
@@ -246,10 +248,10 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);
                             } else {
+                                MediaPlayerUtil.getInstance().reportNumber(3);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                                 dialog_accessing_reopen_error_tv.setText("您取出了未选中的物品！");
-                                MediaPlayerUtil.getInstance().reportNumber(3);
                             }
                         }
                     }

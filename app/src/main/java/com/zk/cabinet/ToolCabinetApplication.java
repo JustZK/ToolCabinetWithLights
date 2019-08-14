@@ -10,7 +10,6 @@ import com.zk.cabinet.netty.server.NettyServerParsingLibrary;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.door.DoorSerialOperation;
 import com.zk.cabinet.serial.light.LightSerialOperation;
-import com.zk.cabinet.util.MediaPlayerUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.SharedPreferencesUtil.Record;
@@ -44,7 +43,7 @@ public class ToolCabinetApplication extends Application {
 
         DoorSerialOperation.getInstance().openComPort();
         LightSerialOperation.getInstance().openComPort();
-        MediaPlayerUtil.getInstance().init(this);
+//        MediaPlayerUtil.getInstance().init(this);
 
         NetworkRequest.getInstance().init(this);
 

@@ -1,13 +1,11 @@
 package com.zk.cabinet.activity;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -49,7 +47,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
     private List<Tools> list;
     private ToolsAdapter mAdapter;
 
-    private AlertDialog.Builder openBuilder;
+//    private AlertDialog.Builder openBuilder;
 
     private ProgressDialog progressDialog;
     private MHandler mHandler;
@@ -111,34 +109,21 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
         binding.accessDepositQueryLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                if (openBuilder == null) {
-                    openBuilder = new AlertDialog.Builder(AccessDepositActivity.this);
-                }
-                final Cabinet cabinetTemp = CabinetService.getInstance().queryEq(list.get(position).getCellNumber());
-                openBuilder.setTitle(getString(R.string.title_open_cabinet_where_the_file_is_located));
-                openBuilder.setMessage(String.format(getResources().getString(R.string.open_cabinet_where_the_file_is_located),
-                        list.get(position).getPropertyInvolvedName(), cabinetTemp.getBoxName()));
-                openBuilder.setPositiveButton(getString(R.string.sure), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("CellNumber", cabinetTemp.getCellNumber());
-                        bundle.putInt("OperationType", 2);
-                        bundle.putString("EPC", list.get(position).getEpc());
-                        bundle.putBoolean("ImmediatelyOpen", true);
+                Cabinet cabinetTemp = CabinetService.getInstance().queryEq(list.get(position).getCellNumber());
+                Bundle bundle = new Bundle();
+                bundle.putInt("CellNumber", cabinetTemp.getCellNumber());
+                bundle.putInt("OperationType", 2);
+                bundle.putString("EPC", list.get(position).getEpc());
+                bundle.putBoolean("ImmediatelyOpen", true);
 
-                        bundle.putString("CaseNumber", list.get(position).getCaseNumber());
-                        bundle.putString("PropertyInVolvedName", list.get(position).getPropertyInvolvedName());
-                        bundle.putString("PropertyNumber", list.get(position).getPropertyNumber());
-                        bundle.putString("MechanismCoding", list.get(position).getMechanismCoding());
-                        bundle.putString("MechanismName", list.get(position).getMechanismName());
+                bundle.putString("CaseNumber", list.get(position).getCaseNumber());
+                bundle.putString("PropertyInVolvedName", list.get(position).getPropertyInvolvedName());
+                bundle.putString("PropertyNumber", list.get(position).getPropertyNumber());
+                bundle.putString("MechanismCoding", list.get(position).getMechanismCoding());
+                bundle.putString("MechanismName", list.get(position).getMechanismName());
 
-                        bundle.putInt("PropertyInvolved", propertyInvolved);
-                        IntentActivity(AccessingDepositActivity.class, bundle);
-                    }
-                });
-                openBuilder.setNegativeButton(getString(R.string.cancel), null);
-                openBuilder.show();
+                bundle.putInt("PropertyInvolved", propertyInvolved);
+                IntentActivity(AccessingDepositActivity.class, bundle);
             }
         });
 

@@ -36,9 +36,9 @@ import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.door.DoorSerialOperation;
 import com.zk.cabinet.serial.light.LightSerialOperation;
 import com.zk.cabinet.util.LogUtil;
-import com.zk.cabinet.util.MediaPlayerUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
+import com.zk.cabinet.util.SoundPoolUtil;
 import com.zk.cabinet.util.TimeOpera;
 import com.zk.cabinet.view.CustomProgressDialog;
 import com.zk.cabinet.view.FullScreenAlertDialog;
@@ -229,7 +229,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                             dialog_accessing_reopen_error_tv.setText("本次操作只允许取出！");
-                            MediaPlayerUtil.getInstance().reportNumber(2);
+                            SoundPoolUtil.getInstance().reportNumber(2);
                         } else {
                             boolean isOK = true;
                             for (Tools tools : accessingList) {
@@ -242,13 +242,13 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                                 }
                             }
                             if (isOK) {
-                                if (takeNumber > 0) MediaPlayerUtil.getInstance().reportNumber(8);
-                                else MediaPlayerUtil.getInstance().reportNumber(0);
+                                if (takeNumber > 0) SoundPoolUtil.getInstance().reportNumber(8);
+                                else SoundPoolUtil.getInstance().reportNumber(0);
                                 dialog_accessing_reopen_error_tv.setVisibility(View.GONE);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(true);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.VISIBLE);
                             } else {
-                                MediaPlayerUtil.getInstance().reportNumber(3);
+                                SoundPoolUtil.getInstance().reportNumber(3);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                                 dialog_accessing_reopen_error_tv.setText("您取出了未选中的物品！");
@@ -258,7 +258,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 } else {
                     accessClear();
                     showToast("读卡器离线，本次存取操作无效！");
-                    MediaPlayerUtil.getInstance().reportNumber(1);
+                    SoundPoolUtil.getInstance().reportNumber(1);
                 }
                 break;
             case OPEN_LIGHT_RESULT:
@@ -357,7 +357,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
 
         if (!NettyServerParsingLibrary.getInstance().isOnline(cabinet.getReaderDeviceID())){
             showToast("读写器离线！");
-            MediaPlayerUtil.getInstance().reportNumber(1);
+            SoundPoolUtil.getInstance().reportNumber(1);
             finish();
             return;
         }
@@ -583,6 +583,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
         try {
             jsonObject.put("CabinetID", spUtil.getString(Key.DeviceId, ""));
             jsonObject.put("CountErNumber", cabinet.getCellNumber());
+            jsonObject.put("MechanismCoding", unitNumber);
         } catch (JSONException e1) {
             e1.printStackTrace();
         }

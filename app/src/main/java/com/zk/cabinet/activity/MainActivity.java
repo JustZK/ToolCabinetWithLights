@@ -1,22 +1,15 @@
 package com.zk.cabinet.activity;
 
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.databinding.DataBindingUtil;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -35,27 +28,17 @@ import com.zk.cabinet.databinding.DilaogLoginBinding;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.card.CardSerialOperation;
 import com.zk.cabinet.util.FingerprintParsingLibrary;
-import com.zk.cabinet.util.LogUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.SharedPreferencesUtil.Record;
+import com.zk.cabinet.util.SoundPoolUtil;
 import com.zk.cabinet.util.TimeOpera;
 import com.zk.cabinet.view.TimeOffAppCompatActivity;
-import com.zkteco.android.biometric.core.device.ParameterHelper;
-import com.zkteco.android.biometric.core.device.TransportType;
-import com.zkteco.android.biometric.core.utils.LogHelper;
-import com.zkteco.android.biometric.module.fingerprint.FingerprintCaptureListener;
-import com.zkteco.android.biometric.module.fingerprint.FingerprintFactory;
-import com.zkteco.android.biometric.module.fingerprint.FingerprintSensor;
-import com.zkteco.android.biometric.module.fingerprint.exception.FingerprintSensorException;
-import com.zkteco.zkfinger.FingerprintService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends TimeOffAppCompatActivity implements View.OnClickListener,
         View.OnLongClickListener {
@@ -159,7 +142,7 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
         FingerprintParsingLibrary.getInstance().onFingerprintVerifyListener(fingerprintVerifyListener);
         FingerprintParsingLibrary.getInstance().setFingerprintVerify(true);
 
-
+        SoundPoolUtil.getInstance().init(this);
     }
 
     private CardListener cardListener = new CardListener() {
@@ -284,6 +267,7 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
     @Override
     protected void onDestroy() {
         FingerprintParsingLibrary.getInstance().close();
+        SoundPoolUtil.getInstance().shutDown();
         super.onDestroy();
     }
 

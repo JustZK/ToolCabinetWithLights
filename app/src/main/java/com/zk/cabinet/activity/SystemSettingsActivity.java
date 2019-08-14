@@ -21,10 +21,10 @@ import android.widget.TextView;
 import com.zk.cabinet.R;
 import com.zk.cabinet.databinding.ActivitySystemSettingsBinding;
 import com.zk.cabinet.db.CabinetService;
-import com.zk.cabinet.util.MediaPlayerUtil;
 import com.zk.cabinet.util.RegularExpressionUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.SharedPreferencesUtil.Record;
+import com.zk.cabinet.util.SoundPoolUtil;
 import com.zk.cabinet.view.TimeOffAppCompatActivity;
 
 import java.util.ArrayList;
@@ -455,7 +455,7 @@ public class SystemSettingsActivity extends TimeOffAppCompatActivity implements 
                 } else {
                     beepSound = true;
                 }
-                MediaPlayerUtil.getInstance().setOpen(beepSound);
+                SoundPoolUtil.getInstance().setOpen(beepSound);
                 binding.systemSettingSoundSwitchSb.setChecked(beepSound);
                 spUtil.applyValue(new Record( Key.BeepSound, beepSound));
                 break;

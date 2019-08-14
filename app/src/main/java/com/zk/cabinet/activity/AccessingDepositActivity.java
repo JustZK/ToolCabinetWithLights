@@ -35,9 +35,9 @@ import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.door.DoorSerialOperation;
 import com.zk.cabinet.serial.light.LightSerialOperation;
 import com.zk.cabinet.util.LogUtil;
-import com.zk.cabinet.util.MediaPlayerUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
+import com.zk.cabinet.util.SoundPoolUtil;
 import com.zk.cabinet.util.TimeOpera;
 import com.zk.cabinet.view.CustomProgressDialog;
 import com.zk.cabinet.view.FullScreenAlertDialog;
@@ -133,7 +133,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                 progress.show();
                                 getUpOutBoundList(depositList);
                             } else {
-                                MediaPlayerUtil.getInstance().reportNumber(0);
+                                SoundPoolUtil.getInstance().reportNumber(0);
                                 showToast("本次未发生存取操作");
                                 finish();
                             }
@@ -196,6 +196,12 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                     toolsTemp.setOperateTime(TimeOpera.getStringDateShort());
                                     depositList.add(toolsTemp);
 
+                                    inTheCabinetList.add(toolsTemp);
+                                    notOpenLightNumbers.add(toolsTemp.getToolLightNumber());
+                                    mAdapter.setList(inTheCabinetList);
+                                    mAdapter.notifyDataSetChanged();
+                                    binding.accessingDepositToolNumberTv.setText("本柜共有：" + inTheCabinetList.size() + "件物品");
+
                                     isSave = true;
                                     break;
                                 }
@@ -203,21 +209,22 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                             if (isSave) break;
                         }
                         //判断物品取出
+
                         for (Tools tools : inTheCabinetList) {
                             boolean isExist = false;
                             for (InventoryInfo inventoryInfo : inventoryList) {
                                 if (tools.getEpc().equalsIgnoreCase(inventoryInfo.getEPC())) {
                                     isExist = true;
-
-                                    Tools errorTool = tools;
-                                    errorTool.setSelected(true);
-                                    errorTools.add(errorTool);
-
                                     break;
                                 }
                             }
                             if (!isExist) {
                                 error = true;
+
+                                Tools errorTool = tools;
+                                errorTool.setSelected(true);
+                                errorTools.add(errorTool);
+
                                 takeNumber++;
                             }
                         }
@@ -240,7 +247,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                 accessingFullDialog.setCancelable(false);
                                 accessingFullDialog.setContentView(accessingDialog);
                                 dialog_accessing_lv = accessingDialog.findViewById(R.id.dialog_accessing_lv);
-                                accessingAdapter = new ToolsAdapter(this, depositList);
+                                accessingAdapter = new ToolsAdapter(this, errorTools);
                                 accessingDialog.findViewById(R.id.dialog_accessing_abnormal_completion_operation).setOnClickListener(this);
                                 accessingDialog.findViewById(R.id.dialog_accessing_reopen).setOnClickListener(this);
                                 dialog_accessing_sure = accessingDialog.findViewById(R.id.dialog_accessing_sure);
@@ -259,16 +266,17 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
                             dialog_accessing_reopen_error_tv.setText("本次操作只允许存入！\n请把以下物品归回原位。");
-                            MediaPlayerUtil.getInstance().reportNumber(5);
+                            SoundPoolUtil.getInstance().reportNumber(5);
 
                         } else {
-                            MediaPlayerUtil.getInstance().reportNumber(9);
+                            SoundPoolUtil.getInstance().reportNumber(9);
+                            accessClear();
                         }
                     }
                 } else {
                     accessClear();
                     showToast("读卡器离线，本次存取操作无效！");
-                    MediaPlayerUtil.getInstance().reportNumber(1);
+                    SoundPoolUtil.getInstance().reportNumber(1);
                     finish();
                 }
                 break;
@@ -295,7 +303,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                         ProgressDialogShow("正在第1次盘点，请稍后......");
 
                     } else if (needOpenLightNumbers.size() > 1) {
-                        MediaPlayerUtil.getInstance().reportNumber(4);
+                        SoundPoolUtil.getInstance().reportNumber(4);
                         showToast("本次操作只允许归还一件物品");
                     }
                 }
@@ -366,7 +374,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
         cabinet = CabinetService.getInstance().queryEq(cellNumber);
         if (!NettyServerParsingLibrary.getInstance().isOnline(cabinet.getReaderDeviceID())) {
             showToast("读写器离线！");
-            MediaPlayerUtil.getInstance().reportNumber(1);
+            SoundPoolUtil.getInstance().reportNumber(1);
             finish();
             return;
         }
@@ -559,6 +567,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
         try {
             jsonObject.put("CabinetID", spUtil.getString(Key.DeviceId, ""));
             jsonObject.put("CountErNumber", cabinet.getCellNumber());
+            jsonObject.put("MechanismCoding", unitNumber);
         } catch (JSONException e1) {
             e1.printStackTrace();
         }
@@ -652,7 +661,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                 dataJsonObject.put("NameParty", upAccessingList.get(i).getNameParty());
                 dataJsonObject.put("CabinetID", deviceId);
                 jsonArray.put(dataJsonObject);
-                LogUtil.getInstance().d("出库上报写入：" + jsonArray);
+                LogUtil.getInstance().d("入库上报写入：" + jsonArray);
 
             }
             jsonObject.put("toolInStoreBacks", jsonArray);

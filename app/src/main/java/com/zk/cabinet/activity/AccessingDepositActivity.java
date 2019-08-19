@@ -96,6 +96,8 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
     private List<Tools> depositList; //存入的数据
     private List<Tools> errorTools; //异常数据
 
+    private boolean closeDoorInventory = false;
+
     private MHandler mHandler;
 
     private ProgressDialog progress;
@@ -118,24 +120,21 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                         }
                     } else if (openDooring == 1) {
                         if (!boxStateList.contains(cabinet.getLockNumber())) { // 门关闭
-                            timerStart();
+                            if (!inventorying) {
+                                openDooring = 0;
+                                closeDoorInventory = true;
+                                inventorying = true;
+                                antennaNumberPosition = 0;
+                                NettyServerParsingLibrary.getInstance().send(new NettySendInfo(
+                                        cabinet.getReaderDeviceID(), 0,
+                                        antennaNumberList.get(antennaNumberPosition), 0));
+                                showToast( cabinet.getBoxName() + "已经关闭，准备盘点.");
+                                ProgressDialogShow("正在第1次盘点，请稍后......");
 
-                            DoorSerialOperation.getInstance().startCheckBoxDoorState(-1);
-                            LightSerialOperation.getInstance().startCheckLightState(-1);
-                            needOpenLightNumbers.clear();//关灯
-                            LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
-                                    cabinet.getSourceAddress(), needOpenLightNumbers));
-
-                            openDooring = 0;
-
-                            if (depositList.size() > 0) {
-                                progress.setMessage("正在提交入库数据，请稍后......");
-                                progress.show();
-                                getUpOutBoundList(depositList);
                             } else {
-                                SoundPoolUtil.getInstance().reportNumber(0);
-                                showToast("本次未发生存取操作");
-                                finish();
+                                DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
+                                        cabinet.getSourceAddress(), cabinet.getLockNumber()));
+                                showToast("请在所有盘点结束后关门！");
                             }
                         }
                     }
@@ -180,36 +179,38 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
 
                         int saveNumber = 0, takeNumber = 0;
                         //判断物品存入
-                        for (InventoryInfo inventoryInfo : inventoryList) {
-                            boolean isSave = false;
-                            for (Tools tools : allowDepositList) {
-                                if (tools.getState() != 0 &&
-                                        inventoryInfo.getEPC().equalsIgnoreCase(tools.getEpc())) {
-                                    saveNumber++; // 有物品存入
-                                    tools.setState(0);
+                        if (!closeDoorInventory) {
+                            for (InventoryInfo inventoryInfo : inventoryList) {
+                                boolean isSave = false;
+                                for (Tools tools : allowDepositList) {
+                                    if (tools.getState() != 0 &&
+                                            inventoryInfo.getEPC().equalsIgnoreCase(tools.getEpc())) {
+                                        saveNumber++; // 有物品存入
+                                        tools.setState(0);
 
-                                    Tools toolsTemp = tools;
-                                    toolsTemp.setCellNumber(cellNumber);
-                                    toolsTemp.setToolLightNumber(needOpenLightNumbers.get(0));
-                                    toolsTemp.setSelected(false);
-                                    toolsTemp.setState(0);
-                                    toolsTemp.setOperateTime(TimeOpera.getStringDateShort());
-                                    depositList.add(toolsTemp);
+                                        Tools toolsTemp = tools;
+                                        toolsTemp.setCellNumber(cellNumber);
+                                        toolsTemp.setToolLightNumber(needOpenLightNumbers.get(0));
+                                        toolsTemp.setSelected(false);
+                                        toolsTemp.setState(0);
+                                        toolsTemp.setOperateTime(TimeOpera.getStringDateShort());
+                                        depositList.add(toolsTemp);
 
-                                    inTheCabinetList.add(toolsTemp);
-                                    notOpenLightNumbers.add(toolsTemp.getToolLightNumber());
-                                    mAdapter.setList(inTheCabinetList);
-                                    mAdapter.notifyDataSetChanged();
-                                    binding.accessingDepositToolNumberTv.setText("本柜共有：" + inTheCabinetList.size() + "件物品");
+                                        inTheCabinetList.add(toolsTemp);
+                                        notOpenLightNumbers.add(toolsTemp.getToolLightNumber());
+                                        mAdapter.setList(inTheCabinetList);
+                                        mAdapter.notifyDataSetChanged();
+                                        binding.accessingDepositToolNumberTv.setText("本柜共有：" + inTheCabinetList.size() + "件物品");
 
-                                    isSave = true;
-                                    break;
+                                        isSave = true;
+                                        break;
+                                    }
                                 }
+                                if (isSave) break;
                             }
-                            if (isSave) break;
                         }
-                        //判断物品取出
 
+                        //判断物品取出
                         for (Tools tools : inTheCabinetList) {
                             boolean isExist = false;
                             for (InventoryInfo inventoryInfo : inventoryList) {
@@ -269,8 +270,30 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                             SoundPoolUtil.getInstance().reportNumber(5);
 
                         } else {
-                            SoundPoolUtil.getInstance().reportNumber(9);
-                            accessClear();
+                            if (!closeDoorInventory) {
+                                SoundPoolUtil.getInstance().reportNumber(9);
+                                accessClear();
+                            } else {
+                                closeDoorInventory = false;
+                                timerStart();
+
+                                DoorSerialOperation.getInstance().startCheckBoxDoorState(-1);
+                                LightSerialOperation.getInstance().startCheckLightState(-1);
+                                needOpenLightNumbers.clear();//关灯
+                                LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
+                                        cabinet.getSourceAddress(), needOpenLightNumbers));
+
+
+                                if (depositList.size() > 0) {
+                                    progress.setMessage("正在提交入库数据，请稍后......");
+                                    progress.show();
+                                    getUpOutBoundList(depositList);
+                                } else {
+                                    SoundPoolUtil.getInstance().reportNumber(0);
+                                    showToast("本次未发生存取操作");
+                                    finish();
+                                }
+                            }
                         }
                     }
                 } else {
@@ -475,6 +498,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
             case R.id.accessing_deposit_open_btn:
                 break;
             case R.id.dialog_accessing_reopen:
+                closeDoorInventory = false;
                 accessClear();
                 break;
             case R.id.dialog_accessing_sure:

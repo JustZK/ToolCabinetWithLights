@@ -498,7 +498,11 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
             case R.id.accessing_deposit_open_btn:
                 break;
             case R.id.dialog_accessing_reopen:
-                closeDoorInventory = false;
+                if(closeDoorInventory) {
+                    closeDoorInventory = false;
+                    DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
+                            cabinet.getSourceAddress(), cabinet.getLockNumber()));
+                }
                 accessClear();
                 break;
             case R.id.dialog_accessing_sure:

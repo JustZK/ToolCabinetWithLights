@@ -167,14 +167,6 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                     } else { // 盘点结束
                         ProgressDialogDismiss();
                         int saveNumber = 0, takeNumber = 0;
-//                        for (InventoryInfo inventoryInfo : inventoryList) {
-//                            Tools toolsTemp = ToolsService.getInstance().queryEq(inventoryInfo.getEPC());
-//                            if (toolsTemp != null) {
-//                                if (toolsTemp.getToolState() != 0) {
-//                                    saveNumber++; // 有物品存入
-//                                }
-//                            }
-//                        }
                         for (Tools tools : toolsList) {
                             boolean isExist = false;
                             for (InventoryInfo inventoryInfo : inventoryList) {
@@ -237,7 +229,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                                     if (tools1.getEpc().equalsIgnoreCase(tools.getEpc()) && !tools1.isSelected()) {
                                         isOK = false;
                                         //不该取得物品
-                                        tools.setSelected(true);
+//                                        tools.setSelected(true);
                                     }
                                 }
                             }

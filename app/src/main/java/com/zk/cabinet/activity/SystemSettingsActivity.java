@@ -445,7 +445,8 @@ public class SystemSettingsActivity extends TimeOffAppCompatActivity implements 
             case R.id.system_setting_file_manager_sb:
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                ComponentName cn = new ComponentName("com.android.rk", "com.android.rk.RockExplorer");
+                ComponentName cn = new ComponentName("com.softwinner.TvdFileManager",
+                        "com.softwinner.TvdFileManager.MainUI");
                 intent.setComponent(cn);
                 startActivity(intent);
                 break;

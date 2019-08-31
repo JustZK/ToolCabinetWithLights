@@ -271,7 +271,8 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
 
                         } else {
                             if (!closeDoorInventory) {
-                                SoundPoolUtil.getInstance().reportNumber(9);
+                                if (saveNumber > 0) SoundPoolUtil.getInstance().reportNumber(9);
+                                else SoundPoolUtil.getInstance().reportNumber(10);
                                 accessClear();
                             } else {
                                 closeDoorInventory = false;

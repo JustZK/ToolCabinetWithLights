@@ -323,11 +323,8 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
         binding = DataBindingUtil.setContentView(this, R.layout.activity_accessing_out);
         binding.setOnClickListener(this);
         operationType = getIntent().getExtras().getInt("OperationType");
-//        if (operationType == 0) {
-//            binding.accessingOutToolbar.setTitle("取出操作(按柜子)");
-//        } else if (operationType == 1) {
         binding.accessingOutToolbar.setTitle("取出操作");
-//        }
+
         setSupportActionBar(binding.accessingOutToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
@@ -465,20 +462,12 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 DoorSerialOperation.getInstance().startCheckBoxDoorState(cabinet.getTargetAddress());
                 break;
             case R.id.dialog_accessing_sure:
-//                ToolsService.getInstance().insertOrUpdate(accessingList);
-
-//                accessClear();
                 timerStart();
 
                 progress.setMessage("正在提交出库数据，请稍后......");
                 progress.show();
                 getUpOutBoundList(accessingList);
 
-//                toolsList = ToolsService.getInstance().queryEq(cabinet.getCellNumber(), 0);
-//                if (toolsList == null) toolsList = new ArrayList<>();
-//                mAdapter.setList(toolsList);
-//                mAdapter.notifyDataSetChanged();
-//                binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件物品");
                 break;
         }
     }

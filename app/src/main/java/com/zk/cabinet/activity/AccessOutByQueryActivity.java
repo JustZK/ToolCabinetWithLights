@@ -17,10 +17,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.zk.cabinet.R;
 import com.zk.cabinet.adapter.ToolsAdapter;
-import com.zk.cabinet.bean.Cabinet;
 import com.zk.cabinet.bean.Tools;
 import com.zk.cabinet.databinding.ActivityAccessOutByQueryActivityBinding;
-import com.zk.cabinet.db.CabinetService;
 import com.zk.cabinet.db.ToolsService;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.util.LogUtil;
@@ -44,8 +42,6 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
 
     private List<Tools> list;
     private ToolsAdapter mAdapter;
-
-//    private AlertDialog.Builder openBuilder;
 
     private ProgressDialog progressDialog;
 
@@ -76,7 +72,6 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_access_out_by_query_activity);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_access_out_by_query_activity);
         binding.setOnClickListener(this);
         setSupportActionBar(binding.accessOutByQueryToolbar);
@@ -91,8 +86,6 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
     }
 
     private void init() {
-//        list = ToolsService.getInstance().queryOr("");
-//        if (list == null)
 
         userIDTemp = spUtil.getString(Key.UserIDTemp, "");
         unitNumber = spUtil.getString(Key.UnitNumber, "");
@@ -107,7 +100,27 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
         binding.accessOutByQueryQueryLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                if (!list.get(position).isSelected()) {
+                    boolean isSelect = false;
+                    for (Tools tools : list) {
+                        if (tools.isSelected()) {
+                            isSelect = true;
+                            if (tools.getCellNumber() == list.get(position).getCellNumber()) {
+                                list.get(position).setSelected(true);
+                            } else {
+                                showToast("您当前选中的工具与之前选中的工具不在同一个格子。");
+                            }
+                            break;
+                        }
+                    }
+                    if (!isSelect) list.get(position).setSelected(true);
+                } else {
+                    list.get(position).setSelected(false);
+                }
+                mAdapter.notifyDataSetChanged();
 
+
+                /* 单个存取的逻辑
                 Cabinet cabinetTemp = CabinetService.getInstance().queryEq(list.get(position).getCellNumber());
 
                 Bundle bundle = new Bundle();
@@ -117,6 +130,7 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
                 bundle.putBoolean("ImmediatelyOpen", true);
                 bundle.putInt("PropertyInvolved", propertyInvolved);
                 IntentActivity(AccessingOutActivity.class, bundle);
+                */
             }
         });
         getOutBoundList();
@@ -138,32 +152,26 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.access_out_by_query_btn:
-//                String search = binding.accessOutByQuerySearchEt.getText().toString().trim();
-////                if (!TextUtils.isEmpty(search)){
-//                list = ToolsService.getInstance().queryOr(search);
-//                if (list == null) list = new ArrayList<>();
-//                mAdapter.setList(list);
-//                mAdapter.notifyDataSetChanged();
-//
-////                } else {
-//                    list = ToolsService.getInstance().loadAll();
-//                    if (list == null) list = new ArrayList<>();
-//                    mAdapter.setList(list);
-//                    mAdapter.notifyDataSetChanged();
-//                }
+            case R.id.access_out_btn:
+                List<Tools> outList = new ArrayList<>();
+                for (Tools tools : list) {
+                    tools.setOperating(1);
+                    if (tools.isSelected()) outList.add(tools);
+                }
+                ToolsService.getInstance().update(outList);
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("CellNumber", outList.get(0).getCellNumber());
+                bundle.putInt("OperationType", 1);
+                bundle.putBoolean("ImmediatelyOpen", true);
+                bundle.putInt("PropertyInvolved", propertyInvolved);
+                IntentActivity(AccessingOutActivity.class, bundle);
                 break;
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        showToast("刷新界面");
-//        String search = binding.accessOutByQuerySearchEt.getText().toString().trim();
-//        list = ToolsService.getInstance().queryOr(search);
-//        if (list == null) list = new ArrayList<>();
-//        mAdapter.setList(list);
-//        mAdapter.notifyDataSetChanged();
         if (resultCode != RESULT_CODE) {
             getOutBoundList();
             if (progressDialog == null)

@@ -1,10 +1,10 @@
 package com.zk.cabinet.bean;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Transient;
+import org.greenrobot.greendao.annotation.Generated;
 
 @Entity(nameInDb = "Tools")
 public class Tools {
@@ -60,15 +60,19 @@ public class Tools {
     @Property(nameInDb = "OperateTime")
     private String operateTime;
 
+    // 可操作 1：取出 2：存入
+    @Property(nameInDb = "Operating")
+    private int operating;
+
     @Transient
     private boolean selected;
 
-    @Generated(hash = 584522984)
+    @Generated(hash = 1333413138)
     public Tools(Long id, String caseNumber, String propertyInvolved,
             String propertyInvolvedName, String propertyNumber,
             String mechanismCoding, String mechanismName, String epc,
             int cellNumber, int state, int toolLightNumber, String nameParty,
-            String operateTime) {
+            String operateTime, int operating) {
         this.id = id;
         this.caseNumber = caseNumber;
         this.propertyInvolved = propertyInvolved;
@@ -82,10 +86,19 @@ public class Tools {
         this.toolLightNumber = toolLightNumber;
         this.nameParty = nameParty;
         this.operateTime = operateTime;
+        this.operating = operating;
     }
 
     @Generated(hash = 161980891)
     public Tools() {
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCaseNumber() {
@@ -184,19 +197,19 @@ public class Tools {
         this.operateTime = operateTime;
     }
 
+    public int getOperating() {
+        return this.operating;
+    }
+
+    public void setOperating(int operating) {
+        this.operating = operating;
+    }
+
     public boolean isSelected() {
         return selected;
     }
 
     public void setSelected(boolean selected) {
         this.selected = selected;
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }

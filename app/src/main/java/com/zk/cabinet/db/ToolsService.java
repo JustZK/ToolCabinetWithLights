@@ -31,6 +31,7 @@ public class ToolsService extends BaseService<Tools, Long> {
 
     public List<Tools> getDepositTools(int cellNumber){
         return query(ToolsDao.Properties.CellNumber.eq(cellNumber),
-                ToolsDao.Properties.State.eq(1));
+                ToolsDao.Properties.State.eq(1),
+                ToolsDao.Properties.Operating.eq(2));
     }
 }

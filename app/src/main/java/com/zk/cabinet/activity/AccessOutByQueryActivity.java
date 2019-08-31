@@ -158,14 +158,16 @@ public class AccessOutByQueryActivity extends TimeOffAppCompatActivity implement
                     tools.setOperating(1);
                     if (tools.isSelected()) outList.add(tools);
                 }
-                ToolsService.getInstance().update(outList);
+                if (outList.size() > 0) {
+                    ToolsService.getInstance().update(outList);
 
-                Bundle bundle = new Bundle();
-                bundle.putInt("CellNumber", outList.get(0).getCellNumber());
-                bundle.putInt("OperationType", 1);
-                bundle.putBoolean("ImmediatelyOpen", true);
-                bundle.putInt("PropertyInvolved", propertyInvolved);
-                IntentActivity(AccessingOutActivity.class, bundle);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("CellNumber", outList.get(0).getCellNumber());
+                    bundle.putInt("OperationType", 1);
+                    bundle.putBoolean("ImmediatelyOpen", true);
+                    bundle.putInt("PropertyInvolved", propertyInvolved);
+                    IntentActivity(AccessingOutActivity.class, bundle);
+                } else showToast("请选中出库的工具");
                 break;
         }
     }

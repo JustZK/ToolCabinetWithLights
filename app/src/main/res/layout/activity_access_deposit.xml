@@ -27,6 +27,19 @@
             bind:theme="@style/ToolbarTheme">
 
             <TextView
+                android:gravity="center"
+                android:id="@+id/access_deposit_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginEnd="@dimen/big_spacing"
+                android:layout_marginLeft="@dimen/big_spacing"
+                android:onClick="@{onClickListener}"
+                android:text="存入"
+                android:textSize="@dimen/super_big_lite_text"
+                android:textColor="@color/white" />
+
+            <TextView
                 android:id="@+id/access_deposit_countdown_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

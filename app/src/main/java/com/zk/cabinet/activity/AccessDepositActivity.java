@@ -17,10 +17,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.zk.cabinet.R;
 import com.zk.cabinet.adapter.ToolsAdapter;
-import com.zk.cabinet.bean.Cabinet;
 import com.zk.cabinet.bean.Tools;
 import com.zk.cabinet.databinding.ActivityAccessDepositBinding;
-import com.zk.cabinet.db.CabinetService;
 import com.zk.cabinet.db.ToolsService;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.util.LogUtil;
@@ -36,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class AccessDepositActivity extends TimeOffAppCompatActivity {
+public class AccessDepositActivity extends TimeOffAppCompatActivity implements View.OnClickListener{
     private final static int GET_IN_BOUND_LIST_SUCCESS = 0x00;
     private final static int GET_IN_BOUND_LIST_ERROR = 0x01;
     private ActivityAccessDepositBinding binding;
@@ -81,6 +79,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_access_deposit);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_access_deposit);
+        binding.setOnClickListener(this);
         setSupportActionBar(binding.accessDepositToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
@@ -109,6 +108,26 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
         binding.accessDepositQueryLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                if (!list.get(position).isSelected()) {
+                    boolean isSelect = false;
+                    for (Tools tools : list) {
+                        if (tools.isSelected()) {
+                            isSelect = true;
+                            if (tools.getCellNumber() == list.get(position).getCellNumber()) {
+                                list.get(position).setSelected(true);
+                            } else {
+                                showToast("您当前选中的工具与之前选中的工具不在同一个格子。");
+                            }
+                            break;
+                        }
+                    }
+                    if (!isSelect) list.get(position).setSelected(true);
+                } else {
+                    list.get(position).setSelected(false);
+                }
+                mAdapter.notifyDataSetChanged();
+
+                /* 单个存入
                 Cabinet cabinetTemp = CabinetService.getInstance().queryEq(list.get(position).getCellNumber());
                 Bundle bundle = new Bundle();
                 bundle.putInt("CellNumber", cabinetTemp.getCellNumber());
@@ -124,6 +143,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
 
                 bundle.putInt("PropertyInvolved", propertyInvolved);
                 IntentActivity(AccessingDepositActivity.class, bundle);
+                */
             }
         });
 
@@ -156,6 +176,30 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity {
             progressDialog.setMessage("正在联网获取入库清单，请稍后......");
             progressDialog.show();
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.access_deposit_btn:
+                List<Tools> addList = new ArrayList<>();
+                for (Tools tools : list) {
+                    tools.setOperating(2);
+                    if (tools.isSelected()) addList.add(tools);
+                }
+                if (addList.size() > 0) {
+                    ToolsService.getInstance().update(addList);
+
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("CellNumber", addList.get(0).getCellNumber());
+                    bundle.putInt("OperationType", 2);
+                    bundle.putBoolean("ImmediatelyOpen", true);
+                    bundle.putInt("PropertyInvolved", propertyInvolved);
+                    IntentActivity(AccessingDepositActivity.class, bundle);
+                } else showToast("请选中入库的工具");
+
+                break;
         }
     }
 

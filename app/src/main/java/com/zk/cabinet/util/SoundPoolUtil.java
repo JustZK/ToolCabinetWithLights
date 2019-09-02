@@ -21,6 +21,8 @@ public class SoundPoolUtil {
     private Boolean isPlaying = false;
     private int number = 0;
 
+    private int streamID;
+
     private SoundPoolUtil() {
     }
 
@@ -86,9 +88,13 @@ public class SoundPoolUtil {
 
     public void reportNumber(int errorNumber) {
         if (!isOpen) return;
-        if (isPlaying) return;
-
-        soundPool.play(soundPoolMap.get(errorNumber), 1.0f, 1.0f, 0, 0, 1);
+        if (errorNumber == 11){
+            soundPool.stop(streamID);
+            soundPool.play(soundPoolMap.get(errorNumber), 1.0f, 1.0f, 0, 0, 1);
+        } else {
+            if (isPlaying) return;
+            streamID = soundPool.play(soundPoolMap.get(errorNumber), 1.0f, 1.0f, 0, 0, 1);
+        }
 
         synchronized (isPlaying) {
             isPlaying = true;

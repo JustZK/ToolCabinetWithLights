@@ -121,6 +121,13 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                     } else if (openDooring == 1) {
                         if (!boxStateList.contains(cabinet.getLockNumber())) { // 门关闭
                             if (!inventorying) {
+                                for (Tools tools: allowDepositList){
+                                    if (!tools.isAlreadyOperated()){
+                                        SoundPoolUtil.getInstance().reportNumber(11);
+                                        showToast(tools.getPropertyInvolvedName() + "，该物品在入库列表中，但您未入库。");
+                                    }
+                                }
+
                                 openDooring = 0;
                                 closeDoorInventory = true;
                                 inventorying = true;
@@ -187,6 +194,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                             inventoryInfo.getEPC().equalsIgnoreCase(tools.getEpc())) {
                                         saveNumber++; // 有物品存入
                                         tools.setState(0);
+                                        tools.setAlreadyOperated(true);
 
                                         Tools toolsTemp = tools;
                                         toolsTemp.setCellNumber(cellNumber);

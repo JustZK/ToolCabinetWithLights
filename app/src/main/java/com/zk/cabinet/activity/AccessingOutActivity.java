@@ -118,9 +118,9 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                         if (!boxStateList.contains(cabinet.getLockNumber())) {
                             DoorSerialOperation.getInstance().startCheckBoxDoorState(-1);
 
-                            lightNumbers.clear();//关灯
-                            LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
-                                    cabinet.getSourceAddress(), lightNumbers));
+//                            lightNumbers.clear();//关灯
+//                            LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
+//                                    cabinet.getSourceAddress(), lightNumbers));
 
                             openDooring = 0;
                             antennaNumberPosition = 0;
@@ -230,10 +230,19 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                                         isOK = false;
                                         //不该取得物品
 //                                        tools.setSelected(true);
+                                    } else if (tools1.getEpc().equalsIgnoreCase(tools.getEpc()) && tools1.isSelected()){
+                                        tools1.setAlreadyOperated(true);
                                     }
                                 }
                             }
                             if (isOK) {
+                                for (Tools tools: toolsList){
+                                    if (!tools.isAlreadyOperated() && tools.isSelected()){
+                                        SoundPoolUtil.getInstance().reportNumber(12);
+                                        showToast(tools.getPropertyInvolvedName() + "，该物品在出库列表中，但您未入库。");
+                                    }
+                                }
+
                                 if (takeNumber > 0) SoundPoolUtil.getInstance().reportNumber(8);
                                 else SoundPoolUtil.getInstance().reportNumber(0);
                                 dialog_accessing_reopen_error_tv.setVisibility(View.GONE);

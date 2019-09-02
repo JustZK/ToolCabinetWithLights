@@ -67,6 +67,9 @@ public class Tools {
     @Transient
     private boolean selected;
 
+    @Transient
+    private boolean alreadyOperated;
+
     @Generated(hash = 1333413138)
     public Tools(Long id, String caseNumber, String propertyInvolved,
             String propertyInvolvedName, String propertyNumber,
@@ -211,5 +214,13 @@ public class Tools {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public boolean isAlreadyOperated() {
+        return alreadyOperated;
+    }
+
+    public void setAlreadyOperated(boolean alreadyOperated) {
+        this.alreadyOperated = alreadyOperated;
     }
 }

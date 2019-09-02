@@ -38,7 +38,11 @@ public class SoundPoolUtil {
         soundPoolMap.put(7, soundPool.load(context,R.raw.deposited_multiple_tools, 1));       //您存入了多个工具
         soundPoolMap.put(8, soundPool.load(context,R.raw.successful_delivery, 1));            //取出成功
         soundPoolMap.put(9, soundPool.load(context,R.raw.successful_warehousing, 1));         //存入成功
-        soundPoolMap.put(10, soundPool.load(context,R.raw.not_in_warehousing_list, 1));         //不在入库列表中
+        soundPoolMap.put(10, soundPool.load(context,R.raw.not_in_warehousing_list, 1));       //不在入库列表中
+
+        soundPoolMap.put(11, soundPool.load(context,R.raw.incomplete_deposit, 1));            //未完成所有的存入
+        soundPoolMap.put(12, soundPool.load(context,R.raw.unfinished, 1));                    //未完成所有的取出
+
 
         isOpen = SharedPreferencesUtil.getInstance().getBoolean(SharedPreferencesUtil.Key.BeepSound, true);
 
@@ -48,7 +52,7 @@ public class SoundPoolUtil {
             public void run() {
                 if (isPlaying){
                     number ++;
-                    if (number > 5) {
+                    if (number > 4) {
                         number = 0;
                         synchronized (isPlaying) {
                             isPlaying = false;

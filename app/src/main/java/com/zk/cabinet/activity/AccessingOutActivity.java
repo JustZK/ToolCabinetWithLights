@@ -230,14 +230,14 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                                         isOK = false;
                                         //不该取得物品
 //                                        tools.setSelected(true);
-                                    } else if (tools1.getEpc().equalsIgnoreCase(tools.getEpc()) && tools1.isSelected()){
+                                    } else if (tools1.getEpc().equalsIgnoreCase(tools.getEpc()) && tools1.isSelected()) {
                                         tools1.setAlreadyOperated(true);
                                     }
                                 }
                             }
                             if (isOK) {
-                                for (Tools tools: toolsList){
-                                    if (!tools.isAlreadyOperated() && tools.isSelected()){
+                                for (Tools tools : toolsList) {
+                                    if (!tools.isAlreadyOperated() && tools.isSelected()) {
                                         SoundPoolUtil.getInstance().reportNumber(12);
                                         showToast(tools.getPropertyInvolvedName() + "，该物品在出库列表中，但您未入库。");
                                     }
@@ -257,9 +257,11 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                         }
                     }
                 } else {
-                    accessClear();
-                    showToast("读卡器离线，本次存取操作无效！");
-                    SoundPoolUtil.getInstance().reportNumber(1);
+                    if (cabinet.getReaderDeviceID() == msg.arg2) {
+                        accessClear();
+                        showToast("读卡器离线，本次存取操作无效！");
+                        SoundPoolUtil.getInstance().reportNumber(1);
+                    }
                 }
                 break;
             case OPEN_LIGHT_RESULT:
@@ -275,7 +277,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
 //                String epc = getIntent().getExtras().getString("EPC");
                 List<Tools> epcList = ToolsService.getInstance().getOutTools(cellNumber);
                 for (Tools tools : toolsList) {
-                    for (Tools epcTool: epcList) {
+                    for (Tools epcTool : epcList) {
                         if (tools.getEpc().equals(epcTool.getEpc())) {
                             tools.setSelected(true);
                             lightNumbers.add(tools.getToolLightNumber());
@@ -353,7 +355,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
         cellNumber = getIntent().getExtras().getInt("CellNumber");
         cabinet = CabinetService.getInstance().queryEq(cellNumber);
 
-        if (!NettyServerParsingLibrary.getInstance().isOnline(cabinet.getReaderDeviceID())){
+        if (!NettyServerParsingLibrary.getInstance().isOnline(cabinet.getReaderDeviceID())) {
             showToast("读写器离线！");
             SoundPoolUtil.getInstance().reportNumber(1);
             finish();
@@ -393,11 +395,12 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
 
     private InventoryListener inventoryListener = new InventoryListener() {
         @Override
-        public void inventoryList(int result, List<InventoryInfo> inventoryInfoList) {
+        public void inventoryList(int readerID, int result, List<InventoryInfo> inventoryInfoList) {
             Message msg = Message.obtain();
             msg.what = INVENTORY_18K6C;
             msg.obj = inventoryInfoList;
             msg.arg1 = result;
+            msg.arg2 = readerID;
             mHandler.sendMessage(msg);
         }
     };

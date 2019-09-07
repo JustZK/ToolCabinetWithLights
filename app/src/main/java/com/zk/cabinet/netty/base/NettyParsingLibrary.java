@@ -273,7 +273,7 @@ public class NettyParsingLibrary {
                     } else if (buffer[10] == 0x01) {
                         //盘点结束
                         if (inventoryListener != null) {
-                            inventoryListener.inventoryList(0, inventoryInfoList);
+                            inventoryListener.inventoryList(0,0, inventoryInfoList);
                         }
                     }
                     break;

@@ -71,17 +71,17 @@ public class NettyServerParsingLibrary {
         }
     }
 
-    public void send(NettySendInfo nettySendInfo) {
-        processor.send(nettySendInfo);
+    public boolean send(NettySendInfo nettySendInfo) {
+        return processor.send(nettySendInfo);
     }
 
-    public boolean isOnline(int readerIp){
+    public boolean isOnline(int readerIp) {
         return processor.isOnline(readerIp);
     }
 
     public static class Processor extends NettyServerHandler.NettyServerEventProcessor {
         private HashMap<Integer, ChannelHandlerContext> nettyChannelMap = new HashMap<>();
-
+        private int readerID;
         private byte[] remainBuffer = null;//上次解析剩余的数据
         private List<InventoryInfo> inventoryInfoList = new ArrayList<>();
         private InventoryListener inventoryListener;
@@ -90,11 +90,12 @@ public class NettyServerParsingLibrary {
             this.inventoryListener = inventoryListener;
         }
 
-        public boolean isOnline(int readerIp){
+        public boolean isOnline(int readerIp) {
             return nettyChannelMap.get(readerIp) != null;
         }
 
-        public void send(NettySendInfo nettySendInfo) {
+        public boolean send(NettySendInfo nettySendInfo) {
+            readerID = nettySendInfo.getReaderIp();
             if (nettyChannelMap.get(nettySendInfo.getReaderIp()) != null) {
                 switch (nettySendInfo.getCommunicationType()) {
                     case 0x03:
@@ -112,9 +113,12 @@ public class NettyServerParsingLibrary {
                         LogUtil.getInstance().d("NETTY通信Android发送盘点指令：" + buffers);
                         break;
                 }
+                return true;
             } else {
-                inventoryListener.inventoryList(1, inventoryInfoList);
+                if (inventoryListener != null)
+                    inventoryListener.inventoryList(readerID, 1, inventoryInfoList);
                 LogUtil.getInstance().LogPrint("nettyChannelMap.get(nettySendInfo.getReaderIp()) != null");
+                return false;
             }
         }
 
@@ -148,11 +152,35 @@ public class NettyServerParsingLibrary {
         @Override
         protected void onChannelInactive(ChannelHandlerContext ctx) {
             super.onChannelInactive(ctx);
+            // 离线
+            if (nettyChannelMap.containsValue(ctx)) {
+                for (Map.Entry<Integer, ChannelHandlerContext> entry : nettyChannelMap.entrySet()) {
+                    if (ctx.equals(entry.getValue())) {
+                        LogUtil.getInstance().d("nettyChannelMap.remove(entry.getKey()) :" + entry.getKey());
+                        nettyChannelMap.remove(entry.getKey());
+                        if (inventoryListener != null)
+                            inventoryListener.inventoryList(entry.getKey(), 1, inventoryInfoList);
+                        break;
+                    }
+                }
+            }
         }
 
         @Override
         protected void onExceptionCaught(ChannelHandlerContext ctx) {
             super.onExceptionCaught(ctx);
+            // 异常
+            if (nettyChannelMap.containsValue(ctx)) {
+                for (Map.Entry<Integer, ChannelHandlerContext> entry : nettyChannelMap.entrySet()) {
+                    if (ctx.equals(entry.getValue())) {
+                        LogUtil.getInstance().d("nettyChannelMap.remove(entry.getKey()) :" + entry.getKey());
+                        nettyChannelMap.remove(entry.getKey());
+                        if (inventoryListener != null)
+                            inventoryListener.inventoryList(entry.getKey(), 1, inventoryInfoList);
+                        break;
+                    }
+                }
+            }
         }
 
         @Override
@@ -163,10 +191,13 @@ public class NettyServerParsingLibrary {
         @Override
         protected void onHandlerRemoved(ChannelHandlerContext ctx) {
             super.onHandlerRemoved(ctx);
+            // 离开
             for (Map.Entry<Integer, ChannelHandlerContext> entry : nettyChannelMap.entrySet()) {
                 if (ctx == entry.getValue()) {
                     LogUtil.getInstance().LogPrint("nettyChannelMap.remove(entry.getKey()) :" + entry.getKey());
                     nettyChannelMap.remove(entry.getKey());
+                    if (inventoryListener != null)
+                        inventoryListener.inventoryList(entry.getKey(), 1, inventoryInfoList);
                     break;
                 }
             }
@@ -302,7 +333,7 @@ public class NettyServerParsingLibrary {
                         //盘点结束
                         LogUtil.getInstance().d("Inventory end");
                         if (inventoryListener != null) {
-                            inventoryListener.inventoryList(0, inventoryInfoList);
+                            inventoryListener.inventoryList(readerID, 0, inventoryInfoList);
                         }
                     }
                     break;

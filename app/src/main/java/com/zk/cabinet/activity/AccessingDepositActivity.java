@@ -121,8 +121,8 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                     } else if (openDooring == 1) {
                         if (!boxStateList.contains(cabinet.getLockNumber())) { // 门关闭
                             if (!inventorying) {
-                                for (Tools tools: allowDepositList){
-                                    if (!tools.isAlreadyOperated()){
+                                for (Tools tools : allowDepositList) {
+                                    if (!tools.isAlreadyOperated()) {
                                         SoundPoolUtil.getInstance().reportNumber(11);
                                         showToast(tools.getPropertyInvolvedName() + "，该物品在入库列表中，但您未入库。");
                                     }
@@ -135,7 +135,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                 NettyServerParsingLibrary.getInstance().send(new NettySendInfo(
                                         cabinet.getReaderDeviceID(), 0,
                                         antennaNumberList.get(antennaNumberPosition), 0));
-                                showToast( cabinet.getBoxName() + "已经关闭，准备盘点.");
+                                showToast(cabinet.getBoxName() + "已经关闭，准备盘点.");
                                 ProgressDialogShow("正在第1次盘点，请稍后......");
 
                             } else {
@@ -306,10 +306,12 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                         }
                     }
                 } else {
-                    accessClear();
-                    showToast("读卡器离线，本次存取操作无效！");
-                    SoundPoolUtil.getInstance().reportNumber(1);
-                    finish();
+                    if (cabinet.getReaderDeviceID() == msg.arg2) {
+                        accessClear();
+                        showToast("读卡器离线，本次存取操作无效！");
+                        SoundPoolUtil.getInstance().reportNumber(1);
+                        finish();
+                    }
                 }
                 break;
             case OPEN_LIGHT_RESULT:
@@ -448,11 +450,12 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
 
     private InventoryListener inventoryListener = new InventoryListener() {
         @Override
-        public void inventoryList(int result, List<InventoryInfo> inventoryInfoList) {
+        public void inventoryList(int readerID, int result, List<InventoryInfo> inventoryInfoList) {
             Message msg = Message.obtain();
             msg.what = INVENTORY_18K6C;
             msg.obj = inventoryInfoList;
             msg.arg1 = result;
+            msg.arg2 = readerID;
             mHandler.sendMessage(msg);
         }
     };
@@ -507,7 +510,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
             case R.id.accessing_deposit_open_btn:
                 break;
             case R.id.dialog_accessing_reopen:
-                if(closeDoorInventory) {
+                if (closeDoorInventory) {
                     closeDoorInventory = false;
                     DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
                             cabinet.getSourceAddress(), cabinet.getLockNumber()));

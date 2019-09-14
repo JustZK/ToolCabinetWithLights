@@ -6,9 +6,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.util.concurrent.GlobalEventExecutor;
 
 public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
     private static final String TAG = "b";
@@ -35,11 +32,11 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         // TODO Auto-generated method stub
-        Channel channel = ctx.channel();
-        System.out.println("Client ："+channel.remoteAddress()+"  异常\n");
-        cause.printStackTrace();
-        ctx.close();
-        if (nettyServerEventProcessor != null) nettyServerEventProcessor.onExceptionCaught(ctx);
+//        Channel channel = ctx.channel();
+//        System.out.println("Client ："+channel.remoteAddress()+"  异常\n");
+//        cause.printStackTrace();
+//        ctx.close();
+//        if (nettyServerEventProcessor != null) nettyServerEventProcessor.onExceptionCaught(ctx);
     }
 
     @Override

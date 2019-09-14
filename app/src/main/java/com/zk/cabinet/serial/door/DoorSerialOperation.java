@@ -115,13 +115,7 @@ public class DoorSerialOperation extends SerialHelper {
 
     @Override
     protected void onDataReceived(String sPort, byte[] buffer, int size) {
-        StringBuilder buffers = new StringBuilder();
-        for (int i = 0; i < size; i++) {
-            buffers.append(Integer.toHexString((buffer[i] & 0xff)));
-            buffers.append(" ");
-        }
-        LogUtil.getInstance().d(TAG, "onDataReceived---：：：：" + buffers);
-        LogUtil.getInstance().LogPrint("串口通信Android接收：" + buffers);
+        LogUtil.getInstance().d("onDataReceived---：：：：", buffer, size);
 
         if (buffer[0] == DoorUtils.HEAD_HIGH && buffer[1] == DoorUtils.HEAD_LOW) {
             int needleLength = buffer[4] * 256 + buffer[5];
@@ -155,28 +149,24 @@ public class DoorSerialOperation extends SerialHelper {
                         if ((buffer[8] >> i & 0x1) == 1) {
                             boxStateList.add(24 + i + 1);
                             LogUtil.getInstance().d("门开启：" + (24 + i + 1));
-                            LogUtil.getInstance().LogPrint("门开启：" + (24 + i + 1));
                         }
                     }
                     for (int i = 0; i < 8; i++) {
                         if ((buffer[9] >> i & 0x1) == 1) {
                             boxStateList.add(16 + i + 1);
                             LogUtil.getInstance().d("门开启：" + (16 + i + 1));
-                            LogUtil.getInstance().LogPrint("门开启：" + (16 + i + 1));
                         }
                     }
                     for (int i = 0; i < 8; i++) {
                         if ((buffer[10] >> i & 0x1) == 1) {
                             boxStateList.add(8 + i + 1);
                             LogUtil.getInstance().d("门开启：" + (8 + i + 1));
-                            LogUtil.getInstance().LogPrint("门开启：" + (8 + i + 1));
                         }
                     }
                     for (int i = 0; i < 8; i++) {
                         if ((buffer[11] >> i & 0x1) == 1) {
                             boxStateList.add(i + 1);
                             LogUtil.getInstance().d("门开启：" + (i + 1));
-                            LogUtil.getInstance().LogPrint("门开启：" + (i + 1));
                         }
                     }
                     if (doorListener != null){

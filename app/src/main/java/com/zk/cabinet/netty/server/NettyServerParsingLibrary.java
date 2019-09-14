@@ -80,6 +80,7 @@ public class NettyServerParsingLibrary {
     }
 
     public static class Processor extends NettyServerHandler.NettyServerEventProcessor {
+        private int number = 0;//用于测试
         private HashMap<Integer, ChannelHandlerContext> nettyChannelMap = new HashMap<>();
         private int readerID;
         private byte[] remainBuffer = null;//上次解析剩余的数据
@@ -117,21 +118,13 @@ public class NettyServerParsingLibrary {
             } else {
                 if (inventoryListener != null)
                     inventoryListener.inventoryList(readerID, 1, inventoryInfoList);
-                LogUtil.getInstance().LogPrint("nettyChannelMap.get(nettySendInfo.getReaderIp()) != null");
                 return false;
             }
         }
 
         @Override
         protected void onMessageReceived(ChannelHandlerContext ctx, byte[] buffer) {
-            LogUtil.getInstance().d(TAG, "onMessageReceived");
-            StringBuilder buffers = new StringBuilder();
-            for (int i = 0; i < buffer.length; i++) {
-                buffers.append(Integer.toHexString((buffer[i] & 0xff)));
-                buffers.append(" ");
-            }
-            LogUtil.getInstance().d("test Received" + buffers);
-            LogUtil.getInstance().LogPrint("NETTY通信Android收到原始数据：" + buffers);
+            LogUtil.getInstance().d(TAG, buffer, buffer.length);
 
             byte[] tempBytes;
             //如果上次解析有剩余，则将其加上
@@ -141,7 +134,12 @@ public class NettyServerParsingLibrary {
                 tempBytes = buffer;
             }
 
+            number = 0;
             remainBuffer = interceptionReceivedData(ctx, tempBytes);
+            if (remainBuffer != null)
+                LogUtil.getInstance().d("上次解析有剩余：", remainBuffer, remainBuffer.length);
+            else
+                LogUtil.getInstance().d("上次解析没有有剩余：");
         }
 
         @Override
@@ -169,18 +167,18 @@ public class NettyServerParsingLibrary {
         @Override
         protected void onExceptionCaught(ChannelHandlerContext ctx) {
             super.onExceptionCaught(ctx);
-            // 异常
-            if (nettyChannelMap.containsValue(ctx)) {
-                for (Map.Entry<Integer, ChannelHandlerContext> entry : nettyChannelMap.entrySet()) {
-                    if (ctx.equals(entry.getValue())) {
-                        LogUtil.getInstance().d("nettyChannelMap.remove(entry.getKey()) :" + entry.getKey());
-                        nettyChannelMap.remove(entry.getKey());
-                        if (inventoryListener != null)
-                            inventoryListener.inventoryList(entry.getKey(), 1, inventoryInfoList);
-                        break;
-                    }
-                }
-            }
+//            // 异常
+//            if (nettyChannelMap.containsValue(ctx)) {
+//                for (Map.Entry<Integer, ChannelHandlerContext> entry : nettyChannelMap.entrySet()) {
+//                    if (ctx.equals(entry.getValue())) {
+//                        LogUtil.getInstance().d("nettyChannelMap.remove(entry.getKey()) :" + entry.getKey());
+//                        nettyChannelMap.remove(entry.getKey());
+//                        if (inventoryListener != null)
+//                            inventoryListener.inventoryList(entry.getKey(), 1, inventoryInfoList);
+//                        break;
+//                    }
+//                }
+//            }
         }
 
         @Override
@@ -194,7 +192,6 @@ public class NettyServerParsingLibrary {
             // 离开
             for (Map.Entry<Integer, ChannelHandlerContext> entry : nettyChannelMap.entrySet()) {
                 if (ctx == entry.getValue()) {
-                    LogUtil.getInstance().LogPrint("nettyChannelMap.remove(entry.getKey()) :" + entry.getKey());
                     nettyChannelMap.remove(entry.getKey());
                     if (inventoryListener != null)
                         inventoryListener.inventoryList(entry.getKey(), 1, inventoryInfoList);
@@ -210,23 +207,51 @@ public class NettyServerParsingLibrary {
          * @return 返回截取剩剩余的帧
          */
         private byte[] interceptionReceivedData(ChannelHandlerContext ctx, byte[] dataBytes) {
+            LogUtil.getInstance().d("第 " + number + "次进入");
             if (dataBytes == null || dataBytes.length == 0) {
                 return null;
             }
             int size = dataBytes.length;
             //针头帧尾的位置
             int headPosition1 = -1, headPosition2 = -1, tailPosition1 = -1, tailPosition2 = -1;
-            for (int i = 0; i < (size - 1); i++) {
-                if (dataBytes[i] == NettyUtils.HEAD_HIGH && dataBytes[i + 1] == NettyUtils.HEAD_LOW) {
-                    headPosition1 = i;
-                    headPosition2 = i + 1;
+            for (int i = 0; i < size; i++) {
+                if (dataBytes[i] == NettyUtils.HEAD_HIGH) {
+                    if (headPosition1 == -1) {
+                        headPosition1 = i;
+                    } else {
+                        if ((i + 1) < size && dataBytes[i + 1] == NettyUtils.HEAD_LOW) {
+                            headPosition1 = i;
+                        }
+                    }
                 }
-                if (dataBytes[i] == NettyUtils.TAIL_HIGH && dataBytes[i + 1] == NettyUtils.TAIL_LOW) {
-                    tailPosition1 = i;
-                    tailPosition2 = i + 1;
-                    break;
+                if (dataBytes[i] == NettyUtils.HEAD_LOW) {
+                    if (headPosition1 == (i - 1)) {
+                        headPosition2 = i;
+                    } else {
+//                        headPosition1 = -1;
+//                        headPosition2 = -1;
+                    }
+                }
+                if (dataBytes[i] == NettyUtils.TAIL_HIGH) {
+                    if (tailPosition1 == -1) {
+                        tailPosition1 = i;
+                    } else {
+                        if ((i + 1) < size && dataBytes[i + 1] == NettyUtils.TAIL_LOW) {
+                            tailPosition1 = i;
+                        }
+                    }
+                }
+                if (dataBytes[i] == NettyUtils.TAIL_LOW) {
+                    if (tailPosition1 == (i - 1)) {
+                        tailPosition2 = i;
+                        break;
+                    } else {
+//                        tailPosition1 = -1;
+//                        tailPosition2 = -1;
+                    }
                 }
             }
+            LogUtil.getInstance().d("headPosition1:" + headPosition1 + "headPosition2:" + headPosition2 + "tailPosition1:" + tailPosition1 + "tailPosition2:" + tailPosition2);
             if (headPosition1 != -1) {
                 if (headPosition2 != -1 && tailPosition1 != -1 && tailPosition2 != -1 && tailPosition1 > headPosition2) {
                     byte[] tempCompleteBytes = new byte[tailPosition2 - headPosition1 + 1];
@@ -236,6 +261,7 @@ public class NettyServerParsingLibrary {
                     if (size > (tailPosition2 + 1)) {
                         byte[] subTempBytes = new byte[size - tailPosition2 - 1];
                         System.arraycopy(dataBytes, tailPosition2 + 1, subTempBytes, 0, subTempBytes.length);
+                        number++;
                         return interceptionReceivedData(ctx, subTempBytes);
                     } else {
                         return null;
@@ -302,7 +328,6 @@ public class NettyServerParsingLibrary {
                 buffers.append(" ");
             }
             LogUtil.getInstance().d("test Received end" + buffers);
-            LogUtil.getInstance().LogPrint("NETTY通信Android收到解析后的数据：" + buffers);
 
 
             switch (buffer[6]) {
@@ -317,7 +342,6 @@ public class NettyServerParsingLibrary {
                     int deviceID = NettyUtils.byteArrayToInt(deviceIDB);
                     LogUtil.getInstance().d("设备编号：" + deviceID);
                     nettyChannelMap.put(deviceID, ctx);
-                    LogUtil.getInstance().LogPrint("nettyChannelMap.put(deviceID, ctx); :" + deviceID);
                     break;
                 case 0x04: //心跳
                     LogUtil.getInstance().d("心跳");

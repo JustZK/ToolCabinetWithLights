@@ -149,13 +149,7 @@ public abstract class SerialHelper{
                     } else {
                         byte[] send = sendList.remove(0);
                         if (send != null) {
-
-                            StringBuilder buffers = new StringBuilder();
-                            for (int i = 0; i < send.length; i++) {
-                                buffers.append(Integer.toHexString((send[i] & 0xff)));
-                                buffers.append(" ");
-                            }
-                            LogUtil.getInstance().LogPrint("串口通信Android发送：" + buffers);
+                            LogUtil.getInstance().d("串口通信Android发送：", send, send.length);
 
                             send(send);
                         }

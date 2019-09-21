@@ -65,8 +65,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
         ByteBuf byteBuf = (ByteBuf) msg;
+        byte[] b = new byte[byteBuf.readableBytes()];
+        byteBuf.readBytes(b);
 
-        if (nettyServerEventProcessor != null) nettyServerEventProcessor.onMessageReceived(ctx, byteBuf.array());
+        if (nettyServerEventProcessor != null) nettyServerEventProcessor.onMessageReceived(ctx, b);
     }
 
     @Override

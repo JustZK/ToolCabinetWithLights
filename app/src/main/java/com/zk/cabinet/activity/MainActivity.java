@@ -130,6 +130,8 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
         isFinish = false;//倒计时关闭
 
         init();
+
+//        JKSDolphinUtil.getInstance().hideNavigation();
     }
 
     private void init() {

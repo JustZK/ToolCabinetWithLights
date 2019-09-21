@@ -124,7 +124,7 @@ public class NettyServerParsingLibrary {
 
         @Override
         protected void onMessageReceived(ChannelHandlerContext ctx, byte[] buffer) {
-            LogUtil.getInstance().d(TAG, buffer, buffer.length);
+            LogUtil.getInstance().d("收到的原始数据：", buffer, buffer.length);
 
             byte[] tempBytes;
             //如果上次解析有剩余，则将其加上
@@ -282,13 +282,7 @@ public class NettyServerParsingLibrary {
          * @param size   改数据帧的长度（加上针头帧尾）
          */
         private void checkReceived(ChannelHandlerContext ctx, byte[] buffer, int size) {
-            LogUtil.getInstance().d("checkReceived");
-            StringBuilder buffers = new StringBuilder();
-            for (int i = 0; i < size; i++) {
-                buffers.append(Integer.toHexString((buffer[i] & 0xff)));
-                buffers.append(" ");
-            }
-            LogUtil.getInstance().d("checkReceived", "test Received checkReceived :" + buffers);
+            LogUtil.getInstance().d("一条完整开始校验的数据帧：", buffer, size);
 
             if (buffer[0] == NettyUtils.HEAD_HIGH && buffer[1] == NettyUtils.HEAD_LOW
                     && buffer[size - 2] == NettyUtils.TAIL_HIGH && buffer[size - 1] == NettyUtils.TAIL_LOW) {
@@ -322,13 +316,7 @@ public class NettyServerParsingLibrary {
          * @param size
          */
         private void parser(ChannelHandlerContext ctx, byte[] buffer, int size) {
-            StringBuilder buffers = new StringBuilder();
-            for (int i = 0; i < size; i++) {
-                buffers.append(Integer.toHexString((buffer[i] & 0xff)));
-                buffers.append(" ");
-            }
-            LogUtil.getInstance().d("test Received end" + buffers);
-
+            LogUtil.getInstance().d("校验通过");
 
             switch (buffer[6]) {
                 case 0x01: //注册
@@ -356,6 +344,7 @@ public class NettyServerParsingLibrary {
                     } else if (buffer[10] == 0x01) {
                         //盘点结束
                         LogUtil.getInstance().d("Inventory end");
+                        LogUtil.getInstance().d("一共盘点到：" + inventoryInfoList.size() + "条数据");
                         if (inventoryListener != null) {
                             inventoryListener.inventoryList(readerID, 0, inventoryInfoList);
                         }

@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.zk.cabinet.R;
 import com.zk.cabinet.databinding.ActivitySystemSettingsBinding;
 import com.zk.cabinet.db.CabinetService;
+import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.util.RegularExpressionUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.SharedPreferencesUtil.Record;
@@ -345,6 +346,7 @@ public class SystemSettingsActivity extends TimeOffAppCompatActivity implements 
                                             platformServicePortInt != mPlatformServicePort) {
                                         mPlatformServiceIp = platformServiceIPStr;
                                         mPlatformServicePort = platformServicePortInt;
+                                        NetworkRequest.getInstance().configModify(mPlatformServiceIp, mPlatformServicePort);
                                         spUtil.applyValue(new Record(Key.PlatformServiceIp, mPlatformServiceIp));
                                         spUtil.applyValue(new Record(Key.PlatformServicePort, mPlatformServicePort));
                                         binding.systemSettingPlatformServiceIpSb.setCaptionText(mPlatformServiceIp + ":" + mPlatformServicePort);

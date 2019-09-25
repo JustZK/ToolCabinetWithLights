@@ -57,6 +57,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activity.ListInLibraryActivity"
+            android:label="在库清单"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.AccessingDepositActivity"
             android:label="@string/title_access_deposit"
             android:theme="@style/AppTheme.NoActionBar" />

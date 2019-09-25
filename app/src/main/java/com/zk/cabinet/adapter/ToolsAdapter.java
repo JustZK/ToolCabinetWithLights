@@ -55,10 +55,8 @@ public class ToolsAdapter extends BaseAdapter {
                     (TextView) view.findViewById(R.id.adapter_tools_name_tv),
                     (TextView) view.findViewById(R.id.adapter_mechanism_name_tv),
                     (TextView) view.findViewById(R.id.adapter_tools_epc_tv),
-                    (TextView) view.findViewById(R.id.adapter_tools_state_tv),
                     (TextView) view.findViewById(R.id.adapter_tools_cell_number_tv),
-                    (TextView) view.findViewById(R.id.adapter_tools_light_tv),
-                    (TextView) view.findViewById(R.id.adapter_tool_mechanism_name_tv));
+                    (TextView) view.findViewById(R.id.adapter_tools_light_tv));
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -69,15 +67,11 @@ public class ToolsAdapter extends BaseAdapter {
         viewHolder.adapter_tools_cell_number_tv.setText(tools.getCellNumber() + "-" + tools.getToolLightNumber());
         viewHolder.adapter_tools_epc_tv.setText(tools.getOperateTime() != null ?
                 tools.getOperateTime() : "---");
-        viewHolder.adapter_tools_state_tv.setText(tools.getMechanismName() != null?
-                tools.getMechanismName() : "---");
         viewHolder.adapter_tools_light_tv.setText(tools.getNameParty() != null ?
                 tools.getNameParty() : "---");
 //        viewHolder.adapter_mechanism_name_tv.setText(tools.getMechanismName());
         viewHolder.adapter_mechanism_name_tv.setText(tools.getEpc() != null?
                 tools.getEpc() : "---");
-        viewHolder.adapter_tool_mechanism_name_tv.setText((tools.getMechanismName() != null ?
-                tools.getMechanismName() : "---" ));
 
         if (tools.isSelected()){
             viewHolder.adapter_tools_item_ll.setBackgroundColor(mContext.getResources().getColor(R.color.md_orange_900));
@@ -98,29 +92,23 @@ public class ToolsAdapter extends BaseAdapter {
         protected TextView adapter_tools_cell_number_tv;
 
         protected TextView adapter_tools_epc_tv;
-        protected TextView adapter_tools_state_tv;
 
         protected TextView adapter_tools_light_tv;
 
         protected TextView adapter_mechanism_name_tv;
-        protected TextView adapter_tool_mechanism_name_tv;
 
         public ViewHolder(LinearLayout adapter_tools_item_ll,
                           TextView adapter_tools_name_tv,
                           TextView adapter_tools_cell_number_tv,
                           TextView adapter_tools_epc_tv,
-                          TextView adapter_tools_state_tv,
                           TextView adapter_tools_light_tv,
-                          TextView adapter_mechanism_name_tv,
-                          TextView adapter_tool_mechanism_name_tv) {
+                          TextView adapter_mechanism_name_tv) {
             this.adapter_tools_item_ll = adapter_tools_item_ll;
             this.adapter_tools_name_tv = adapter_tools_name_tv;
             this.adapter_tools_cell_number_tv = adapter_tools_cell_number_tv;
             this.adapter_tools_epc_tv = adapter_tools_epc_tv;
-            this.adapter_tools_state_tv = adapter_tools_state_tv;
             this.adapter_tools_light_tv = adapter_tools_light_tv;
             this.adapter_mechanism_name_tv = adapter_mechanism_name_tv;
-            this.adapter_tool_mechanism_name_tv = adapter_tool_mechanism_name_tv;
         }
     }
 

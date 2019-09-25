@@ -101,6 +101,59 @@
             android:layout_marginTop="@dimen/card_spacing"
             android:background="@color/md_blue_grey_100" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="@dimen/title_medium_l_spacing"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:text="物品名称"
+                android:textColor="@color/gray_deep"
+                android:textSize="@dimen/sub_big_text" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="@dimen/title_medium_spacing"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:text="物品位置"
+                android:textColor="@color/gray_deep"
+                android:textSize="@dimen/sub_big_text" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="@dimen/title_medium_spacing"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:text="操作时间"
+                android:textColor="@color/gray_deep"
+                android:textSize="@dimen/sub_big_text" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="@dimen/title_medium_l_spacing"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:text="当事人"
+                android:textColor="@color/gray_deep"
+                android:textSize="@dimen/sub_big_text" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="@dimen/title_medium_spacing"
+                android:layout_weight="5"
+                android:gravity="center"
+                android:text="RFID标签"
+                android:textColor="@color/gray_deep"
+                android:textSize="@dimen/sub_big_text" />
+
+        </LinearLayout>
+
         <ListView
             android:id="@+id/accessing_deposit_lv"
             android:layout_width="match_parent"

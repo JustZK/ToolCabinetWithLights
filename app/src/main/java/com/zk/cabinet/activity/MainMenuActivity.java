@@ -86,7 +86,7 @@ public class MainMenuActivity extends TimeOffAppCompatActivity {
             list.add(new ImageTextListInfo(R.drawable.blood_delivery, "血样/尿样出库"));
             list.add(new ImageTextListInfo(R.drawable.goods_storage, "收缴物品入库"));
             list.add(new ImageTextListInfo(R.drawable.goods_delivery, "收缴物品出库"));
-
+            list.add(new ImageTextListInfo(R.drawable.cabinet, "在库清单"));
         } else {
 //            list.add(new ImageTextListInfo(R.drawable.goods, getString(R.string.tool_management)));
             list.add(new ImageTextListInfo(R.drawable.personnel_management, getString(R.string.personnel_management)));
@@ -156,6 +156,10 @@ public class MainMenuActivity extends TimeOffAppCompatActivity {
                     progressDialog.setMessage("正在联网获取用户信息......");
                     progressDialog.show();
                     getUserList();
+                    break;
+                case R.drawable.cabinet:
+                    intent.setClass(MainMenuActivity.this, ListInLibraryActivity.class);
+                    startActivityForResult(intent, REQUEST_CODE);
                     break;
                 default:
                     break;

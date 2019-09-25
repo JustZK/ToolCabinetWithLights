@@ -15,162 +15,57 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_l_spacing"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:text="@string/title_tool_name"
-            android:textColor="@color/gray_deep"
-            android:textSize="@dimen/medium_text" />
-
-        <TextView
             android:id="@+id/adapter_tools_name_tv"
             android:layout_width="0dp"
             android:layout_height="@dimen/title_medium_l_spacing"
-            android:layout_weight="5"
-            android:gravity="center|left"
+            android:layout_weight="3"
+            android:gravity="center"
             android:text="@string/tool_name"
             android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_spacing"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:text="物品位置："
-            android:textColor="@color/gray_deep"
-            android:textSize="@dimen/medium_text" />
-
-        <TextView
             android:id="@+id/adapter_mechanism_name_tv"
             android:layout_width="0dp"
             android:layout_height="@dimen/title_medium_spacing"
-            android:layout_weight="2"
-            android:gravity="center|left"
+            android:layout_weight="3"
+            android:gravity="center"
             android:text="1-2"
             android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_spacing"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:text="操作时间："
-            android:textColor="@color/gray_deep"
-            android:textSize="@dimen/medium_text" />
-
-        <TextView
             android:id="@+id/adapter_tools_epc_tv"
             android:layout_width="0dp"
             android:layout_height="@dimen/title_medium_spacing"
-            android:layout_weight="4"
-            android:gravity="center|left"
+            android:layout_weight="3"
+            android:gravity="center"
             android:text="2019-01-01 10:10"
             android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_l_spacing"
-            android:layout_weight="3"
-            android:gravity="center"
-            android:text="当事人："
-            android:textColor="@color/gray_deep"
-            android:textSize="@dimen/medium_text" />
 
         <TextView
             android:id="@+id/adapter_tools_cell_number_tv"
             android:layout_width="0dp"
             android:layout_height="@dimen/title_medium_l_spacing"
             android:layout_weight="3"
-            android:gravity="center|left"
+            android:gravity="center"
             android:text="@string/tool_cell_number"
             android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_spacing"
-            android:layout_weight="3"
-            android:gravity="center"
-            android:text="机构名称："
-            android:textColor="@color/gray_deep"
-            android:textSize="@dimen/sub_big_text" />
-
-        <TextView
-            android:id="@+id/adapter_tools_state_tv"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_spacing"
-            android:layout_weight="11"
-            android:gravity="center|left"
-            android:text="@string/tool_state"
-            android:textColor="@color/gray_deep"
-            android:textSize="@dimen/sub_medium_text" />
-
-
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_spacing"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:text="EPC编号："
-            android:textColor="@color/gray_deep"
-            android:textSize="@dimen/medium_text" />
 
         <TextView
             android:id="@+id/adapter_tools_light_tv"
             android:layout_width="0dp"
             android:layout_height="@dimen/title_medium_spacing"
             android:layout_weight="5"
-            android:gravity="center|left"
-            android:text="@string/tool_epc"
-            android:textColor="@color/gray_deep"
-            android:textSize="@dimen/sub_medium_text" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_spacing"
-            android:layout_weight="4"
             android:gravity="center"
-            android:text="机构名称："
-            android:textColor="@color/gray_deep"
-            android:textSize="@dimen/medium_text" />
-
-        <TextView
-            android:id="@+id/adapter_tool_mechanism_name_tv"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/title_medium_spacing"
-            android:layout_weight="16"
-            android:gravity="center|left"
             android:text="@string/tool_epc"
             android:textColor="@color/gray_deep"
             android:textSize="@dimen/sub_medium_text" />
 
     </LinearLayout>
+
 
 </LinearLayout>

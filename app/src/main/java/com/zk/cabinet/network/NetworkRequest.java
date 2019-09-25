@@ -7,7 +7,6 @@ import com.zk.cabinet.util.SharedPreferencesUtil;
 public class NetworkRequest extends VolleyRequest{
     private static volatile NetworkRequest networkRequest = null;
 
-    private String deviceCode;
     public static final String URL_HEAD = "http://";
     public static final String URL_COLON = ":";
     public static final String DEFAULT_URL = "127.0.0.1";
@@ -21,6 +20,7 @@ public class NetworkRequest extends VolleyRequest{
     public String urlUpInBoundList;
     public String urlUserList;
     public String urlUserFpiAdd;
+    public String urlToolsInBox;
     public static final String LOGIN_BY_PWD = "/api/User/Login";
     public static final String LOGIN_BY_CARD = "/api/user/card";
     public static final String OUT_BOUND_LIST = "/Api/Traffic/TrafficGdnQuery";
@@ -30,6 +30,7 @@ public class NetworkRequest extends VolleyRequest{
     public static final String UP_IN_BOUND_LIST = "/Api/Traffic/TrafficGrnAdd";
     public static final String USER_LIST = "/Api/Traffic/UserList";
     public static final String USER_FPI_ADD_LIST = "/Api/Traffic/UserFPIAdd";
+    public static final String TOOLS_IN_BOX = "/Api/Traffic/TrafficAllCabinet";
 
     public static NetworkRequest getInstance(){
         if (networkRequest == null) {
@@ -48,10 +49,8 @@ public class NetworkRequest extends VolleyRequest{
 
         String url = SharedPreferencesUtil.getInstance().getString(SharedPreferencesUtil.Key.PlatformServiceIp, DEFAULT_URL);
         int port = SharedPreferencesUtil.getInstance().getInt(SharedPreferencesUtil.Key.PlatformServicePort, DEFAULT_PORT);
-        deviceCode = SharedPreferencesUtil.getInstance().getString(SharedPreferencesUtil.Key.DeviceId, "00000000");
         configModify(url, port);
     }
-
 
     public void configModify (String url, int port) {
         urlLoginByPwd = URL_HEAD + url + URL_COLON + port + LOGIN_BY_PWD;
@@ -63,6 +62,7 @@ public class NetworkRequest extends VolleyRequest{
         urlUpInBoundList = URL_HEAD + url + URL_COLON + port + UP_IN_BOUND_LIST;
         urlUserList = URL_HEAD + url + URL_COLON + port + USER_LIST;
         urlUserFpiAdd = URL_HEAD + url + URL_COLON + port + USER_FPI_ADD_LIST;
+        urlToolsInBox = URL_HEAD + url + URL_COLON + port + TOOLS_IN_BOX;
     }
 
 //    @Override

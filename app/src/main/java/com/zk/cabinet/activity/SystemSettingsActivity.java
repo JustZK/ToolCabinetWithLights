@@ -442,9 +442,11 @@ public class SystemSettingsActivity extends TimeOffAppCompatActivity implements 
             case R.id.system_setting_app_version_sb:
                 break;
             case R.id.system_setting_display_sb:
+//                JKSDolphinUtil.getInstance().showNavigation();
                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                 break;
             case R.id.system_setting_file_manager_sb:
+//                JKSDolphinUtil.getInstance().showNavigation();
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_LAUNCHER);
                 ComponentName cn = new ComponentName("com.softwinner.TvdFileManager",
@@ -495,5 +497,11 @@ public class SystemSettingsActivity extends TimeOffAppCompatActivity implements 
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        JKSDolphinUtil.getInstance().hideNavigation();
     }
 }

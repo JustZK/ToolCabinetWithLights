@@ -154,7 +154,7 @@ public class ListInLibraryActivity extends TimeOffAppCompatActivity {
                     } else {
                         Message msg = Message.obtain();
                         msg.what = GET_IN_BOUND_LIST_ERROR;
-                        msg.obj = "无入库数据。";
+                        msg.obj = "无在库数据。";
                         mHandler.sendMessage(msg);
                     }
                 } catch (JSONException e) {

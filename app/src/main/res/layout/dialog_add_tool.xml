@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="工具灯号：" />
+            android:text="权证灯号：" />
 
         <EditText
             android:id="@+id/dialog_add_tools_light_edt"

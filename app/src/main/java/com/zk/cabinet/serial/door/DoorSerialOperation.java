@@ -21,7 +21,7 @@ public class DoorSerialOperation extends SerialHelper {
     private DoorListener doorListener;
 
     private final String PATH = "/dev/ttyS0";
-    private final String BAUD = "115200";
+    private final String BAUD = "9600";
     private boolean isConnect = false;
     private volatile static DoorSerialOperation instance;
 

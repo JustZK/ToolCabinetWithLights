@@ -21,8 +21,8 @@ public class NetworkRequest extends VolleyRequest{
     public String urlUserList;
     public String urlUserFpiAdd;
     public String urlToolsInBox;
-    public static final String LOGIN_BY_PWD = "/api/User/Login";
-    public static final String LOGIN_BY_CARD = "/api/user/card";
+    public static final String LOGIN_BY_PWD = "/Api/User/Login";
+    public static final String LOGIN_BY_CARD = "/Api/user/card";
     public static final String OUT_BOUND_LIST = "/Api/Traffic/TrafficGdnQuery";
     public static final String IN_BOUND_LIST = "/Api/Traffic/TrafficGrnQuery";
     public static final String TOOLS_IN_BOX_LIST = "/Api/Traffic/TrafficCabinet";

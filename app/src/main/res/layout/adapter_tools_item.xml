@@ -18,7 +18,7 @@
             android:id="@+id/adapter_tools_name_tv"
             android:layout_width="0dp"
             android:layout_height="@dimen/title_medium_l_spacing"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="center"
             android:text="@string/tool_name"
             android:textColor="@color/gray_deep"

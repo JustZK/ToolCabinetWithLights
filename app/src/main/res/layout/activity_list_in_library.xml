@@ -48,9 +48,9 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="@dimen/title_medium_l_spacing"
-                android:layout_weight="3"
+                android:layout_weight="4"
                 android:gravity="center"
-                android:text="物品名称"
+                android:text="权证名称/编号"
                 android:textColor="@color/gray_deep"
                 android:textSize="@dimen/sub_big_text" />
 
@@ -59,7 +59,7 @@
                 android:layout_height="@dimen/title_medium_spacing"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:text="物品位置"
+                android:text="权证位置"
                 android:textColor="@color/gray_deep"
                 android:textSize="@dimen/sub_big_text" />
 
@@ -78,7 +78,7 @@
                 android:layout_height="@dimen/title_medium_l_spacing"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:text="当事人"
+                android:text="业务经理"
                 android:textColor="@color/gray_deep"
                 android:textSize="@dimen/sub_big_text" />
 

@@ -24,7 +24,7 @@
     <!--主界面-->
     <string name="fingerprint_entry_prompt">请将手指放于屏幕下方传感器上\n或点击屏幕任意键使用密码登陆</string>
     <string name="other_login">其他方式登陆</string>
-    <string name="contractor">智能物品柜应用系统</string>
+    <string name="contractor">智能权证柜应用系统</string>
 
     <string name="login_by_pwd">用户登录</string>
     <string name="account">账  号：</string>
@@ -42,11 +42,11 @@
     <string name="title_activity_admin">管理菜单</string>
 
     <string name="borrow_by_cabinet">按柜子借用</string>
-    <string name="borrow_by_tool">按物品借用</string>
+    <string name="borrow_by_tool">按权证借用</string>
     <string name="one_click_borrowing">一键借用</string>
     <string name="one_click_return">一键归还</string>
     <string name="personnel_management">人员管理</string>
-    <string name="tool_management">物品管理</string>
+    <string name="tool_management">权证管理</string>
     <string name="change_password">密码修改</string>
     <string name="system_settings">系统设置</string>
     <string name="synchronize">同步</string>
@@ -109,20 +109,20 @@
 
     <!--物品查询-->
     <string name="title_activity_access_operate">按格子借用</string>
-    <string name="title_tools">物品管理</string>
-    <string name="title_tool_name">物品名称：</string>
-    <string name="tool_name">物品名称名称</string>
+    <string name="title_tools">权证管理</string>
+    <string name="title_tool_name">权证名称：</string>
+    <string name="tool_name">权证名称名称</string>
     <string name="title_tool_cell_number">所在格子：</string>
     <string name="tool_cell_number">所在格子</string>
-    <string name="title_tool_state">物品状态：</string>
-    <string name="tool_state">物品状态</string>
+    <string name="title_tool_state">权证状态：</string>
+    <string name="tool_state">权证状态</string>
     <string name="title_tool_epc">EPC编号：</string>
     <string name="tool_epc">EPC</string>
 
-    <string name="tools_add">添加物品</string>
+    <string name="tools_add">添加权证</string>
     <!--物品查询-->
 
-    <string name="confirm_access_operation">请确认下方的物品是本次操作结果吗？</string>
+    <string name="confirm_access_operation">请确认下方的权证是本次操作结果吗？</string>
     <string name="reopen">重新操作</string>
     <string name="abnormal_completion_operation">异常完成操作</string>
 
@@ -137,7 +137,7 @@
 
     <string name="title_open_cabinet_where_the_file_is_located">开启柜门</string>
     <string name="open_cabinet_where_the_file_is_located">%1$s存放在%2$s，是否开启%2$s的柜门</string>
-    <string name="not_in_cabinet">该物品不在当前柜子！</string>
+    <string name="not_in_cabinet">该权证不在当前柜子！</string>
     <string name="cabinet_not_exist">未查到该格子！</string>
     <string name="no_permission_open_box">配置管理员，您无权限开启柜门！</string>
 

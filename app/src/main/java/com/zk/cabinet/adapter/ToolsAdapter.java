@@ -63,7 +63,7 @@ public class ToolsAdapter extends BaseAdapter {
         }
 
         viewHolder.adapter_tools_name_tv.setText(tools.getPropertyInvolvedName() != null ?
-                tools.getPropertyInvolvedName() : "---");
+                (tools.getPropertyInvolvedName() + "/"+ tools.getCaseNumber()) : "---");
         viewHolder.adapter_tools_cell_number_tv.setText(tools.getCellNumber() + "-" + tools.getToolLightNumber());
         viewHolder.adapter_tools_epc_tv.setText(tools.getOperateTime() != null ?
                 tools.getOperateTime() : "---");

@@ -124,7 +124,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                 for (Tools tools : allowDepositList) {
                                     if (!tools.isAlreadyOperated()) {
                                         SoundPoolUtil.getInstance().reportNumber(11);
-                                        showToast(tools.getPropertyInvolvedName() + "，该物品在入库列表中，但您未入库。");
+                                        showToast(tools.getPropertyInvolvedName() + "，该权证在入库列表中，但您未入库。");
                                     }
                                 }
 
@@ -208,7 +208,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
                                         notOpenLightNumbers.add(toolsTemp.getToolLightNumber());
                                         mAdapter.setList(inTheCabinetList);
                                         mAdapter.notifyDataSetChanged();
-                                        binding.accessingDepositToolNumberTv.setText("本柜共有：" + inTheCabinetList.size() + "件物品");
+                                        binding.accessingDepositToolNumberTv.setText("本柜共有：" + inTheCabinetList.size() + "件权证");
 
                                         isSave = true;
                                         break;
@@ -274,7 +274,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
 
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                             accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
-                            dialog_accessing_reopen_error_tv.setText("本次操作只允许存入！\n请把以下物品归回原位。");
+                            dialog_accessing_reopen_error_tv.setText("本次操作只允许存入！\n请把以下权证归回原位。");
                             SoundPoolUtil.getInstance().reportNumber(5);
 
                         } else {
@@ -338,7 +338,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
 
                     } else if (needOpenLightNumbers.size() > 1) {
                         SoundPoolUtil.getInstance().reportNumber(4);
-                        showToast("本次操作只允许归还一件物品");
+                        showToast("本次操作只允许归还一件权证");
                     }
                 }
                 break;
@@ -352,7 +352,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
 
                 mAdapter.setList(inTheCabinetList);
                 mAdapter.notifyDataSetChanged();
-                binding.accessingDepositToolNumberTv.setText("本柜共有：" + inTheCabinetList.size() + "件物品");
+                binding.accessingDepositToolNumberTv.setText("本柜共有：" + inTheCabinetList.size() + "件权证");
                 binding.accessingDepositOpenBtn.setVisibility(View.INVISIBLE);
 
                 DoorSerialOperation.getInstance().send(new DoorSendInfo(cabinet.getTargetAddress(),
@@ -435,7 +435,7 @@ public class AccessingDepositActivity extends TimeOffAppCompatActivity implement
         inTheCabinetList = new ArrayList<>();
         mAdapter = new ToolsAdapter(this, inTheCabinetList);
         binding.accessingDepositLv.setAdapter(mAdapter);
-        binding.accessingDepositToolNumberTv.setText("本柜共有：" + inTheCabinetList.size() + "件物品");
+        binding.accessingDepositToolNumberTv.setText("本柜共有：" + inTheCabinetList.size() + "件权证");
 
 
         getToolsInBoxList();

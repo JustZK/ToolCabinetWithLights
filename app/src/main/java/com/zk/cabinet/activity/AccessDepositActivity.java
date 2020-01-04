@@ -116,7 +116,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity implements V
                             if (tools.getCellNumber() == list.get(position).getCellNumber()) {
                                 list.get(position).setSelected(true);
                             } else {
-                                showToast("您当前选中的工具与之前选中的工具不在同一个格子。");
+                                showToast("您当前选中的权证与之前选中的权证不在同一个格子。");
                             }
                             break;
                         }
@@ -197,7 +197,7 @@ public class AccessDepositActivity extends TimeOffAppCompatActivity implements V
                     bundle.putBoolean("ImmediatelyOpen", true);
                     bundle.putInt("PropertyInvolved", propertyInvolved);
                     IntentActivity(AccessingDepositActivity.class, bundle);
-                } else showToast("请选中入库的工具");
+                } else showToast("请选中入库的权证");
 
                 break;
         }

@@ -239,7 +239,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                                 for (Tools tools : toolsList) {
                                     if (!tools.isAlreadyOperated() && tools.isSelected()) {
                                         SoundPoolUtil.getInstance().reportNumber(12);
-                                        showToast(tools.getPropertyInvolvedName() + "，该物品在出库列表中，但您未入库。");
+                                        showToast(tools.getPropertyInvolvedName() + "，该权证在出库列表中，但您未入库。");
                                     }
                                 }
 
@@ -252,7 +252,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                                 SoundPoolUtil.getInstance().reportNumber(3);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setEnabled(false);
                                 accessingDialog.findViewById(R.id.dialog_accessing_sure).setVisibility(View.INVISIBLE);
-                                dialog_accessing_reopen_error_tv.setText("您取出了未选中的物品！");
+                                dialog_accessing_reopen_error_tv.setText("您取出了未选中的权证！");
                             }
                         }
                     }
@@ -272,7 +272,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 toolsList = (List<Tools>) msg.obj;
                 mAdapter.setList(toolsList);
                 mAdapter.notifyDataSetChanged();
-                binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件物品");
+                binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件权证");
 
 //                String epc = getIntent().getExtras().getString("EPC");
                 List<Tools> epcList = ToolsService.getInstance().getOutTools(cellNumber);
@@ -301,7 +301,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                 toolsList = (List<Tools>) msg.obj;
                 mAdapter.setList(toolsList);
                 mAdapter.notifyDataSetChanged();
-                binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件物品");
+                binding.accessingOutToolNumberTv.setText("本柜共有：" + toolsList.size() + "件权证");
                 break;
             case GET_TOOLS_IN_BOX_LIST_ERROR:
                 binding.accessingOutToolNumberTv.setText("获取异常");
@@ -463,7 +463,7 @@ public class AccessingOutActivity extends TimeOffAppCompatActivity implements Vi
                     LightSerialOperation.getInstance().send(new LightSendInfo(cabinet.getTargetAddressForLight(),
                             cabinet.getSourceAddress(), lightNumbers));
                 } else {
-                    showToast("请先选择出库的物品。");
+                    showToast("请先选择出库的权证。");
                 }
                 break;
             case R.id.dialog_accessing_reopen:

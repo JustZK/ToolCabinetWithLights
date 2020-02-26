@@ -2,13 +2,16 @@ package com.zk.cabinet.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.RemoteException;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +26,12 @@ import com.zk.cabinet.R;
 import com.zk.cabinet.bean.User;
 import com.zk.cabinet.callback.CardListener;
 import com.zk.cabinet.callback.FingerprintVerifyListener;
+import com.zk.cabinet.constant.SelfComm;
 import com.zk.cabinet.databinding.ActivityMainBinding;
 import com.zk.cabinet.databinding.DilaogLoginBinding;
 import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.card.CardSerialOperation;
+import com.zk.cabinet.service.BusinessService;
 import com.zk.cabinet.util.FingerprintParsingLibrary;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.SharedPreferencesUtil.Record;
@@ -50,6 +55,8 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
     private ActivityMainBinding mainBinding;
     private AlertDialog dialogLogin;
 
+    private boolean mEntireInventory = false;
+    private ProgressDialog mEntireInventoryDialog;
     private Intent businessServiceIntent;
     private ServiceConnection businessServiceConnection;
     private Messenger businessMessenger;
@@ -97,24 +104,40 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                 showToast(msg.obj.toString());
                 break;
             case FINGER_LOGIN_SUCCESS:
-                FingerprintParsingLibrary.getInstance().setFingerprintVerify(false);
-                ArrayList<Record> records1 = new ArrayList<>();
-                User user = (User) msg.obj;
-                records1.add(new Record(Key.UserIDTemp,  user.getUserID()));
-                records1.add(new Record(Key.CodeTemp, user.getCode()));
-                records1.add(new Record(Key.NameTemp, user.getUserName()));
-                records1.add(new Record(Key.MobilePhoneTemp, user.getMobilePhone()));
-                records1.add(new Record(Key.CardIDTemp, user.getCardID()));
-                records1.add(new Record(Key.UnitNumber, user.getMechanismCoding()));
-                spUtil.applyValue(records1);
+                if (!mEntireInventory) {
+                    FingerprintParsingLibrary.getInstance().setFingerprintVerify(false);
+                    ArrayList<Record> records1 = new ArrayList<>();
+                    User user = (User) msg.obj;
+                    records1.add(new Record(Key.UserIDTemp, user.getUserID()));
+                    records1.add(new Record(Key.CodeTemp, user.getCode()));
+                    records1.add(new Record(Key.NameTemp, user.getUserName()));
+                    records1.add(new Record(Key.MobilePhoneTemp, user.getMobilePhone()));
+                    records1.add(new Record(Key.CardIDTemp, user.getCardID()));
+                    records1.add(new Record(Key.UnitNumber, user.getMechanismCoding()));
+                    spUtil.applyValue(records1);
 
-                Intent intent1 = new Intent();
-                intent1.putExtra("UserType", 1);
-                intent1.setClass(MainActivity.this, MainMenuActivity.class);
-                startActivityForResult(intent1, REQUEST_CODE);
+                    Intent intent1 = new Intent();
+                    intent1.putExtra("UserType", 1);
+                    intent1.setClass(MainActivity.this, MainMenuActivity.class);
+                    startActivityForResult(intent1, REQUEST_CODE);
+                }
                 break;
             case FINGER_LOGIN_ERROR:
                 showToast(msg.obj.toString());
+                break;
+            case SelfComm.BUSINESS_ENTIRE_INVENTORY:
+                mEntireInventory = (boolean) msg.obj;
+                if (mEntireInventory){
+                    if (mEntireInventoryDialog == null) {
+                        mEntireInventoryDialog = new ProgressDialog(this);
+                        mEntireInventoryDialog.setMessage("正在整柜盘点，暂时无法操作...");
+                    }
+                    mEntireInventoryDialog.show();
+                } else {
+                    if (mEntireInventoryDialog != null && mEntireInventoryDialog.isShowing()) {
+                        mEntireInventoryDialog.dismiss();
+                    }
+                }
                 break;
         }
     }
@@ -145,6 +168,27 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
         FingerprintParsingLibrary.getInstance().setFingerprintVerify(true);
 
         SoundPoolUtil.getInstance().init(this);
+
+        businessServiceIntent = new Intent(this, BusinessService.class);
+        businessServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                businessMessenger = new Messenger(service);
+                Message msg = Message.obtain();
+                msg.what = SelfComm.BUSINESS_SERVICE_CONNECT;
+                msg.replyTo = new Messenger(mHandler);
+                try {
+                    businessMessenger.send(msg);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
     }
 
     private CardListener cardListener = new CardListener() {

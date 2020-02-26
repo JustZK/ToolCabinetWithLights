@@ -33,7 +33,7 @@ public class DBHelper {
         return instance;
     }
 
-    public void init (Context context) {
+    public void init(Context context) {
         if (instance != null) {
             //此处devOpenHelper为自动生成开发所使用，发布版本需自定义
 //            DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(context.getApplicationContext(), "FileCabinet", null);
@@ -54,8 +54,9 @@ public class DBHelper {
             mDaoSession = mDaoMaster.newSession(IdentityScopeType.None);
 
             CabinetService.getInstance().init(mDaoSession, mDaoSession.getCabinetDao());
-            ToolsService.getInstance().init(mDaoSession,mDaoSession.getToolsDao());
-            UserService.getInstance().init(mDaoSession,mDaoSession.getUserDao());
+            ToolsService.getInstance().init(mDaoSession, mDaoSession.getToolsDao());
+            UserService.getInstance().init(mDaoSession, mDaoSession.getUserDao());
+            InventoryAllService.getInstance().init(mDaoSession, mDaoSession.getInventoryAllDao());
         }
     }
 

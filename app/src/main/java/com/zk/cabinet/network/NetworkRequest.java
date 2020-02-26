@@ -21,16 +21,21 @@ public class NetworkRequest extends VolleyRequest{
     public String urlUserList;
     public String urlUserFpiAdd;
     public String urlToolsInBox;
-    public static final String LOGIN_BY_PWD = "/Api/User/Login";
-    public static final String LOGIN_BY_CARD = "/Api/user/card";
-    public static final String OUT_BOUND_LIST = "/Api/Traffic/TrafficGdnQuery";
-    public static final String IN_BOUND_LIST = "/Api/Traffic/TrafficGrnQuery";
-    public static final String TOOLS_IN_BOX_LIST = "/Api/Traffic/TrafficCabinet";
-    public static final String UP_OUT_BOUND_LIST = "/Api/Traffic/TrafficGrnAdd";
-    public static final String UP_IN_BOUND_LIST = "/Api/Traffic/TrafficGrnAdd";
-    public static final String USER_LIST = "/Api/Traffic/UserList";
-    public static final String USER_FPI_ADD_LIST = "/Api/Traffic/UserFPIAdd";
-    public static final String TOOLS_IN_BOX = "/Api/Traffic/TrafficAllCabinet";
+    public String urlHeartbeat;
+    public String urlInventory;
+    private static final String LOGIN_BY_PWD = "/Api/User/Login";
+    private static final String LOGIN_BY_CARD = "/Api/user/card";
+    private static final String OUT_BOUND_LIST = "/Api/Traffic/TrafficGdnQuery";
+    private static final String IN_BOUND_LIST = "/Api/Traffic/TrafficGrnQuery";
+    private static final String TOOLS_IN_BOX_LIST = "/Api/Traffic/TrafficCabinet";
+    private static final String UP_OUT_BOUND_LIST = "/Api/Traffic/TrafficGrnAdd";
+    private static final String UP_IN_BOUND_LIST = "/Api/Traffic/TrafficGrnAdd";
+    private static final String USER_LIST = "/Api/Traffic/UserList";
+    private static final String USER_FPI_ADD_LIST = "/Api/Traffic/UserFPIAdd";
+    private static final String TOOLS_IN_BOX = "/Api/Traffic/TrafficAllCabinet";
+    private static final String HEARTBEAT = "/Api/Traffic/TrafficHeartbeat";
+    private static final String INVENTORY = "/Api/Traffic/TrafficInventory";
+
 
     public static NetworkRequest getInstance(){
         if (networkRequest == null) {
@@ -63,10 +68,7 @@ public class NetworkRequest extends VolleyRequest{
         urlUserList = URL_HEAD + url + URL_COLON + port + USER_LIST;
         urlUserFpiAdd = URL_HEAD + url + URL_COLON + port + USER_FPI_ADD_LIST;
         urlToolsInBox = URL_HEAD + url + URL_COLON + port + TOOLS_IN_BOX;
+        urlHeartbeat = URL_HEAD + url + URL_COLON + port + HEARTBEAT;
+        urlInventory = URL_HEAD + url + URL_COLON + port + INVENTORY;
     }
-
-//    @Override
-//    public void add(JsonObjectRequest jsonObjectRequest){
-//        super.add(jsonObjectRequest);
-//    }
 }

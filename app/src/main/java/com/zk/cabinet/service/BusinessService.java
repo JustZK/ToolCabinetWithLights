@@ -73,6 +73,7 @@ public class BusinessService extends Service {
     private String mEntireInventoryTime = "";
     private TimerTask taskKeepLive;
     private ScheduledExecutorService systemPool;
+    private PendingIntent taskPendingIntent;
     private boolean isInventorying = false;
     private Object objectForInventory = new Object();
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -114,9 +115,15 @@ public class BusinessService extends Service {
             case KEEP_LIVE:
                 Bundle bundle = receiveMessage.getData();
                 mInventoryCoding = bundle.getString("InventoryCoding");
-                mEntireInventoryTime = bundle.getString("OperateTime");
-                configTimingTask(AlarmEventReceiver.ACTION_ENTIRE_INVENTORY,
-                        mEntireInventoryTime, businessMessenger);
+                String entireInventoryTimeTemp = bundle.getString("OperateTime");
+                if (!mEntireInventoryTime.equals(entireInventoryTimeTemp)) {
+                    if (taskPendingIntent != null && alarmManager != null){
+                        alarmManager.cancel(taskPendingIntent);
+                    }
+                    mEntireInventoryTime = entireInventoryTimeTemp;
+                    configTimingTask(AlarmEventReceiver.ACTION_ENTIRE_INVENTORY,
+                            mEntireInventoryTime, businessMessenger);
+                }
                 break;
             default:
                 break;
@@ -189,7 +196,7 @@ public class BusinessService extends Service {
         Intent taskIntent = new Intent(action);
         taskIntent.putExtra(SelfComm.BUSINESS_MESSENGER, messenger);
         taskIntent.setClass(this, AlarmEventReceiver.class);
-        PendingIntent taskPendingIntent = PendingIntent.getBroadcast(this, 0, taskIntent, 0);
+        taskPendingIntent = PendingIntent.getBroadcast(this, 0, taskIntent, 0);
 
         if (Build.VERSION.SDK_INT < 19) {
             alarmManager.set(AlarmManager.RTC, taskTime, taskPendingIntent);

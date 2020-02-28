@@ -33,6 +33,7 @@ import com.zk.cabinet.network.NetworkRequest;
 import com.zk.cabinet.serial.card.CardSerialOperation;
 import com.zk.cabinet.service.BusinessService;
 import com.zk.cabinet.util.FingerprintParsingLibrary;
+import com.zk.cabinet.util.LogUtil;
 import com.zk.cabinet.util.SharedPreferencesUtil.Key;
 import com.zk.cabinet.util.SharedPreferencesUtil.Record;
 import com.zk.cabinet.util.SoundPoolUtil;
@@ -131,6 +132,7 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
                     if (mEntireInventoryDialog == null) {
                         mEntireInventoryDialog = new ProgressDialog(this);
                         mEntireInventoryDialog.setMessage("正在整柜盘点，暂时无法操作...");
+                        mEntireInventoryDialog.setCancelable(false);
                     }
                     mEntireInventoryDialog.show();
                 } else {
@@ -169,6 +171,7 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
 
         SoundPoolUtil.getInstance().init(this);
 
+        LogUtil.getInstance().d("BusinessService", "new");
         businessServiceIntent = new Intent(this, BusinessService.class);
         businessServiceConnection = new ServiceConnection() {
             @Override
@@ -189,6 +192,7 @@ public class MainActivity extends TimeOffAppCompatActivity implements View.OnCli
 
             }
         };
+        bindService(businessServiceIntent, businessServiceConnection, BIND_AUTO_CREATE);
     }
 
     private CardListener cardListener = new CardListener() {

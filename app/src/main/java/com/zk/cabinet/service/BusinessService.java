@@ -64,7 +64,7 @@ public class BusinessService extends Service {
     private HandlerThread businessHandlerThread = null;
     private BusinessHandler businessHandler = null;
 
-    private AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+    private AlarmManager alarmManager;
 
     private SharedPreferencesUtil spUtil;
 
@@ -132,6 +132,7 @@ public class BusinessService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        LogUtil.getInstance().d(TAG, "onBind");
         spUtil = SharedPreferencesUtil.getInstance();
         businessHandlerThread = new HandlerThread(HANDLER_THREAD_NAME);
         businessHandlerThread.start();
@@ -174,8 +175,8 @@ public class BusinessService extends Service {
      */
     private void configTimingTask(String action, String taskTimeToday, Messenger messenger) {
         if (alarmManager == null) {
-            LogUtil.getInstance().d(TAG, "configTimingTask定时任务管理未初始化，alarmManager == null");
-            return;
+            alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            LogUtil.getInstance().d(TAG, "alarmManager == null");
         }
 
         Calendar taskCalendar = Calendar.getInstance();
@@ -192,6 +193,7 @@ public class BusinessService extends Service {
         taskCalendar.setTime(date);
         long taskTime = taskCalendar.getTimeInMillis();
         LogUtil.getInstance().d(TAG, "new taskTime=" + taskTime);
+        LogUtil.getInstance().d(TAG, "time: " + taskCalendar.getTime().toString() );
 
         Intent taskIntent = new Intent(action);
         taskIntent.putExtra(SelfComm.BUSINESS_MESSENGER, messenger);
@@ -324,6 +326,7 @@ public class BusinessService extends Service {
             @Override
             public void onResponse(JSONObject jsonResult) {
                 try {
+                    LogUtil.getInstance().d(TAG, jsonResult.toString());
                     JSONObject jsonObject = jsonResult.getJSONObject("Data");
                     if (jsonResult.getInt("Result") == 200) {
                         Bundle bundle = new Bundle();

@@ -373,7 +373,7 @@ public class NettyServerParsingLibrary {
                     LogUtil.getInstance().d("EPC:" + epcStr.toString());
                     inventoryInfoList.add(new InventoryInfo(
                             buffer[15] * 256 + buffer[16],
-                            buffer[19] * 256 + buffer[20],
+                            -(buffer[19] * 256 + buffer[20]),
                             epcStr.toString()));
 
                     break;

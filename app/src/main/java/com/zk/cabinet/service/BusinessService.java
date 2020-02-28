@@ -14,6 +14,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -249,18 +250,21 @@ public class BusinessService extends Service {
                     e.printStackTrace();
                 }
             }
-
+            LogUtil.getInstance().d(TAG, "开始整柜盘点" );
             List<Cabinet> cabinetList = CabinetService.getInstance().loadAll();
             InventoryAllService.getInstance().deleteAll();
             NettyServerParsingLibrary.getInstance().processor.onInventoryListener(mInventoryListener);
             for (Cabinet cabinet: cabinetList){
+                if (cabinet.getCellNumber() == -2 && TextUtils.isEmpty(cabinet.getAntennaNumber())){
+                    continue;
+                }
                 String[] antennaNumberStr = cabinet.getAntennaNumber().split(",");
                 for (String s : antennaNumberStr) {
                     int antennaNumber = Integer.valueOf(s);
                     NettyServerParsingLibrary.getInstance().send(new NettySendInfo(
                             cabinet.getReaderDeviceID(), 0,
                             antennaNumber, 0));
-
+                    LogUtil.getInstance().d(TAG, "开始整柜盘点的格子：" + cabinet.getBoxName() + "分之器编号：" + s );
                     synchronized (objectForInventory) {
                         try {
                             objectForInventory.wait(20 * 1000);
@@ -268,10 +272,12 @@ public class BusinessService extends Service {
                             e.printStackTrace();
                         }
                     }
+                    LogUtil.getInstance().d(TAG, "-------------------------超时" );
                 }
 
             }
             NettyServerParsingLibrary.getInstance().processor.onInventoryListener(null);
+            LogUtil.getInstance().d(TAG, "整柜盘点结束" );
             //上传数据
             upInventoryList(spUtil.getString(SharedPreferencesUtil.Key.DeviceId, ""),
                     spUtil.getString(SharedPreferencesUtil.Key.UnitNumber, ""), mInventoryCoding,
@@ -376,7 +382,7 @@ public class BusinessService extends Service {
         } catch (JSONException e1) {
             e1.printStackTrace();
         }
-        LogUtil.getInstance().d("盘库上报：" + jsonObject);
+        LogUtil.getInstance().d(TAG, "盘库上报：" + jsonObject);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,
                 jsonObject, new Response.Listener<JSONObject>() {
             @Override

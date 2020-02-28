@@ -14,6 +14,7 @@ import java.util.Map;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.AdaptiveRecvByteBufAllocator;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOption;
@@ -83,7 +84,7 @@ public class NettyServerParsingLibrary {
         private int number = 0;//用于测试
         private HashMap<Integer, ChannelHandlerContext> nettyChannelMap = new HashMap<>();
         private int readerID;
-        private byte[] remainBuffer = null;//上次解析剩余的数据
+        private HashMap<Channel, byte[]> remainBufferMap = new HashMap<>();//上次解析剩余的数据
         private List<InventoryInfo> inventoryInfoList = new ArrayList<>();
         private InventoryListener inventoryListener;
 
@@ -126,6 +127,7 @@ public class NettyServerParsingLibrary {
         protected void onMessageReceived(ChannelHandlerContext ctx, byte[] buffer) {
             LogUtil.getInstance().d("收到的原始数据：", buffer, buffer.length);
 
+            byte[] remainBuffer = remainBufferMap.get(ctx.channel());
             byte[] tempBytes;
             //如果上次解析有剩余，则将其加上
             if (remainBuffer != null && remainBuffer.length != 0) {
@@ -133,12 +135,13 @@ public class NettyServerParsingLibrary {
             } else {
                 tempBytes = buffer;
             }
-
+            remainBufferMap.put(ctx.channel(), null);
             number = 0;
             remainBuffer = interceptionReceivedData(ctx, tempBytes);
-            if (remainBuffer != null)
+            if (remainBuffer != null) {
+                remainBufferMap.put(ctx.channel(), remainBuffer);
                 LogUtil.getInstance().d("上次解析有剩余：", remainBuffer, remainBuffer.length);
-            else
+            } else
                 LogUtil.getInstance().d("上次解析没有有剩余：");
         }
 
